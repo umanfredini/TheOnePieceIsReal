@@ -1,0 +1,36 @@
+Personaggi:
+- Luffy (Poster 1.5m, Maglia Bandiera, Maglia Legend, Maglia Occhiata, Cosplay, Quadro Gear4, Quadro Wano, Figure,
+  Maglia Snakeman, Cosplay Wano, Quadro Colorful, Figure Gear4, Figure ASL, Figure King, Figure w/Law, Figure w/Ace)
+- Zoro (Quadro Wano, Poster 120m, Poster 320m, Maglia Albero, Maglia Luna, Cosplay Wano, Maglia Santoryu, Cosplay,
+  Quadro Asura, Quadro Colorful, Figure, Figure King, Figure BountyHunter)
+- Sanji (Figure New World, Poster 330m, Cosplay, Cosplay Wano, Quadro Colorful, Figure SobaMask, Figure King)
+- Jinbei (Figure, Poster 400m, Figure King)
+- Robin (Poster 130m, Cosplay, Cosplay Wano, Figure, Figure Queen, Figure New World)
+- Brook (Poster 83m, Quadro Colorful, Figure, Figure King, Figure Soul, Figure New World)
+- Franky (Poster 94m, Quadro Colorful, Figure, Figure Shogun, Figure King)
+- Nami (Cosplay Wano, Figure, Poster 66m, Figure Chibi, Figure Queen, Figure Pre)
+- Chopper (Poster 100, Maglia, Quadro Colorful, Pelouche, Figure, Figure King, Figure Horn Point)
+- Usopp (Poster 200m, Figure, Figure New World, Figure Sogeking)
+- Law (Figure w/Luffy, Maglia, Cosplay, Quadro, Quadro Colorful, Figure, Figure NeW World)
+- Kidd (Figure)
+- Ace (Figure ASL, Maglia, Poster 550m, Figure w/Luffy, Maglia Barbabianca, Quadro Colorful, Figure, Figure King)
+- Sabo (Figure ASL, Pelouche, Figure, Figure Flame Emperor)
+- Shanks (Poster 4M, Cosplay, Quadro Colorful, Figure, Figure King, Figure Chibi)
+- Kaido (Poster 4M, Figure)
+- Barbabianca (Poster 5M, Maglia, Figure, Figure King)
+- Barbanera (Poster 2M, Figure, Figure King)
+- Roger (Poster 5M, Quadro, Figure)
+
+Navi:
+- Going Merry
+- Queen Mama Chanter
+- Baratie
+- Arca Maxim
+- Thousand Sunny
+
+Gadget:
+- Portachiavi (Cappello, Luffy, Luffy Wano, Monster Trio, Jolly Roger Zoro, Zoro, Jolly Roger Sanji, Sanji, Robin
+  Brook, Nami, Chopper, Usopp, Law, Sabo, Ace, Cappello Ace, Jolly Roger Barbabianca)
+- Portafoglio (Jolly Roger, Chopper, Jolly Roger Law, Ace)
+- Bracciale (Logo, Jolly Roger, Ace)
+- Cappelli (Luffy, Chopper, Ace, Barbabianca)
