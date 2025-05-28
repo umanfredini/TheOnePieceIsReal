@@ -160,3 +160,5 @@ INSERT INTO products (id, name, description, price, image_url, category, persona
 (156, 'Modellino Queen Mama Chanter', 'Descrizione di Modellino Queen Mama Chanter', 19.90, 'Modellino_Queen_Mama_Chanter.jpg', 'Modellini', NULL, TRUE),
 (157, 'Modellino Arca Maxim', 'Descrizione di Modellino Arca Maxim', 19.90, 'Modellino_Arca_Maxim.jpg', 'Modellini', NULL, TRUE),
 (158, 'Poster Wanted Generico', 'Descrizione di Poster Wanted Generico', 19.90, 'Poster_Wanted_Generico.jpg', 'Poster e Stampe', NULL, TRUE);
+
+UPDATE products SET featured = TRUE WHERE id IN (1, 5, 8, 12);
