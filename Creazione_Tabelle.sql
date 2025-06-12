@@ -96,3 +96,12 @@ CREATE TABLE cart_items (
     FOREIGN KEY (product_id) REFERENCES products(id),
     FOREIGN KEY (variant_id) REFERENCES product_variants(id)
 );
+
+-- Tabella wishlist
+CREATE TABLE wishlist (
+  user_id INT NOT NULL,
+  product_id INT NOT NULL,
+  PRIMARY KEY (user_id, product_id),
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+  FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
+);
