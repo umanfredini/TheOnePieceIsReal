@@ -10,6 +10,15 @@ public class CartItem {
     private int quantity;
     private Timestamp addedAt;
 
+    public CartItem(int id, int cartId, int productId, Integer variantId, int quantity, Timestamp addedAt) {
+        this.id = id;
+        this.cartId = cartId;
+        this.productId = productId;
+        this.variantId = variantId;
+        this.quantity = quantity;
+        this.addedAt = addedAt;
+    }
+    
     // Getters e Setters
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
@@ -29,3 +38,4 @@ public class CartItem {
     public Timestamp getAddedAt() { return addedAt; }
     public void setAddedAt(Timestamp addedAt) { this.addedAt = addedAt; }
 }
+

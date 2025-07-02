@@ -13,6 +13,18 @@ public class User {
     private Timestamp createdAt;
     private Timestamp lastLogin;
 
+    public User(int id, String email, String passwordHash, String username, String role, boolean isActive, String shippingAddress, Timestamp createdAt, Timestamp lastLogin) {
+        this.id = id;
+        this.email = email;
+        this.passwordHash = passwordHash;
+        this.username = username;
+        this.role = role;
+        this.isActive = isActive;
+        this.shippingAddress = shippingAddress;
+        this.createdAt = createdAt;
+        this.lastLogin = lastLogin;
+    }
+    
     // Costruttore vuoto
     public User() {}
 

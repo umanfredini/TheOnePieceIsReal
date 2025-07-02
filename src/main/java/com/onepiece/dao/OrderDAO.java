@@ -89,4 +89,38 @@ public class OrderDAO {
             rs.getString("notes")
         );
     }
+
+    public List<Order> findAll() throws SQLException {
+        List<Order> orders = new ArrayList<>();
+        String sql = "SELECT * FROM orders";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                orders.add(extractOrder(rs));
+            }
+        }
+        return orders;
+    }
+
+    public boolean delete(int id) throws SQLException {
+        String checkSql = "SELECT status FROM orders WHERE id = ?";
+        try (PreparedStatement checkStmt = connection.prepareStatement(checkSql)) {
+            checkStmt.setInt(1, id);
+            ResultSet rs = checkStmt.executeQuery();
+            if (rs.next()) {
+                String status = rs.getString("status");
+                if ("shipped".equalsIgnoreCase(status) || "delivered".equalsIgnoreCase(status)) {
+                    return false; // non cancellabile
+                }
+            }
+        }
+
+        String deleteSql = "DELETE FROM orders WHERE id = ?";
+        try (PreparedStatement deleteStmt = connection.prepareStatement(deleteSql)) {
+            deleteStmt.setInt(1, id);
+            deleteStmt.executeUpdate();
+            return true;
+        }
+    }
+
 }

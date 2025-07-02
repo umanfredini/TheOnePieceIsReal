@@ -65,12 +65,24 @@ public class ProductVariantDAO {
         return variants;
     }
 
-   
-private ProductVariant extractVariant(ResultSet rs) throws SQLException {
-    return new ProductVariant(
-        rs.getInt("id"),
-        rs.getInt("product_id"),
-        rs.getString("variant_name"),
-        rs.getInt("stock_quantity")
-    );
+    public ProductVariant findByIdAndProductId(int id, int productId) throws SQLException {
+        String sql = "SELECT * FROM product_variants WHERE id = ? AND product_id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, id);
+            stmt.setInt(2, productId);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return extractVariant(rs);
+            }
+        }
+        return null;
+    }
+    
+    private ProductVariant extractVariant(ResultSet rs) throws SQLException
+        return new ProductVariant(
+                rs.getInt("id"),
+                rs.getInt("product_id"),
+                rs.getString("variant_name"),
+                rs.getInt("stock_quantity")
+                );
 }

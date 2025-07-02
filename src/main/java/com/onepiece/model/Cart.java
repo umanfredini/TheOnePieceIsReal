@@ -10,6 +10,13 @@ public class Cart {
     private Timestamp modifiedAt;
     private List<CartItem> items;
 
+    public Cart(int id, int userId, Timestamp createdAt, Timestamp modifiedAt) {
+        this.id = id;
+        this.userId = userId;
+        this.createdAt = createdAt;
+        this.modifiedAt = modifiedAt;
+    }
+    
     // Getters e Setters
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
@@ -26,3 +33,4 @@ public class Cart {
     public List<CartItem> getItems() { return items; }
     public void setItems(List<CartItem> items) { this.items = items; }
 }
+

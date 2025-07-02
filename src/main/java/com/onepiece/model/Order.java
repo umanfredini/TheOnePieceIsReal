@@ -16,6 +16,16 @@ public class Order {
     private String notes;
     private List<OrderItem> items;
 
+    public Order(int id, int userId, String shippingAddress, String paymentMethod, String status, Timestamp orderDate, List<OrderItem> items) {
+        this.id = id;
+        this.userId = userId;
+        this.shippingAddress = shippingAddress;
+        this.paymentMethod = paymentMethod;
+        this.status = status;
+        this.orderDate = orderDate;
+        this.items = items;
+    }
+    
     // Getters e Setters
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }

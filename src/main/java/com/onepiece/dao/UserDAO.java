@@ -63,7 +63,7 @@ public class UserDAO {
     }
 
     public void delete(int id) throws SQLException {
-        String sql = "DELETE FROM users WHERE id = ?";
+        String sql = "UPDATE products SET active = FALSE WHERE id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setInt(1, id);
             stmt.executeUpdate();
@@ -95,4 +95,14 @@ public class UserDAO {
             rs.getTimestamp("last_login")
         );
     }
+
+    public void updateLastLogin(int id) throws SQLException {
+        String sql = "UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, id);
+            stmt.executeUpdate();
+        }
+    }
+
+    
 }

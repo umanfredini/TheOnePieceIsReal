@@ -6,6 +6,13 @@ public class ProductVariant {
     private String variantName;
     private int stockQuantity;
 
+    public ProductVariant(int id, int productId, String name, int stockQuantity) {
+        this.id = id;
+        this.productId = productId;
+        this.name = name;
+        this.stockQuantity = stockQuantity;
+    }
+    
     // Getters e Setters
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }

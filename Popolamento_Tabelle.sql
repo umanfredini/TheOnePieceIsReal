@@ -1,7 +1,7 @@
 use onepiece;
 
 -- Popolamento completo tabella products
-INSERT INTO products (id, name, description, price, image_url, category, personaggio, active) VALUES
+INSERT INTO products (id, name, description, price, image_url, category, personaggi, active) VALUES
 (1, 'Poster 1.5m', 'Descrizione di Poster 1.5m', 19.90, 'Poster_15m.jpg', 'Poster e Stampe', 'Luffy', TRUE),
 (2, 'Maglia Bandiera', 'Descrizione di Maglia Bandiera', 19.90, 'Maglia_Bandiera.jpg', 'Magliette', 'Luffy', TRUE),
 (3, 'Maglia Legend', 'Descrizione di Maglia Legend', 19.90, 'Maglia_Legend.jpg', 'Magliette', 'Luffy', TRUE),

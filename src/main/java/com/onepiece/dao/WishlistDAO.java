@@ -41,4 +41,26 @@ public class WishlistDAO {
             stmt.executeUpdate();
         }
     }
+
+    public void clearByUserId(int userId) throws SQLException {
+        String sql = "DELETE FROM wishlist WHERE user_id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, userId);
+            stmt.executeUpdate();
+        }
+    }
+
+    public boolean exists(int userId, int productId) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM wishlist WHERE user_id = ? AND product_id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, userId);
+            stmt.setInt(2, productId);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        }
+        return false;
+    }
+
 }

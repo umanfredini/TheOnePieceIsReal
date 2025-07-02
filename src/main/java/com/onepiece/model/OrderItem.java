@@ -11,6 +11,16 @@ public class OrderItem {
     private BigDecimal unitPrice;
     private int quantity;
 
+    public OrderItem(int id, int orderId, int productId, Integer variantId, String variantName, BigDecimal unitPrice, int quantity) {
+        this.id = id;
+        this.orderId = orderId;
+        this.productId = productId;
+        this.variantId = variantId;
+        this.variantName = variantName;
+        this.unitPrice = unitPrice;
+        this.quantity = quantity;
+    }
+    
     // Getters e Setters
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }

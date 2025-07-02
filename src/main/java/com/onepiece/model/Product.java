@@ -17,6 +17,21 @@ public class Product {
     private Timestamp createdAt;
     private Timestamp updatedAt;
 
+    public Product(int id, String name, String description, BigDecimal price, String imageUrl, String category, String personaggi, int stockQuantity, boolean active, boolean featured, Timestamp createdAt, Timestamp updatedAt) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.imageUrl = imageUrl;
+        this.category = category;
+        this.personaggi = personaggi;
+        this.stockQuantity = stockQuantity;
+        this.active = active;
+        this.featured = featured;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+    }
+    
     // Getters e Setters
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
@@ -54,3 +69,5 @@ public class Product {
     public Timestamp getUpdatedAt() { return updatedAt; }
     public void setUpdatedAt(Timestamp updatedAt) { this.updatedAt = updatedAt; }
 }
+
+

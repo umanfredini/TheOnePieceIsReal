@@ -57,7 +57,7 @@ public class ProductDAO {
     }
 
     public void delete(int id) throws SQLException {
-        String sql = "DELETE FROM products WHERE id = ?";
+        String sql = "UPDATE products SET active = FALSE WHERE id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setInt(1, id);
             stmt.executeUpdate();

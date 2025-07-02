@@ -49,6 +49,17 @@ public class OrderItemDAO {
         return items;
     }
 
+    public void update(OrderItem item) throws SQLException {
+        String sql = "UPDATE order_items SET quantity = ?, unit_price = ?, variant_name = ? WHERE id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, item.getQuantity());
+            stmt.setBigDecimal(2, item.getUnitPrice());
+            stmt.setString(3, item.getVariantName());
+            stmt.setInt(4, item.getId());
+            stmt.executeUpdate();
+        }
+    }
+    
     public void delete(int id) throws SQLException {
         String sql = "DELETE FROM order_items WHERE id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {

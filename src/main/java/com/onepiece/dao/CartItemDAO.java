@@ -62,4 +62,33 @@ public class CartItemDAO {
             stmt.executeUpdate();
         }
     }
+
+    public boolean exists(int cartId, int productId, Integer variantId) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM cart_items WHERE cart_id = ? AND product_id = ? AND (variant_id = ? OR (? IS NULL AND variant_id IS NULL))";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, cartId);
+            stmt.setInt(2, productId);
+            if (variantId != null) {
+                stmt.setInt(3, variantId);
+                stmt.setInt(4, variantId);
+            } else {
+                stmt.setNull(3, Types.INTEGER);
+                stmt.setNull(4, Types.INTEGER);
+            }
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        }
+        return false;
+    }
+
+    public void removeByCartId(int cartId) throws SQLException {
+        String sql = "DELETE FROM cart_items WHERE cart_id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, cartId);
+            stmt.executeUpdate();
+        }
+    }
+
 }
