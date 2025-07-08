@@ -3,15 +3,12 @@ package control;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import model.dao.ProdottoDAO;
-import model.bean.Prodotto;
-import model.bean.CartItem;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.*;
+import dao.ProductDAO;
+import model.CartItem;
+import model.Product;
 
 @WebServlet("/CartServlet")
 public class CartServlet extends HttpServlet {
@@ -37,7 +34,8 @@ public class CartServlet extends HttpServlet {
         try {
             switch (action) {
                 case "add":
-                    addToCart(request, carrello);
+                	int cartId = (int) session.getAttribute("cartId"); 
+                    addToCart(request, carrello, cartId);
                     break;
                 case "update":
                     updateCart(request, carrello);
@@ -69,21 +67,22 @@ public class CartServlet extends HttpServlet {
             }
         }
     }
-    
-    private void addToCart(HttpServletRequest request, Map<Integer, CartItem> carrello) throws Exception {
+
+    private void addToCart(HttpServletRequest request, Map<Integer, CartItem> carrello, int cartId) throws Exception {
         int prodottoId = Integer.parseInt(request.getParameter("prodottoId"));
         int quantita = Integer.parseInt(request.getParameter("quantita"));
         String taglia = request.getParameter("taglia");
-        
-        ProdottoDAO prodottoDAO = new ProdottoDAO();
-        Prodotto prodotto = prodottoDAO.doRetrieveByKey(prodottoId);
-        
-        if (prodotto != null && prodotto.getQuantita() >= quantita) {
+
+        ProductDAO prodottoDAO = new ProductDAO(); // oppure new ProductDAO(DBConnection.getConnection());
+        Product prodotto = prodottoDAO.findByProductId(prodottoId);
+
+        if (prodotto != null && prodotto.getStockQuantity() >= quantita) {
             CartItem item = carrello.get(prodottoId);
             if (item != null) {
-                item.setQuantita(item.getQuantita() + quantita);
+                item.setQuantity(item.getQuantity() + quantita);
             } else {
-                item = new CartItem(prodotto, quantita, taglia);
+                int cartItemId = 0; // oppure genera un ID temporaneo
+                item = new CartItem(cartItemId, cartId, prodotto, quantita, taglia);
                 carrello.put(prodottoId, item);
             }
         }
@@ -98,7 +97,7 @@ public class CartServlet extends HttpServlet {
         } else {
             CartItem item = carrello.get(prodottoId);
             if (item != null) {
-                item.setQuantita(quantita);
+                item.setQuantity(quantita);
             }
         }
     }

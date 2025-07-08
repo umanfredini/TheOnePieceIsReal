@@ -1,14 +1,20 @@
-package model;
+package dao;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+
+import model.OrderItem;
 
 public class OrderItemDAO {
     private final Connection connection;
 
     public OrderItemDAO(Connection connection) {
         this.connection = connection;
+    }
+    
+    public OrderItemDAO() {
+    	this.connection = null;
     }
 
     public void add(OrderItem item) throws SQLException {

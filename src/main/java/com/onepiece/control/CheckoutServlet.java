@@ -3,23 +3,23 @@ package control;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
-import model.dao.OrdineDAO;
-import model.dao.DettaglioOrdineDAO;
-import model.bean.Utente;
-import model.bean.Ordine;
-import model.bean.DettaglioOrdine;
-import model.bean.CartItem;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import model.CartItem;
+import model.Order;
+import model.OrderItem;
+import model.User;
+import dao.OrderDAO;
+import dao.OrderItemDAO;
+import java.util.logging.Logger;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Map;
 
 @WebServlet("/CheckoutServlet")
 public class CheckoutServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
-    private static final Logger logger = LoggerFactory.getLogger(CheckoutServlet.class);
+    private static final Logger logger = Logger.getLogger(CheckoutServlet.class.getName());
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -55,7 +55,7 @@ public class CheckoutServlet extends HttpServlet {
         }
 
         try {
-            Utente utente = (Utente) session.getAttribute("utente");
+            User utente = (User) session.getAttribute("utente");
             @SuppressWarnings("unchecked")
             Map<Integer, CartItem> carrello = (Map<Integer, CartItem>) session.getAttribute("carrello");
 
@@ -64,34 +64,38 @@ public class CheckoutServlet extends HttpServlet {
                 return;
             }
 
-            Ordine ordine = new Ordine();
-            ordine.setUtenteId(utente.getId());
-            ordine.setDataOrdine(new Timestamp(System.currentTimeMillis()));
-            ordine.setStato("CONFERMATO");
-            ordine.setIndirizzoSpedizione(request.getParameter("indirizzo"));
-            ordine.setCittaSpedizione(request.getParameter("citta"));
-            ordine.setCapSpedizione(request.getParameter("cap"));
+            Order ordine = new Order();
+            ordine.setUserId(utente.getId());
+            ordine.setOrderDate(new Timestamp(System.currentTimeMillis()));
+            ordine.setStatus("CONFERMATO");
+            ordine.setShippingAddress(request.getParameter("indirizzo"));
 
-            double totale = 0;
+            BigDecimal totale = BigDecimal.ZERO;
             for (CartItem item : carrello.values()) {
-                totale += item.getProdotto().getPrezzo() * item.getQuantita();
+                BigDecimal prezzo = item.getProduct().getPrice();
+                BigDecimal quantita = BigDecimal.valueOf(item.getQuantity());
+                totale = totale.add(prezzo.multiply(quantita));
             }
-            ordine.setTotale(totale);
+            ordine.setTotalPrice(totale);
 
-            OrdineDAO ordineDAO = new OrdineDAO();
-            int ordineId = ordineDAO.doSave(ordine);
+            OrderDAO ordineDAO = new OrderDAO();
+            ordineDAO.create(ordine);
+            int ordineId = ordine.getId();
 
             if (ordineId > 0) {
-                DettaglioOrdineDAO dettaglioDAO = new DettaglioOrdineDAO();
-                for (CartItem item : carrello.values()) {
-                    DettaglioOrdine dettaglio = new DettaglioOrdine();
-                    dettaglio.setOrdineId(ordineId);
-                    dettaglio.setProdottoId(item.getProdotto().getId());
-                    dettaglio.setQuantita(item.getQuantita());
-                    dettaglio.setPrezzo(item.getProdotto().getPrezzo());
-                    dettaglio.setTaglia(item.getTaglia());
-                    dettaglioDAO.doSave(dettaglio);
-                }
+            	OrderItemDAO orderItemDAO = new OrderItemDAO();
+            	for (CartItem item : carrello.values()) {
+            	    OrderItem orderItem = new OrderItem();
+            	    orderItem.setOrderId(ordineId);
+            	    orderItem.setProductId(item.getProduct().getId());
+            	    orderItem.setQuantity(item.getQuantity());
+            	    orderItem.setUnitPrice(item.getProduct().getPrice());
+            	    orderItem.setVariantId(item.getVariantId());
+            	    orderItem.setVariantName(item.getVariantId() != null ? String.valueOf(item.getVariantId()) : null);
+
+            	    orderItemDAO.add(orderItem);
+            	}
+
 
                 carrello.clear();
                 session.setAttribute("carrello", carrello);
@@ -102,11 +106,12 @@ public class CheckoutServlet extends HttpServlet {
                 request.getRequestDispatcher("checkout.jsp").forward(request, response);
             }
         } catch (Exception e) {
-            logger.error("Errore durante il checkout", e);
+            logger.severe("Errore durante il checkout: " + e.getMessage());
             request.setAttribute("errorMessage", "Errore interno del server");
             request.getRequestDispatcher("checkout.jsp").forward(request, response);
         }
     }
+
 
     private boolean isUserLoggedIn(HttpSession session) {
         Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");

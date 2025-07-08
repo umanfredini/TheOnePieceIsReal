@@ -1,8 +1,10 @@
-package model;
+package dao;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+
+import model.User;
 
 public class UserDAO {
     private final Connection connection;
@@ -10,19 +12,25 @@ public class UserDAO {
     public UserDAO(Connection connection) {
         this.connection = connection;
     }
+    
+    public UserDAO() {
+        this.connection = null;
+    }
 
-    public void create(User user) throws SQLException {
+    public boolean create(User user) throws SQLException {
         String sql = "INSERT INTO users (email, password_hash, username, role, is_active, shipping_address) VALUES (?, ?, ?, ?, ?, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, user.getEmail());
             stmt.setString(2, user.getPasswordHash());
             stmt.setString(3, user.getUsername());
-            stmt.setString(4, user.getRole());
+            stmt.setBoolean(4, user.isAdmin());
             stmt.setBoolean(5, user.isActive());
             stmt.setString(6, user.getShippingAddress());
-            stmt.executeUpdate();
+            int rowsInserted = stmt.executeUpdate();
+            return rowsInserted > 0;
         }
     }
+
 
     public User read(int id) throws SQLException {
         String sql = "SELECT * FROM users WHERE id = ?";
@@ -36,7 +44,7 @@ public class UserDAO {
         return null;
     }
 
-    public User readByEmail(String email) throws SQLException {
+    public User findByEmail(String email) throws SQLException {
         String sql = "SELECT * FROM users WHERE email = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, email);
@@ -48,17 +56,18 @@ public class UserDAO {
         return null;
     }
 
-    public void update(User user) throws SQLException {
+    public boolean update(User user) throws SQLException {
         String sql = "UPDATE users SET email = ?, password_hash = ?, username = ?, role = ?, is_active = ?, shipping_address = ? WHERE id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, user.getEmail());
             stmt.setString(2, user.getPasswordHash());
             stmt.setString(3, user.getUsername());
-            stmt.setString(4, user.getRole());
+            stmt.setBoolean(4, user.isAdmin());
             stmt.setBoolean(5, user.isActive());
             stmt.setString(6, user.getShippingAddress());
             stmt.setInt(7, user.getId());
-            stmt.executeUpdate();
+            int rowsUpdated = stmt.executeUpdate();
+            return rowsUpdated > 0;
         }
     }
 
@@ -88,11 +97,12 @@ public class UserDAO {
             rs.getString("email"),
             rs.getString("password_hash"),
             rs.getString("username"),
-            rs.getString("role"),
+            rs.getBoolean("is_admin"),
             rs.getBoolean("is_active"),
             rs.getString("shipping_address"),
             rs.getTimestamp("created_at"),
-            rs.getTimestamp("last_login")
+            rs.getTimestamp("last_login"),
+            rs.getString("avatar")
         );
     }
 
@@ -104,5 +114,59 @@ public class UserDAO {
         }
     }
 
+    public User findByUserId(int id) throws SQLException {
+        String sql = "SELECT * FROM users WHERE id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, id);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return extractUser(rs); // Assicurati che esista questo metodo
+            }
+        }
+        return null;
+    }
+
+    public void toggleUserStatus(int id) throws SQLException {
+        String sql = "UPDATE users SET active = NOT active WHERE id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, id);
+            stmt.executeUpdate();
+        }
+    }
     
+    public int countAll() throws SQLException {
+        String sql = "SELECT COUNT(*) FROM users";
+        try (Statement stmt = connection.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        }
+        return 0;
+    }
+
+    public User findByEmailPassword(String email, String hashedPassword) throws SQLException {
+        String sql = "SELECT * FROM users WHERE email = ? AND password = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, email);
+            stmt.setString(2, hashedPassword);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return extractUser(rs);
+                }
+            }
+        }
+        return null;
+    }
+
+    public boolean emailExists(String email) throws SQLException {
+        String sql = "SELECT 1 FROM users WHERE email = ? LIMIT 1";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, email);
+            try (ResultSet rs = stmt.executeQuery()) {
+                return rs.next(); // true se esiste almeno una riga
+            }
+        }
+    }
+
 }

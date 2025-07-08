@@ -1,4 +1,4 @@
-package com.onepiece.model;
+package model;
 
 import java.sql.Timestamp;
 import java.util.List;

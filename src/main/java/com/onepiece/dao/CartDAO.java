@@ -1,6 +1,8 @@
-package model;
+package dao;
 
 import java.sql.*;
+
+import model.Cart;
 
 public class CartDAO {
     private final Connection connection;

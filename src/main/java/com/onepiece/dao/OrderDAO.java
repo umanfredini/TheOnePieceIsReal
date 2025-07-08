@@ -1,14 +1,21 @@
-package model;
+package dao;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+
+import model.Order;
+import model.OrderItem;
 
 public class OrderDAO {
     private final Connection connection;
 
     public OrderDAO(Connection connection) {
         this.connection = connection;
+    }
+    
+    public OrderDAO() {
+    	this.connection = null;
     }
 
     public void create(Order order) throws SQLException {
@@ -68,27 +75,27 @@ public class OrderDAO {
         return orders;
     }
 
-    public void delete(int id) throws SQLException {
-        String sql = "DELETE FROM orders WHERE id = ?";
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setInt(1, id);
-            stmt.executeUpdate();
-        }
-    }
 
     private Order extractOrder(ResultSet rs) throws SQLException {
+        int orderId = rs.getInt("id");
+
+        OrderItemDAO itemDAO = new OrderItemDAO(connection);
+        List<OrderItem> items = itemDAO.findByOrderId(orderId);
+
         return new Order(
-            rs.getInt("id"),
+            orderId,
             rs.getInt("user_id"),
             rs.getBigDecimal("total_price"),
-            rs.getTimestamp("order_date"),
             rs.getString("shipping_address"),
             rs.getString("payment_method"),
             rs.getString("status"),
             rs.getString("tracking_number"),
-            rs.getString("notes")
+            rs.getString("notes"),
+            rs.getTimestamp("order_date"),
+            items
         );
     }
+
 
     public List<Order> findAll() throws SQLException {
         List<Order> orders = new ArrayList<>();
@@ -122,5 +129,49 @@ public class OrderDAO {
             return true;
         }
     }
+
+    public void updateStato(int ordineId, String nuovoStato) throws SQLException {
+        String sql = "UPDATE orders SET status = ? WHERE id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, nuovoStato);
+            stmt.setInt(2, ordineId);
+            stmt.executeUpdate();
+        }
+    }
+    
+    public int countAll() throws SQLException {
+    	String sql = "SELECT COUNT(*) FROM orders";
+    	try (PreparedStatement stmt = connection.prepareStatement(sql);
+    			ResultSet rs = stmt.executeQuery()) {
+    			if (rs.next()) {
+    				return rs.getInt(1);
+    			}
+    	}
+		return 0;
+	}
+
+    public double getTotalRevenue() throws SQLException {
+    	String sql = "SELECT SUM(total_price) FROM orders";
+    	try (PreparedStatement stmt = connection.prepareStatement(sql);
+    			ResultSet rs = stmt.executeQuery()) {
+    			if (rs.next()) {
+    				return rs.getDouble(1);
+    			}
+    	}
+    	return 0.0;
+    }
+
+    public List<Order> getRecentOrders(int limit) throws SQLException {
+    	List<Order> orders = new ArrayList<>();
+    	String sql = "SELECT * FROM orders ORDER BY order_date DESC LIMIT ?";
+    	try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+    		stmt.setInt(1, limit);
+    		ResultSet rs = stmt.executeQuery();
+    		while (rs.next()) {
+    			orders.add(extractOrder(rs));
+    		}
+    	}
+    	return orders;
+    	}
 
 }

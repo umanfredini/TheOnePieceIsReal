@@ -1,14 +1,20 @@
-package model;
+package dao;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+
+import model.Product;
 
 public class WishlistDAO {
     private final Connection connection;
 
     public WishlistDAO(Connection connection) {
         this.connection = connection;
+    }
+    
+    public WishlistDAO() {
+    	this.connection = null;
     }
 
     public void add(int userId, int productId) throws SQLException {
@@ -20,18 +26,36 @@ public class WishlistDAO {
         }
     }
 
-    public List<Integer> findProductIdsByUserId(int userId) throws SQLException {
-        List<Integer> productIds = new ArrayList<>();
-        String sql = "SELECT product_id FROM wishlist WHERE user_id = ?";
+    public List<Product> findProductsByUserId(int userId) throws SQLException {
+        List<Product> products = new ArrayList<>();
+        String sql = "SELECT p.* FROM wishlist w JOIN products p ON w.product_id = p.id WHERE w.user_id = ?";
+
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setInt(1, userId);
             ResultSet rs = stmt.executeQuery();
+
             while (rs.next()) {
-                productIds.add(rs.getInt("product_id"));
+                Product product = new Product();
+                product.setId(rs.getInt("id"));
+                product.setName(rs.getString("name"));
+                product.setDescription(rs.getString("description"));
+                product.setPrice(rs.getBigDecimal("price"));
+                product.setImageUrl(rs.getString("image_url"));
+                product.setCategory(rs.getString("category"));
+                product.setPersonaggi(rs.getString("personaggi"));
+                product.setStockQuantity(rs.getInt("stock_quantity"));
+                product.setActive(rs.getBoolean("active"));
+                product.setFeatured(rs.getBoolean("featured"));
+                product.setCreatedAt(rs.getTimestamp("created_at"));
+                product.setUpdatedAt(rs.getTimestamp("updated_at"));
+
+                products.add(product);
             }
         }
-        return productIds;
+
+        return products;
     }
+
 
     public void remove(int userId, int productId) throws SQLException {
         String sql = "DELETE FROM wishlist WHERE user_id = ? AND product_id = ?";

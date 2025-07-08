@@ -1,4 +1,4 @@
-package com.onepiece.model;
+package model;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
@@ -17,7 +17,7 @@ public class Product {
     private Timestamp createdAt;
     private Timestamp updatedAt;
 
-    public Product(int id, String name, String description, BigDecimal price, String imageUrl, String category, String personaggi, int stockQuantity, boolean active, boolean featured, Timestamp createdAt, Timestamp updatedAt) {
+    public Product(int id, String name, String description, BigDecimal price, String imageUrl, String category, String personaggi, int stockQuantity, boolean active, boolean featured, Timestamp createdAt, Timestamp updatedAt, String immagine) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -31,6 +31,8 @@ public class Product {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
+    
+    public Product() {}
     
     // Getters e Setters
     public int getId() { return id; }

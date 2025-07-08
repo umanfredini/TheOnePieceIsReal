@@ -3,17 +3,16 @@ package control;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
-import model.dao.UtenteDAO;
-import model.bean.Utente;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import model.User;
+import dao.UserDAO;
+import java.util.logging.Logger;
 
 import java.io.IOException;
 
 @WebServlet("/ProfileServlet")
 public class ProfileServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
-    private static final Logger logger = LoggerFactory.getLogger(ProfileServlet.class);
+    private static final Logger logger = Logger.getLogger(ProfileServlet.class.getName());
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -42,22 +41,17 @@ public class ProfileServlet extends HttpServlet {
         }
 
         try {
-            Utente utente = (Utente) session.getAttribute("utente");
+            User utente = (User) session.getAttribute("utente");
 
-            utente.setNome(request.getParameter("nome"));
-            utente.setCognome(request.getParameter("cognome"));
-            utente.setTelefono(request.getParameter("telefono"));
-            utente.setIndirizzo(request.getParameter("indirizzo"));
-            utente.setCitta(request.getParameter("citta"));
-            utente.setCap(request.getParameter("cap"));
-
+            utente.setUsername(request.getParameter("nome"));
+            utente.setShippingAddress(request.getParameter("indirizzo"));
             String avatar = request.getParameter("avatar");
             if (avatar != null && !avatar.isEmpty()) {
                 utente.setAvatar(avatar);
             }
 
-            UtenteDAO utenteDAO = new UtenteDAO();
-            boolean success = utenteDAO.doUpdate(utente);
+            UserDAO utenteDAO = new UserDAO();
+            boolean success = utenteDAO.update(utente);
 
             if (success) {
                 session.setAttribute("utente", utente);
@@ -68,7 +62,7 @@ public class ProfileServlet extends HttpServlet {
 
             request.getRequestDispatcher("profilo.jsp").forward(request, response);
         } catch (Exception e) {
-            logger.error("Errore durante l'aggiornamento del profilo", e);
+            logger.severe("Errore durante l'aggiornamento del profilo" + e.getMessage());
             request.setAttribute("errorMessage", "Errore interno del server");
             request.getRequestDispatcher("profilo.jsp").forward(request, response);
         }

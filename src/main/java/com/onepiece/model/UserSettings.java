@@ -1,4 +1,4 @@
-package com.onepiece.model;
+package model;
 
 public class UserSettings {
     private int userId;

@@ -1,4 +1,4 @@
-package com.onepiece.model;
+package model;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
@@ -16,7 +16,7 @@ public class Order {
     private String notes;
     private List<OrderItem> items;
 
-    public Order(int id, int userId, String shippingAddress, String paymentMethod, String status, Timestamp orderDate, List<OrderItem> items) {
+    public Order(int id, int userId, BigDecimal totalprice, String shippingAddress, String paymentMethod, String status, String trackingnumber, String note, Timestamp orderDate, List<OrderItem> items) {
         this.id = id;
         this.userId = userId;
         this.shippingAddress = shippingAddress;
@@ -24,9 +24,20 @@ public class Order {
         this.status = status;
         this.orderDate = orderDate;
         this.items = items;
+        this.totalPrice = totalprice;
+        this.trackingNumber = trackingnumber;
+        this.notes = note;
     }
     
-    // Getters e Setters
+    public Order() {
+    	this.id = this.userId = 0;
+    	this.totalPrice = null;
+    	this.orderDate = null;
+    	this.shippingAddress = this.paymentMethod = this.notes = this.status = this.trackingNumber = null;
+    	this.items = null;
+    }
+
+	// Getters e Setters
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
     

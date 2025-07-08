@@ -3,18 +3,16 @@ package control;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
-import model.dao.UtenteDAO;
-import model.bean.Utente;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import dao.UserDAO;
+import model.User;
+import java.util.logging.Logger;
 import java.io.IOException;
 import java.security.MessageDigest;
 
 @WebServlet("/RegisterServlet")
 public class RegisterServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
-    private static final Logger logger = LoggerFactory.getLogger(RegisterServlet.class);
+    private static final Logger logger = Logger.getLogger(RegisterServlet.class.getName());
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -24,16 +22,12 @@ public class RegisterServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String nome = request.getParameter("nome");
-        String cognome = request.getParameter("cognome");
         String email = request.getParameter("email");
         String password = request.getParameter("password");
-        String telefono = request.getParameter("telefono");
         String indirizzo = request.getParameter("indirizzo");
-        String citta = request.getParameter("citta");
-        String cap = request.getParameter("cap");
-
+        
         try {
-            UtenteDAO utenteDAO = new UtenteDAO();
+            UserDAO utenteDAO = new UserDAO();
 
             if (utenteDAO.emailExists(email)) {
                 request.setAttribute("errorMessage", "Email già registrata!");
@@ -41,15 +35,12 @@ public class RegisterServlet extends HttpServlet {
                 return;
             }
 
-            Utente utente = new Utente();
-            utente.setNome(nome);
-            utente.setCognome(cognome);
-            utente.setEmail(email utente.setIndirizzo(indirizzo);
-            utente.setCitta(citta);
-            utente.setCap(cap);
-            utente.setAdmin(false);
+            User utente = new User();
+            utente.setUsername(nome);
+            utente.setEmail(email); 
+            utente.setShippingAddress(indirizzo);
 
-            boolean success = utenteDAO.doSave(utente);
+            boolean success = utenteDAO.create(utente);
 
             if (success) {
                 request.setAttribute("successMessage", "Registrazione completata! Effettua il login.");
@@ -59,7 +50,7 @@ public class RegisterServlet extends HttpServlet {
                 request.getRequestDispatcher("register.jsp").forward(request, response);
             }
         } catch (Exception e) {
-            logger.error("Errore durante la registrazione", e);
+            logger.severe("Errore durante la registrazione" + e.getMessage());
             request.setAttribute("errorMessage", "Errore interno del server");
             request.getRequestDispatcher("register.jsp").forward(request, response);
         }

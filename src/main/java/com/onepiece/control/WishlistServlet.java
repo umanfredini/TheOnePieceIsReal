@@ -3,11 +3,10 @@ package control;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
-import model.dao.WishlistDAO;
-import model.bean.Utente;
-import model.bean.Prodotto;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import dao.WishlistDAO;
+import model.User;
+import model.Product;
+import java.util.logging.Logger;
 
 import java.io.IOException;
 import java.util.List;
@@ -15,7 +14,7 @@ import java.util.List;
 @WebServlet("/WishlistServlet")
 public class WishlistServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
-    private static final Logger logger = LoggerFactory.getLogger(WishlistServlet.class);
+    private static final Logger logger = Logger.getLogger(WishlistServlet.class.getName());
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -27,14 +26,14 @@ public class WishlistServlet extends HttpServlet {
         }
 
         try {
-            Utente utente = (Utente) session.getAttribute("utente");
+            User utente = (User) session.getAttribute("utente");
             WishlistDAO wishlistDAO = new WishlistDAO();
-            List<Prodotto> wishlist = wishlistDAO.doRetrieveByUtente(utente.getId());
+            List<Product> wishlist = wishlistDAO.findProductsByUserId(utente.getId());
 
             request.setAttribute("wishlist", wishlist);
             request.getRequestDispatcher("wishlist.jsp").forward(request, response);
         } catch (Exception e) {
-            logger.error("Errore nel caricamento della wishlist", e);
+            logger.severe("Errore nel caricamento della wishlist" + e.getMessage());
             response.sendRedirect("error.jsp");
         }
     }
@@ -54,16 +53,16 @@ public class WishlistServlet extends HttpServlet {
         }
 
         try {
-            Utente utente = (Utente) session.getAttribute("utente");
+            User utente = (User) session.getAttribute("utente");
             int prodottoId = Integer.parseInt(request.getParameter("prodottoId"));
             String action = request.getParameter("action");
 
             WishlistDAO wishlistDAO = new WishlistDAO();
 
             if ("add".equals(action)) {
-                wishlistDAO.addToWishlist(utente.getId(), prodottoId);
+                wishlistDAO.add(utente.getId(), prodottoId);
             } else if ("remove".equals(action)) {
-                wishlistDAO.removeFromWishlist(utente.getId(), prodottoId);
+                wishlistDAO.remove(utente.getId(), prodottoId);
             }
 
             if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
@@ -73,7 +72,7 @@ public class WishlistServlet extends HttpServlet {
                 response.sendRedirect("WishlistServlet");
             }
         } catch (Exception e) {
-            logger.error("Errore nella modifica della wishlist", e);
+            logger.severe("Errore nella modifica della wishlist" + e.getMessage());
             if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
                 response.setContentType("application/json");
                 response.getWriter().write("{\"success\": false, \"error\": \"Errore interno\"}");

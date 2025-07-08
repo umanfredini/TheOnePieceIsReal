@@ -3,12 +3,11 @@ package control;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
-import model.dao.ProdottoDAO;
-import model.dao.OrdineDAO;
-import model.dao.UtenteDAO;
-import model.bean.Ordine;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import model.Order;
+import dao.ProductDAO;
+import dao.OrderDAO;
+import dao.UserDAO;
+import java.util.logging.Logger;
 
 import java.io.IOException;
 import java.util.List;
@@ -17,7 +16,7 @@ import java.util.Map;
 @WebServlet("/admin/DashboardServlet")
 public class DashboardServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
-    private static final Logger logger = LoggerFactory.getLogger(DashboardServlet.class);
+    private static final Logger logger = Logger.getLogger(DashboardServlet.class.getName());
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -29,16 +28,16 @@ public class DashboardServlet extends HttpServlet {
         }
 
         try {
-            ProdottoDAO prodottoDAO = new ProdottoDAO();
-            OrdineDAO ordineDAO = new OrdineDAO();
-            UtenteDAO utenteDAO = new UtenteDAO();
+            ProductDAO prodottoDAO = new ProductDAO();
+            OrderDAO ordineDAO = new OrderDAO();
+            UserDAO utenteDAO = new UserDAO();
 
             int totaleProdotti = prodottoDAO.countAll();
             int totaleOrdini = ordineDAO.countAll();
             int totaleUtenti = utenteDAO.countAll();
             double ricaviTotali = ordineDAO.getTotalRevenue();
             List<Map<String, Object>> prodottiTopSelling = prodottoDAO.getTopSellingProducts(5);
-            List<Ordine> ordiniRecenti = ordineDAO.getRecentOrders(10);
+            List<Order> ordiniRecenti = ordineDAO.getRecentOrders(10);
 
             request.setAttribute("totaleProdotti", totaleProdotti);
             request.setAttribute("totaleOrdini", totaleOrdini);
@@ -49,7 +48,7 @@ public class DashboardServlet extends HttpServlet {
 
             request.getRequestDispatcher("dashboard.jsp").forward(request, response);
         } catch (Exception e) {
-            logger.error("Errore nel caricamento della dashboard", e);
+            logger.severe("Errore nel caricamento della dashboard" + e.getMessage());
             response.sendRedirect("../error.jsp");
         }
     }

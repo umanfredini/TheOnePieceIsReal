@@ -3,18 +3,16 @@ package control;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
-import model.dao.UtenteDAO;
-import model.bean.Utente;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import model.User;
+import dao.UserDAO;
+import java.util.logging.Logger;
 import java.io.IOException;
 import java.util.List;
 
 @WebServlet("/AdminUserServlet")
 public class AdminUserServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
-    private static final Logger logger = LoggerFactory.getLogger(AdminUserServlet.class);
+    private static final Logger logger = Logger.getLogger(AdminUserServlet.class.getName());
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -28,11 +26,11 @@ public class AdminUserServlet extends HttpServlet {
         String action = request.getParameter("action");
 
         try {
-            UtenteDAO utenteDAO = new UtenteDAO();
+            UserDAO utenteDAO = new UserDAO();
 
             if ("detail".equals(action)) {
                 int id = Integer.parseInt(request.getParameter("id"));
-                Utente utente = utenteDAO.doRetrieveByKey(id);
+                User utente = utenteDAO.findByUserId(id);
                 request.setAttribute("utente", utente);
                 request.getRequestDispatcher("user-detail.jsp").forward(request, response);
             } else if ("toggle".equals(action)) {
@@ -40,12 +38,12 @@ public class AdminUserServlet extends HttpServlet {
                 utenteDAO.toggleUserStatus(id);
                 response.sendRedirect("AdminUserServlet");
             } else {
-                List<Utente> utenti = utenteDAO.doRetrieveAll();
+                List<User> utenti = utenteDAO.findAll();
                 request.setAttribute("utenti", utenti);
                 request.getRequestDispatcher("users.jsp").forward(request, response);
             }
         } catch (Exception e) {
-            logger.error("Errore nella gestione utenti admin", e);
+            logger.severe("Errore nella gestione utenti admin" + e.getMessage());
             response.sendRedirect("error.jsp");
         }
     }

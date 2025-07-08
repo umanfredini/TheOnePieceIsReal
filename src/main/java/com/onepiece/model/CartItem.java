@@ -1,4 +1,4 @@
-package com.onepiece.model;
+package model;
 
 import java.sql.Timestamp;
 
@@ -9,14 +9,25 @@ public class CartItem {
     private Integer variantId;
     private int quantity;
     private Timestamp addedAt;
+    private Product product;
 
-    public CartItem(int id, int cartId, int productId, Integer variantId, int quantity, Timestamp addedAt) {
+    public CartItem(int id, int cartId, int productId, Integer variantId, int quantity, Timestamp addedAt, Product product) {
         this.id = id;
         this.cartId = cartId;
         this.productId = productId;
         this.variantId = variantId;
         this.quantity = quantity;
         this.addedAt = addedAt;
+        this.product = product;
+    }
+    
+    public CartItem(int id, int cartId, Product prodotto, int quantity, String taglia) {
+        this.id = id;
+        this.cartId = cartId;
+        this.productId = prodotto.getId();
+        this.variantId = taglia != null ? taglia.hashCode() : null;
+        this.quantity = quantity;
+        this.addedAt = new Timestamp(System.currentTimeMillis());
     }
     
     // Getters e Setters
@@ -37,5 +48,9 @@ public class CartItem {
     
     public Timestamp getAddedAt() { return addedAt; }
     public void setAddedAt(Timestamp addedAt) { this.addedAt = addedAt; }
+    
+    public Product getProduct() {return product;}
+    public void setProduct(Product product) {this.product = product;}
+
 }
 

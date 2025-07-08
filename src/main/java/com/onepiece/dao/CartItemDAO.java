@@ -1,8 +1,11 @@
-package model;
+package dao;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+
+import model.CartItem;
+import model.Product;
 
 public class CartItemDAO {
     private final Connection connection;
@@ -26,25 +29,34 @@ public class CartItemDAO {
         }
     }
 
+
     public List<CartItem> findByCartId(int cartId) throws SQLException {
         List<CartItem> items = new ArrayList<>();
         String sql = "SELECT * FROM cart_items WHERE cart_id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setInt(1, cartId);
             ResultSet rs = stmt.executeQuery();
+            ProductDAO productDAO = new ProductDAO(connection);
             while (rs.next()) {
-                items.add(new CartItem(
+                int productId = rs.getInt("product_id");
+                Product product = productDAO.findByProductId(productId);
+                CartItem item = new CartItem(
                     rs.getInt("id"),
                     rs.getInt("cart_id"),
-                    rs.getInt("product_id"),
+                    productId,
                     rs.getObject("variant_id") != null ? rs.getInt("variant_id") : null,
                     rs.getInt("quantity"),
-                    rs.getTimestamp("added_at")
-                ));
+                    rs.getTimestamp("added_at"),
+                    null
+                );
+                item.setProduct(product);
+                items.add(item);
             }
         }
         return items;
     }
+
+
 
     public void update(CartItem item) throws SQLException {
         String sql = "UPDATE cart_items SET quantity = ? WHERE id = ?";

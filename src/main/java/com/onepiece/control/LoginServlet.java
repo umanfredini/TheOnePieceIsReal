@@ -3,10 +3,9 @@ package control;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
-import model.dao.UtenteDAO;
-import model.bean.Utente;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import model.User;
+import dao.UserDAO;
+import java.util.logging.Logger;
 
 import java.io.IOException;
 import java.security.MessageDigest;
@@ -15,7 +14,7 @@ import java.util.UUID;
 @WebServlet("/LoginServlet")
 public class LoginServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
-    private static final Logger logger = LoggerFactory.getLogger(LoginServlet.class);
+    private static final Logger logger = Logger.getLogger(LoginServlet.class.getName());
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -28,8 +27,8 @@ public class LoginServlet extends HttpServlet {
         String password = request.getParameter("password");
 
         try {
-            UtenteDAO utenteDAO = new UtenteDAO();
-            Utente utente = utenteDAO.doRetrieveByEmailPassword(email, hashPassword(password));
+            UserDAO utenteDAO = new UserDAO();
+            User utente = utenteDAO.findByEmailPassword(email, hashPassword(password));
 
             if (utente != null) {
                 HttpSession session = request.getSession();
@@ -50,7 +49,7 @@ public class LoginServlet extends HttpServlet {
                 request.getRequestDispatcher("login.jsp").forward(request, response);
             }
         } catch (Exception e) {
-            logger.error("Errore durante il login", e);
+            logger.severe("Errore durante il login" + e.getMessage());
             request.setAttribute("errorMessage", "Errore interno del server");
             request.getRequestDispatcher("login.jsp").forward(request, response);
         }

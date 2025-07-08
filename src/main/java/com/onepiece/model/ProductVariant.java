@@ -1,4 +1,4 @@
-package com.onepiece.model;
+package model;
 
 public class ProductVariant {
     private int id;
@@ -9,7 +9,7 @@ public class ProductVariant {
     public ProductVariant(int id, int productId, String name, int stockQuantity) {
         this.id = id;
         this.productId = productId;
-        this.name = name;
+        this.variantName = name;
         this.stockQuantity = stockQuantity;
     }
     

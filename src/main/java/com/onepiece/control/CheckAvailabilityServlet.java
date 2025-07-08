@@ -3,17 +3,16 @@ package control;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
-import model.dao.ProdottoDAO;
-import model.bean.Prodotto;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import model.Product;
+import dao.ProductDAO;
+import java.util.logging.Logger;
 
 import java.io.IOException;
 
 @WebServlet("/CheckAvailabilityServlet")
 public class CheckAvailabilityServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
-    private static final Logger logger = LoggerFactory.getLogger(CheckAvailabilityServlet.class);
+    private static final Logger logger = Logger.getLogger(CheckAvailabilityServlet.class.getName());
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -21,20 +20,20 @@ public class CheckAvailabilityServlet extends HttpServlet {
             int prodottoId = Integer.parseInt(request.getParameter("prodottoId"));
             int quantitaRichiesta = Integer.parseInt(request.getParameter("quantita"));
 
-            ProdottoDAO prodottoDAO = new ProdottoDAO();
-            Prodotto prodotto = prodottoDAO.doRetrieveByKey(prodottoId);
+            ProductDAO prodottoDAO = new ProductDAO();
+            Product prodotto = prodottoDAO.findByProductId(prodottoId);
 
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
 
-            if (prodotto != null && prodotto.getQuantita() >= quantitaRichiesta) {
-                response.getWriter().write("{\"available\": true, \"stock\": " + prodotto.getQuantita() + "}");
+            if (prodotto != null && prodotto.getStockQuantity() >= quantitaRichiesta) {
+                response.getWriter().write("{\"available\": true, \"stock\": " + prodotto.getStockQuantity() + "}");
             } else {
-                int stockDisponibile = (prodotto != null) ? prodotto.getQuantita() : 0;
+                int stockDisponibile = (prodotto != null) ? prodotto.getStockQuantity() : 0;
                 response.getWriter().write("{\"available\": false, \"stock\": " + stockDisponibile + "}");
             }
         } catch (Exception e) {
-            logger.error("Errore nel controllo disponibilità", e);
+            logger.severe("Errore nel controllo disponibilità" + e.getMessage());
             response.setContentType("application/json");
             response.getWriter().write("{\"error\": \"Errore nel controllo disponibilità\"}");
         }

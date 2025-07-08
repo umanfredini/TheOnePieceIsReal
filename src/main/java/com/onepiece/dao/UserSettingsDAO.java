@@ -1,8 +1,10 @@
-package model;
+package dao;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+
+import model.UserSettings;
 
 public class UserSettingsDAO {
     private final Connection connection;

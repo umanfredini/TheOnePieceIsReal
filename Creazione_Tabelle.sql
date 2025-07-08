@@ -9,8 +9,10 @@ CREATE TABLE users (
     username VARCHAR(50) UNIQUE,
     role ENUM('user','admin') DEFAULT 'user',
     is_active BOOLEAN DEFAULT TRUE,
+    is_admin BOOLEAN DEFAULT FALSE,
     shipping_address TEXT,
-    last_login TIMESTAMP
+    last_login TIMESTAMP,
+    avatar VARCHAR(255) NOT NULL
 );
 
 -- Tabella prodotti
@@ -23,8 +25,8 @@ CREATE TABLE products (
     category VARCHAR(100),
     personaggi VARCHAR(255),
     stock_quantity INT NOT NULL DEFAULT 0,
-    active BOOLEAN NOT NULL DEFAULT TRUE,
-    featured BOOLEAN NOT NULL DEFAULT FALSE,
+    is_active BOOLEAN NOT NULL DEFAULT TRUE,
+    is_featured BOOLEAN NOT NULL DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );

@@ -1,8 +1,10 @@
-package model;
+package dao;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+
+import model.ProductVariant;
 
 public class ProductVariantDAO {
     private final Connection connection;
@@ -78,11 +80,12 @@ public class ProductVariantDAO {
         return null;
     }
     
-    private ProductVariant extractVariant(ResultSet rs) throws SQLException
+    private ProductVariant extractVariant(ResultSet rs) throws SQLException{
         return new ProductVariant(
                 rs.getInt("id"),
                 rs.getInt("product_id"),
                 rs.getString("variant_name"),
                 rs.getInt("stock_quantity")
                 );
+    }
 }

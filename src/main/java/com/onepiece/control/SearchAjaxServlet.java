@@ -3,10 +3,9 @@ package control;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
-import model.dao.ProdottoDAO;
-import model.bean.Prodotto;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import dao.ProductDAO;
+import model.Product;
+import java.util.logging.Logger;
 
 import java.io.IOException;
 import java.util.List;
@@ -14,7 +13,7 @@ import java.util.List;
 @WebServlet("/SearchAjaxServlet")
 public class SearchAjaxServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
-    private static final Logger logger = LoggerFactory.getLogger(SearchAjaxServlet.class);
+    private static final Logger logger = Logger.getLogger(SearchAjaxServlet.class.getName());
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -29,27 +28,27 @@ public class SearchAjaxServlet extends HttpServlet {
         }
 
         try {
-            ProdottoDAO prodottoDAO = new ProdottoDAO();
-            List<Prodotto> risultati = prodottoDAO.doRetrieveBySearch(query);
+            ProductDAO prodottoDAO = new ProductDAO();
+            List<Product> risultati = prodottoDAO.findBySearch(query);
 
             StringBuilder json = new StringBuilder();
             json.append("{\"results\": [");
 
             for (int i = 0; i < risultati.size(); i++) {
-                Prodotto p = risultati.get(i);
+                Product p = risultati.get(i);
                 if (i > 0) json.append(",");
                 json.append("{")
                         .append("\"id\": ").append(p.getId()).append(",")
-                        .append("\"nome\": \"").append(p.getNome().replace("\"", "\\\"")).append("\",")
-                        .append("\"prezzo\": ").append(p.getPrezzo()).append(",")
-                        .append("\"immagine\": \"").append(p.getImmagine()).append("\"")
+                        .append("\"nome\": \"").append(p.getName().replace("\"", "\\\"")).append("\",")
+                        .append("\"prezzo\": ").append(p.getPrice()).append(",")
+                        .append("\"immagine\": \"").append(p.getImageUrl()).append("\"")
                         .append("}");
             }
 
             json.append("]}");
             response.getWriter().write(json.toString());
         } catch (Exception e) {
-            logger.error("Errore nella ricerca AJAX", e);
+            logger.severe("Errore nella ricerca AJAX" + e.getMessage());
             response.getWriter().write("{\"error\": \"Errore nella ricerca\"}");
         }
     }

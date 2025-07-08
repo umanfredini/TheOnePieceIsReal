@@ -1,4 +1,4 @@
-package com.onepiece.model;
+package model; 
 
 import java.math.BigDecimal;
 
@@ -21,6 +21,7 @@ public class OrderItem {
         this.quantity = quantity;
     }
     
+    public OrderItem() {}
     // Getters e Setters
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
