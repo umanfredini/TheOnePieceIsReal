@@ -19,11 +19,11 @@ public class ProfileServlet extends HttpServlet {
         HttpSession session = request.getSession(false);
 
         if (!isUserLoggedIn(session)) {
-            response.sendRedirect("login.jsp");
+            response.sendRedirect("/WEB-INF/jsp/login.jsp");
             return;
         }
 
-        request.getRequestDispatcher("profilo.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/jsp/profilo.jsp").forward(request, response);
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -31,12 +31,12 @@ public class ProfileServlet extends HttpServlet {
         HttpSession session = request.getSession(false);
 
         if (!isValidToken(request, session)) {
-            response.sendRedirect("error.jsp");
+            response.sendRedirect("/WEB-INF/jsp/error.jsp");
             return;
         }
 
         if (!isUserLoggedIn(session)) {
-            response.sendRedirect("login.jsp");
+            response.sendRedirect("/WEB-INF/jsp/login.jsp");
             return;
         }
 
@@ -56,15 +56,17 @@ public class ProfileServlet extends HttpServlet {
             if (success) {
                 session.setAttribute("utente", utente);
                 request.setAttribute("successMessage", "Profilo aggiornato con successo!");
+                request.getRequestDispatcher("/WEB-INF/jsp/success.jsp").forward(request, response);
             } else {
                 request.setAttribute("errorMessage", "Errore durante l'aggiornamento del profilo");
+                request.getRequestDispatcher("/WEB-INF/jsp/error.jsp").forward(request, response);
             }
 
-            request.getRequestDispatcher("profilo.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/jsp/profilo.jsp").forward(request, response);
         } catch (Exception e) {
             logger.severe("Errore durante l'aggiornamento del profilo" + e.getMessage());
             request.setAttribute("errorMessage", "Errore interno del server");
-            request.getRequestDispatcher("profilo.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/jsp/profilo.jsp").forward(request, response);
         }
     }
 

@@ -3,6 +3,7 @@ package dao;
 import java.sql.*;
 
 import model.Cart;
+import util.DBConnection;
 
 public class CartDAO {
     private final Connection connection;
@@ -10,6 +11,12 @@ public class CartDAO {
     public CartDAO(Connection connection) {
         this.connection = connection;
     }
+    
+
+    public CartDAO() throws SQLException {
+    	this.connection = DBConnection.getConnection();
+	}
+
 
     public void create(Cart cart) throws SQLException {
         String sql = "INSERT INTO carts (user_id) VALUES (?)";

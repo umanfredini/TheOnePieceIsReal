@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import model.User;
+import util.DBConnection;
 
 public class UserDAO {
     private final Connection connection;
@@ -13,8 +14,8 @@ public class UserDAO {
         this.connection = connection;
     }
     
-    public UserDAO() {
-        this.connection = null;
+    public UserDAO() throws SQLException {
+    	this.connection = DBConnection.getConnection();
     }
 
     public boolean create(User user) throws SQLException {

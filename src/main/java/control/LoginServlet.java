@@ -18,7 +18,7 @@ public class LoginServlet extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getRequestDispatcher("login.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/jsp/login.jsp").forward(request, response);
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -40,18 +40,18 @@ public class LoginServlet extends HttpServlet {
 
                 if (utente.isAdmin()) {
                     session.setAttribute("isAdmin", true);
-                    response.sendRedirect("admin/dashboard.jsp");
+                    response.sendRedirect("/WEB-INF/jsp/adminDashboard.jsp");
                 } else {
-                    response.sendRedirect("profilo.jsp");
+                    response.sendRedirect("/WEB-INF/jsp/profilo.jsp");
                 }
             } else {
                 request.setAttribute("errorMessage", "Email o password non corretti!");
-                request.getRequestDispatcher("login.jsp").forward(request, response);
+                request.getRequestDispatcher("/WEB-INF/jsp/login.jsp").forward(request, response);
             }
         } catch (Exception e) {
             logger.severe("Errore durante il login" + e.getMessage());
             request.setAttribute("errorMessage", "Errore interno del server");
-            request.getRequestDispatcher("login.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/jsp/login.jsp").forward(request, response);
         }
     }
 

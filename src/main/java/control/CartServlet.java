@@ -16,7 +16,7 @@ public class CartServlet extends HttpServlet {
     
     protected void doGet(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
-        request.getRequestDispatcher("cart.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/jsp/cart.jsp").forward(request, response);
     }
     
     protected void doPost(HttpServletRequest request, HttpServletResponse response) 
@@ -55,7 +55,7 @@ public class CartServlet extends HttpServlet {
                 response.setContentType("application/json");
                 response.getWriter().write("{\"success\": true, \"cartSize\": " + carrello.size() + "}");
             } else {
-                response.sendRedirect("cart.jsp");
+                response.sendRedirect("/WEB-INF/jsp/cart.jsp");
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -63,7 +63,7 @@ public class CartServlet extends HttpServlet {
                 response.setContentType("application/json");
                 response.getWriter().write("{\"success\": false, \"error\": \"Errore interno\"}");
             } else {
-                response.sendRedirect("error.jsp");
+                response.sendRedirect("/WEB-INF/jsp/error.jsp");
             }
         }
     }

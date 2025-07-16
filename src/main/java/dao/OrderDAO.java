@@ -6,6 +6,7 @@ import java.util.List;
 
 import model.Order;
 import model.OrderItem;
+import util.DBConnection;
 
 public class OrderDAO {
     private final Connection connection;
@@ -14,9 +15,11 @@ public class OrderDAO {
         this.connection = connection;
     }
     
-    public OrderDAO() {
-    	this.connection = null;
+
+    public OrderDAO() throws SQLException {
+    	this.connection = DBConnection.getConnection();
     }
+
 
     public void create(Order order) throws SQLException {
         String sql = "INSERT INTO orders (user_id, total_price, shipping_address, payment_method, status, tracking_number, notes) VALUES (?, ?, ?, ?, ?, ?, ?)";

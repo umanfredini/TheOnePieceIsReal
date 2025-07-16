@@ -6,7 +6,9 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import model.Product;
+import model.ProductVariant;
 import dao.ProductDAO;
+import dao.ProductVariantDAO;
 
 @WebServlet("/ProductServlet")
 public class ProductServlet extends HttpServlet {
@@ -15,7 +17,7 @@ public class ProductServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
         String action = request.getParameter("action");
-        String personaggio = request.getParameter("personaggio");
+        String personaggio = request.getParameter("personaggi");
         String categoria = request.getParameter("categoria");
         String search = request.getParameter("search");
         
@@ -25,8 +27,11 @@ public class ProductServlet extends HttpServlet {
             if ("detail".equals(action)) {
                 int id = Integer.parseInt(request.getParameter("id"));
                 Product prodotto = prodottoDAO.findByProductId(id);
-                request.setAttribute("prodotto", prodotto);
-                request.getRequestDispatcher("product-detail.jsp").forward(request, response);
+                request.setAttribute("product", prodotto);
+                ProductVariantDAO variantDAO = new ProductVariantDAO();
+                List<ProductVariant> variants = variantDAO.findAllByProductId(id);
+                request.setAttribute("variants", variants);
+                request.getRequestDispatcher("/WEB-INF/jsp/product-detail.jsp").forward(request, response);
             } else {
                 List<Product> prodotti;
                 
@@ -41,11 +46,11 @@ public class ProductServlet extends HttpServlet {
                 }
                 
                 request.setAttribute("prodotti", prodotti);
-                request.getRequestDispatcher("catalog.jsp").forward(request, response);
+                request.getRequestDispatcher("/WEB-INF/jsp/catalog.jsp").forward(request, response);
             }
         } catch (Exception e) {
             e.printStackTrace();
-            response.sendRedirect("error.jsp");
+            response.sendRedirect("/WEB-INF/jsp/error.jsp");
         }
     }
 }

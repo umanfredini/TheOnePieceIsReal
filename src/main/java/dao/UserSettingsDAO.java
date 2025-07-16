@@ -5,12 +5,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import model.UserSettings;
+import util.DBConnection;
 
 public class UserSettingsDAO {
     private final Connection connection;
 
     public UserSettingsDAO(Connection connection) {
         this.connection = connection;
+    }
+    
+    public UserSettingsDAO() throws SQLException {
+    	this.connection = DBConnection.getConnection();
     }
 
     public void save(UserSettings setting) throws SQLException {

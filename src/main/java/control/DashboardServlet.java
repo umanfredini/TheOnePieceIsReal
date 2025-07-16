@@ -23,7 +23,7 @@ public class DashboardServlet extends HttpServlet {
         HttpSession session = request.getSession(false);
 
         if (!isAdminLoggedIn(session)) {
-            response.sendRedirect("../login.jsp");
+            response.sendRedirect("/WEB-INF/jsp/login.jsp");
             return;
         }
 
@@ -49,7 +49,7 @@ public class DashboardServlet extends HttpServlet {
             request.getRequestDispatcher("dashboard.jsp").forward(request, response);
         } catch (Exception e) {
             logger.severe("Errore nel caricamento della dashboard" + e.getMessage());
-            response.sendRedirect("../error.jsp");
+            response.sendRedirect("/WEB-INF/jsp/error.jsp");
         }
     }
 

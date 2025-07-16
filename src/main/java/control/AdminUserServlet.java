@@ -19,7 +19,7 @@ public class AdminUserServlet extends HttpServlet {
         HttpSession session = request.getSession(false);
 
         if (!isAdminLoggedIn(session)) {
-            response.sendRedirect("login.jsp");
+            response.sendRedirect("/WEB-INF/jsp/login.jsp");
             return;
         }
 
@@ -32,19 +32,20 @@ public class AdminUserServlet extends HttpServlet {
                 int id = Integer.parseInt(request.getParameter("id"));
                 User utente = utenteDAO.findByUserId(id);
                 request.setAttribute("utente", utente);
-                request.getRequestDispatcher("user-detail.jsp").forward(request, response);
+                request.getRequestDispatcher("/WEB-INF/jsp/user-detail.jsp").forward(request, response);
             } else if ("toggle".equals(action)) {
                 int id = Integer.parseInt(request.getParameter("id"));
                 utenteDAO.toggleUserStatus(id);
-                response.sendRedirect("AdminUserServlet");
+                request.setAttribute("successMessage", "Stato utente aggiornato con successo.");
+                request.getRequestDispatcher("/WEB-INF/jsp/success.jsp").forward(request, response);
             } else {
                 List<User> utenti = utenteDAO.findAll();
                 request.setAttribute("utenti", utenti);
-                request.getRequestDispatcher("users.jsp").forward(request, response);
+                request.getRequestDispatcher("/WEB-INF/jsp/users.jsp").forward(request, response);
             }
         } catch (Exception e) {
             logger.severe("Errore nella gestione utenti admin" + e.getMessage());
-            response.sendRedirect("error.jsp");
+            request.getRequestDispatcher("/WEB-INF/jsp/error.jsp").forward(request, response);
         }
     }
 

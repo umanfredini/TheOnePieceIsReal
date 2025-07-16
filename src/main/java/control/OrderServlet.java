@@ -21,7 +21,7 @@ public class OrderServlet extends HttpServlet {
         HttpSession session = request.getSession(false);
 
         if (!isUserLoggedIn(session)) {
-            response.sendRedirect("login.jsp");
+            response.sendRedirect("/WEB-INF/jsp/login.jsp");
             return;
         }
 
@@ -31,10 +31,10 @@ public class OrderServlet extends HttpServlet {
             List<Order> ordini = ordineDAO.findByUserId(utente.getId());
 
             request.setAttribute("ordini", ordini);
-            request.getRequestDispatcher("orders.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/jsp/orders.jsp").forward(request, response);
         } catch (Exception e) {
             logger.severe("Errore nel recupero degli ordini utente" + e.getMessage());
-            response.sendRedirect("error.jsp");
+            response.sendRedirect("/WEB-INF/jsp/error.jsp");
         }
     }
 

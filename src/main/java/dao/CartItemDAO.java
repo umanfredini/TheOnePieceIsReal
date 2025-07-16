@@ -6,6 +6,7 @@ import java.util.List;
 
 import model.CartItem;
 import model.Product;
+import util.DBConnection;
 
 public class CartItemDAO {
     private final Connection connection;
@@ -13,6 +14,12 @@ public class CartItemDAO {
     public CartItemDAO(Connection connection) {
         this.connection = connection;
     }
+    
+
+    public CartItemDAO() throws SQLException {
+    	this.connection = DBConnection.getConnection();
+    }
+
 
     public void add(CartItem item) throws SQLException {
         String sql = "INSERT INTO cart_items (cart_id, product_id, variant_id, quantity) VALUES (?, ?, ?, ?)";

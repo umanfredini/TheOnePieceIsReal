@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import model.Product;
+import util.DBConnection;
 
 public class ProductDAO {
     private final Connection connection;
@@ -15,9 +16,9 @@ public class ProductDAO {
         this.connection = connection;
     }
     
-    public ProductDAO() {
-    	this.connection = null;
-    };
+    public ProductDAO() throws SQLException {
+    	this.connection = DBConnection.getConnection();
+    }
 
     public void create(Product product) throws SQLException {
         String sql = "INSERT INTO products (name, description, price, image_url, category, personaggi, stock_quantity, active, featured) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -106,11 +107,11 @@ public class ProductDAO {
             rs.getString("category"),
             rs.getString("personaggi"),
             rs.getInt("stock_quantity"),
-            rs.getBoolean("active"),
-            rs.getBoolean("featured"),
+            rs.getBoolean("is_active"),
+            rs.getBoolean("is_featured"),
             rs.getTimestamp("created_at"),
             rs.getTimestamp("updated_at"),
-            rs.getString("immagine")
+            rs.getString("image_url")
         );
     }
     

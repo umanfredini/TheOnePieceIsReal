@@ -5,12 +5,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import model.ProductVariant;
+import util.DBConnection;
 
 public class ProductVariantDAO {
     private final Connection connection;
 
     public ProductVariantDAO(Connection connection) {
         this.connection = connection;
+    }
+    
+    public ProductVariantDAO() throws SQLException {
+    	this.connection = DBConnection.getConnection();
     }
 
     public void create(ProductVariant variant) throws SQLException {

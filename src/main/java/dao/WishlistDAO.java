@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import model.Product;
+import util.DBConnection;
 
 public class WishlistDAO {
     private final Connection connection;
@@ -13,8 +14,8 @@ public class WishlistDAO {
         this.connection = connection;
     }
     
-    public WishlistDAO() {
-    	this.connection = null;
+    public WishlistDAO() throws SQLException {
+    	this.connection = DBConnection.getConnection();
     }
 
     public void add(int userId, int productId) throws SQLException {

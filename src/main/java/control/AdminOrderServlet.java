@@ -22,7 +22,7 @@ public class AdminOrderServlet extends HttpServlet {
         HttpSession session = request.getSession(false);
 
         if (!isAdminLoggedIn(session)) {
-            response.sendRedirect("login.jsp");
+            response.sendRedirect("/WEB-INF/jsp/login.jsp");
             return;
         }
 
@@ -45,10 +45,10 @@ public class AdminOrderServlet extends HttpServlet {
             }
 
             request.setAttribute("ordini", ordini);
-            request.getRequestDispatcher("orders.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/jsp/orders.jsp").forward(request, response);
         } catch (Exception e) {
             logger.severe("Errore nella gestione ordini admin: " + e.getMessage());
-            response.sendRedirect("error.jsp");
+            response.sendRedirect("/WEB-INF/jsp/error.jsp");
         }
     }
 
@@ -58,12 +58,12 @@ public class AdminOrderServlet extends HttpServlet {
         HttpSession session = request.getSession(false);
 
         if (!isValidToken(request, session)) {
-            response.sendRedirect("error.jsp");
+            response.sendRedirect("/WEB-INF/jsp/error.jsp");
             return;
         }
 
         if (!isAdminLoggedIn(session)) {
-            response.sendRedirect("login.jsp");
+            response.sendRedirect("/WEB-INF/jsp/login.jsp");
             return;
         }
 
@@ -77,7 +77,7 @@ public class AdminOrderServlet extends HttpServlet {
             response.sendRedirect("AdminOrderServlet");
         } catch (Exception e) {
             logger.severe("Errore nell'aggiornamento stato ordine" + e.getMessage());
-            response.sendRedirect("error.jsp");
+            response.sendRedirect("/WEB-INF/jsp/error.jsp");
         }
     }
 

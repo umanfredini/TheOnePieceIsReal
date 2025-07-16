@@ -21,7 +21,7 @@ public class WishlistServlet extends HttpServlet {
         HttpSession session = request.getSession();
 
         if (!isUserLoggedIn(session)) {
-            response.sendRedirect("login.jsp");
+            response.sendRedirect("/WEB-INF/jsp/login.jsp");
             return;
         }
 
@@ -31,10 +31,10 @@ public class WishlistServlet extends HttpServlet {
             List<Product> wishlist = wishlistDAO.findProductsByUserId(utente.getId());
 
             request.setAttribute("wishlist", wishlist);
-            request.getRequestDispatcher("wishlist.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/jsp/wishlist.jsp").forward(request, response);
         } catch (Exception e) {
             logger.severe("Errore nel caricamento della wishlist" + e.getMessage());
-            response.sendRedirect("error.jsp");
+            response.sendRedirect("/WEB-INF/jsp/error.jsp");
         }
     }
 
@@ -47,7 +47,7 @@ public class WishlistServlet extends HttpServlet {
                 response.setContentType("application/json");
                 response.getWriter().write("{\"success\": false, \"error\": \"Non autenticato\"}");
             } else {
-                response.sendRedirect("login.jsp");
+                response.sendRedirect("/WEB-INF/jsp/login.jsp");
             }
             return;
         }
@@ -77,7 +77,7 @@ public class WishlistServlet extends HttpServlet {
                 response.setContentType("application/json");
                 response.getWriter().write("{\"success\": false, \"error\": \"Errore interno\"}");
             } else {
-                response.sendRedirect("error.jsp");
+            	request.getRequestDispatcher("/WEB-INF/jsp/error.jsp").forward(request, response);
             }
         }
     }

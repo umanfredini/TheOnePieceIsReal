@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import model.OrderItem;
+import util.DBConnection;
 
 public class OrderItemDAO {
     private final Connection connection;
@@ -13,8 +14,8 @@ public class OrderItemDAO {
         this.connection = connection;
     }
     
-    public OrderItemDAO() {
-    	this.connection = null;
+    public OrderItemDAO() throws SQLException {
+    	this.connection = DBConnection.getConnection();
     }
 
     public void add(OrderItem item) throws SQLException {

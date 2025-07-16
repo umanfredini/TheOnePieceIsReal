@@ -26,18 +26,18 @@ public class CheckoutServlet extends HttpServlet {
         HttpSession session = request.getSession(false);
 
         if (!isUserLoggedIn(session)) {
-            response.sendRedirect("login.jsp");
+            response.sendRedirect("/WEB-INF/jsp/login.jsp");
             return;
         }
 
         @SuppressWarnings("unchecked")
         Map<Integer, CartItem> carrello = (Map<Integer, CartItem>) session.getAttribute("carrello");
         if (carrello == null || carrello.isEmpty()) {
-            response.sendRedirect("cart.jsp");
+            response.sendRedirect("/WEB-INF/jsp/cart.jsp");
             return;
         }
 
-        request.getRequestDispatcher("checkout.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/jsp/checkout.jsp").forward(request, response);
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -45,12 +45,12 @@ public class CheckoutServlet extends HttpServlet {
         HttpSession session = request.getSession(false);
 
         if (!isValidToken(request, session)) {
-            response.sendRedirect("error.jsp");
+            response.sendRedirect("/WEB-INF/jsp/error.jsp");
             return;
         }
 
         if (!isUserLoggedIn(session)) {
-            response.sendRedirect("login.jsp");
+            response.sendRedirect("/WEB-INF/jsp/login.jsp");
             return;
         }
 
@@ -60,7 +60,7 @@ public class CheckoutServlet extends HttpServlet {
             Map<Integer, CartItem> carrello = (Map<Integer, CartItem>) session.getAttribute("carrello");
 
             if (carrello == null || carrello.isEmpty()) {
-                response.sendRedirect("cart.jsp");
+                response.sendRedirect("/WEB-INF/jsp/cart.jsp");
                 return;
             }
 
@@ -100,15 +100,15 @@ public class CheckoutServlet extends HttpServlet {
                 carrello.clear();
                 session.setAttribute("carrello", carrello);
                 request.setAttribute("ordineId", ordineId);
-                request.getRequestDispatcher("order-success.jsp").forward(request, response);
+                request.getRequestDispatcher("/WEB-INF/jsp/orderConfirmed").forward(request, response);
             } else {
                 request.setAttribute("errorMessage", "Errore durante la creazione dell'ordine");
-                request.getRequestDispatcher("checkout.jsp").forward(request, response);
+                request.getRequestDispatcher("/WEB-INF/jsp/checkout.jsp").forward(request, response);
             }
         } catch (Exception e) {
             logger.severe("Errore durante il checkout: " + e.getMessage());
             request.setAttribute("errorMessage", "Errore interno del server");
-            request.getRequestDispatcher("checkout.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/jsp/checkout.jsp").forward(request, response);
         }
     }
 

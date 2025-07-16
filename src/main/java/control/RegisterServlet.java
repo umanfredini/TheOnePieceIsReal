@@ -16,12 +16,12 @@ public class RegisterServlet extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getRequestDispatcher("register.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/jsp/register.jsp").forward(request, response);
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String nome = request.getParameter("nome");
+        String nome = request.getParameter("username");
         String email = request.getParameter("email");
         String password = request.getParameter("password");
         String indirizzo = request.getParameter("indirizzo");
@@ -31,28 +31,35 @@ public class RegisterServlet extends HttpServlet {
 
             if (utenteDAO.emailExists(email)) {
                 request.setAttribute("errorMessage", "Email già registrata!");
-                request.getRequestDispatcher("register.jsp").forward(request, response);
+                request.getRequestDispatcher("/WEB-INF/jsp/register.jsp").forward(request, response);
                 return;
             }
 
             User utente = new User();
             utente.setUsername(nome);
-            utente.setEmail(email); 
+            utente.setEmail(email);
+            utente.setPasswordHash(hashPassword(password));
             utente.setShippingAddress(indirizzo);
 
             boolean success = utenteDAO.create(utente);
 
             if (success) {
-                request.setAttribute("successMessage", "Registrazione completata! Effettua il login.");
-                request.getRequestDispatcher("login.jsp").forward(request, response);
+            	if (success) {
+            	    HttpSession session = request.getSession();
+            	    session.setAttribute("utente", utente);
+            	    session.setAttribute("isLoggedIn", true);
+            	    session.setAttribute("isAdmin", false);
+            	    session.setAttribute("token", generateToken());
+            	    request.getRequestDispatcher("/WEB-INF/jsp/profile.jsp").forward(request, response);
+            	}
             } else {
                 request.setAttribute("errorMessage", "Errore durante la registrazione");
-                request.getRequestDispatcher("register.jsp").forward(request, response);
+                request.getRequestDispatcher("/WEB-INF/jsp/register.jsp").forward(request, response);
             }
         } catch (Exception e) {
             logger.severe("Errore durante la registrazione" + e.getMessage());
             request.setAttribute("errorMessage", "Errore interno del server");
-            request.getRequestDispatcher("register.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/jsp/register.jsp").forward(request, response);
         }
     }
 
@@ -65,4 +72,9 @@ public class RegisterServlet extends HttpServlet {
         }
         return sb.toString();
     }
+    
+    private String generateToken() {
+        return java.util.UUID.randomUUID().toString();
+    }
+
 }
