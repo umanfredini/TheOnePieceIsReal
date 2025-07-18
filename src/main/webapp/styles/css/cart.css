@@ -1,0 +1,62 @@
+
+/* cart.css - Carrello con casse del tesoro */
+
+.cart-container {
+    background-color: #0C4DA2;
+    background-image: url('../images/treasure-chest.jpg');
+    background-size: 150px;
+    background-repeat: repeat;
+    padding: 2rem;
+    font-family: 'Treasure Map Deadhand', serif;
+    color: #FFFDF5;
+}
+
+.cart-title {
+    font-size: 2.5rem;
+    color: #FDB714;
+    text-align: center;
+    margin-bottom: 1.5rem;
+    text-shadow: 2px 2px #1A1A1A;
+}
+
+.cart-item {
+    background-color: rgba(0, 0, 0, 0.4);
+    border: 2px solid #FDB714;
+    border-radius: 10px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.cart-item img {
+    width: 80px;
+    height: 80px;
+    border-radius: 8px;
+}
+
+.cart-item-details {
+    flex: 1;
+}
+
+.cart-item-name {
+    font-size: 1.2rem;
+    color: #87CEEB;
+}
+
+.cart-item-price {
+    font-size: 1rem;
+    color: #FDB714;
+}
+
+@media (max-width: 768px) {
+    .cart-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .cart-item img {
+        width: 100%;
+        height: auto;
+    }
+}

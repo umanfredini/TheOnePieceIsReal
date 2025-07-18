@@ -1,0 +1,49 @@
+
+/* components.css - Reusable UI components */
+.card {
+  background-color: var(--white);
+  border: 2px solid var(--blue);
+  border-radius: 10px;
+  padding: 1rem;
+  box-shadow: 2px 2px 8px rgba(0,0,0,0.1);
+  transition: transform 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+.badge {
+  display: inline-block;
+  background-color: var(--red);
+  color: var(--white);
+  padding: 0.25rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: bold;
+}
+
+.tooltip {
+  position: relative;
+  cursor: help;
+}
+
+.tooltip::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 125%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: var(--black);
+  color: var(--white);
+  padding: 0.5rem;
+  border-radius: 5px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.tooltip:hover::after {
+  opacity: 1;
+}

@@ -1,0 +1,60 @@
+
+/* catalogo.css - Catalogo prodotti in stile nave pirata */
+
+.catalog-container {
+    background-image: url('../images/wood-texture.jpg');
+    background-size: cover;
+    background-repeat: repeat;
+    padding: 2rem;
+    font-family: 'Treasure Map Deadhand', serif;
+    color: #FFFDF5;
+}
+
+.catalog-title {
+    font-size: 2.5rem;
+    color: #FDB714;
+    text-align: center;
+    margin-bottom: 1.5rem;
+    text-shadow: 2px 2px #1A1A1A;
+}
+
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+}
+
+.product-card {
+    background-color: rgba(255, 253, 245, 0.1);
+    border: 2px solid #D42027;
+    border-radius: 12px;
+    padding: 1rem;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    backdrop-filter: blur(2px);
+}
+
+.product-card:hover {
+    transform: translateY(-5px) rotate(-1deg);
+    box-shadow: 0 0 15px #FDB714;
+}
+
+.product-card img {
+    width: 100%;
+    border-radius: 8px;
+}
+
+.product-name {
+    font-size: 1.2rem;
+    margin-top: 0.5rem;
+    color: #87CEEB;
+    text-align: center;
+}
+
+@media (max-width: 768px) {
+    .catalog-container {
+        padding: 1rem;
+    }
+    .catalog-title {
+        font-size: 2rem;
+    }
+}

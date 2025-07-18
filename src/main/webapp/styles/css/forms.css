@@ -1,0 +1,26 @@
+
+/* forms.css - Pirate-themed form elements */
+input, select, textarea {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  padding: 0.5rem;
+  border: 2px solid var(--blue);
+  border-radius: 6px;
+  background-color: var(--white);
+  color: var(--black);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--gold);
+  box-shadow: 0 0 5px var(--gold);
+}
+
+label {
+  font-weight: bold;
+  margin-bottom: 0.25rem;
+  display: block;
+  color: var(--black);
+}
