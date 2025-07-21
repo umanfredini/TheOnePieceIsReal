@@ -32,11 +32,27 @@ public class CartDAO {
             stmt.setInt(1, userId);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
+                // Gestione sicura dei timestamp
+                java.sql.Timestamp createdAt = null;
+                java.sql.Timestamp modifiedAt = null;
+                
+                try {
+                    createdAt = rs.getTimestamp("created_at");
+                } catch (SQLException e) {
+                    System.out.println("Warning: created_at timestamp non valido, impostato a null");
+                }
+                
+                try {
+                    modifiedAt = rs.getTimestamp("modified_at");
+                } catch (SQLException e) {
+                    System.out.println("Warning: modified_at timestamp non valido, impostato a null");
+                }
+                
                 return new Cart(
                     rs.getInt("id"),
                     rs.getInt("user_id"),
-                    rs.getTimestamp("created_at"),
-                    rs.getTimestamp("modified_at")
+                    createdAt,
+                    modifiedAt
                 );
             }
         }

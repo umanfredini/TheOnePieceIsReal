@@ -9,12 +9,21 @@ public class Cart {
     private Timestamp createdAt;
     private Timestamp modifiedAt;
     private List<CartItem> items;
+    private double total;
 
     public Cart(int id, int userId, Timestamp createdAt, Timestamp modifiedAt) {
         this.id = id;
         this.userId = userId;
         this.createdAt = createdAt;
         this.modifiedAt = modifiedAt;
+    }
+    
+    public Cart() {
+        this.id = 0;
+        this.userId = 0;
+        this.createdAt = new Timestamp(System.currentTimeMillis());
+        this.modifiedAt = new Timestamp(System.currentTimeMillis());
+        this.total = 0.0;
     }
     
     // Getters e Setters
@@ -32,5 +41,8 @@ public class Cart {
     
     public List<CartItem> getItems() { return items; }
     public void setItems(List<CartItem> items) { this.items = items; }
+    
+    public double getTotal() { return total; }
+    public void setTotal(double total) { this.total = total; }
 }
 

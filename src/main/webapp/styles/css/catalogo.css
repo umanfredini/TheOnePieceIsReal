@@ -40,7 +40,11 @@
 
 .product-card img {
     width: 100%;
+    height: 250px;
+    object-fit: contain; /* Mostra tutta l'immagine */
+    background-color: #f8f9fa; /* Sfondo neutro per le parti vuote */
     border-radius: 8px;
+    transition: transform 0.3s ease;
 }
 
 .product-name {
@@ -56,5 +60,8 @@
     }
     .catalog-title {
         font-size: 2rem;
+    }
+    .product-card img {
+        height: 200px;
     }
 }

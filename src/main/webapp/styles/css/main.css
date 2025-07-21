@@ -1,12 +1,74 @@
+/* Importa Bootstrap */
+@import url('https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css');
+
+/* Importa font Pirata One */
+@import url('https://fonts.googleapis.com/css2?family=Pirata+One&display=swap');
+
+/* Importa CSS personalizzati */
 @import url("reset.css");
 @import url("variables.css");
 @import url("layout.css");
+@import url("gradients.css");
+@import url("animations.css");
+@import url("carousel.css");
 @import url("typography.css");
 @import url("buttons.css");
 @import url("forms.css");
-@import url("animations.css");
 @import url("components.css");
 @import url("catalogo.css");
 @import url("cart.css");
 @import url("checkout.css");
+@import url("profile.css");
+@import url("light.css");
+@import url("dark.css");
+@import url("category.css");
 @import url("responsive.css");
+
+/* Main Page Background */
+body {
+    min-height: 100vh;
+}
+
+
+
+
+
+
+
+/* Messaggio quando non ci sono prodotti */
+.no-products-message {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 300px;
+    width: 100%;
+    padding: 40px 20px;
+}
+
+.no-products-content {
+    text-align: center;
+    color: white;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 40px;
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 107, 107, 0.3);
+    max-width: 500px;
+}
+
+.no-products-content h3 {
+    font-family: 'Pirata One', cursive;
+    font-size: 2rem;
+    margin-bottom: 15px;
+    background: linear-gradient(135deg, #ff6b6b, #ffd93d);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.no-products-content p {
+    font-size: 1.1rem;
+    margin-bottom: 25px;
+    color: #e0e0e0;
+    line-height: 1.6;
+}

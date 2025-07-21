@@ -10,7 +10,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Random;
 
-@WebServlet("/SimulatedShippingServlet")
+// @WebServlet("/SimulatedShippingServlet")
 public class SimulatedShippingServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger logger = Logger.getLogger(SimulatedShippingServlet.class.getName());

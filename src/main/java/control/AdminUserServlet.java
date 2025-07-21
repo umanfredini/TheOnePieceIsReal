@@ -9,7 +9,6 @@ import java.util.logging.Logger;
 import java.io.IOException;
 import java.util.List;
 
-@WebServlet("/AdminUserServlet")
 public class AdminUserServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger logger = Logger.getLogger(AdminUserServlet.class.getName());
@@ -19,7 +18,7 @@ public class AdminUserServlet extends HttpServlet {
         HttpSession session = request.getSession(false);
 
         if (!isAdminLoggedIn(session)) {
-            response.sendRedirect("/WEB-INF/jsp/login.jsp");
+            response.sendRedirect("LoginServlet");
             return;
         }
 
@@ -32,20 +31,21 @@ public class AdminUserServlet extends HttpServlet {
                 int id = Integer.parseInt(request.getParameter("id"));
                 User utente = utenteDAO.findByUserId(id);
                 request.setAttribute("utente", utente);
-                request.getRequestDispatcher("/WEB-INF/jsp/user-detail.jsp").forward(request, response);
+                request.getRequestDispatcher("/jsp/user-detail.jsp").forward(request, response);
             } else if ("toggle".equals(action)) {
                 int id = Integer.parseInt(request.getParameter("id"));
                 utenteDAO.toggleUserStatus(id);
                 request.setAttribute("successMessage", "Stato utente aggiornato con successo.");
-                request.getRequestDispatcher("/WEB-INF/jsp/success.jsp").forward(request, response);
+                response.sendRedirect("AdminUserServlet");
             } else {
                 List<User> utenti = utenteDAO.findAll();
                 request.setAttribute("utenti", utenti);
-                request.getRequestDispatcher("/WEB-INF/jsp/users.jsp").forward(request, response);
+                request.getRequestDispatcher("/jsp/adminUsers.jsp").forward(request, response);
             }
         } catch (Exception e) {
             logger.severe("Errore nella gestione utenti admin" + e.getMessage());
-            request.getRequestDispatcher("/WEB-INF/jsp/error.jsp").forward(request, response);
+            request.setAttribute("errorMessage", "Errore nella gestione degli utenti. Riprova.");
+            request.getRequestDispatcher("/jsp/error.jsp").forward(request, response);
         }
     }
 

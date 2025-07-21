@@ -47,13 +47,21 @@ public class CartItemDAO {
             while (rs.next()) {
                 int productId = rs.getInt("product_id");
                 Product product = productDAO.findByProductId(productId);
+                // Gestione sicura del timestamp
+                java.sql.Timestamp addedAt = null;
+                try {
+                    addedAt = rs.getTimestamp("added_at");
+                } catch (SQLException e) {
+                    System.out.println("Warning: added_at timestamp non valido, impostato a null");
+                }
+                
                 CartItem item = new CartItem(
                     rs.getInt("id"),
                     rs.getInt("cart_id"),
                     productId,
                     rs.getObject("variant_id") != null ? rs.getInt("variant_id") : null,
                     rs.getInt("quantity"),
-                    rs.getTimestamp("added_at"),
+                    addedAt,
                     null
                 );
                 item.setProduct(product);

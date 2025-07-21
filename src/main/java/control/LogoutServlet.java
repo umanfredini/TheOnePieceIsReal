@@ -5,7 +5,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import java.io.IOException;
 
-@WebServlet("/LogoutServlet")
+// @WebServlet("/LogoutServlet")
 public class LogoutServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
@@ -15,7 +15,7 @@ public class LogoutServlet extends HttpServlet {
         if (session != null) {
             session.invalidate();
         }
-        response.sendRedirect("/WEB-INF/jsp/index.jsp");
+        response.sendRedirect("index.jsp");
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response)

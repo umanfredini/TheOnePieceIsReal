@@ -90,11 +90,27 @@ public class GuestCartDAO {
     }
 
     private GuestCart extractGuestCart(ResultSet rs) throws SQLException {
+        // Gestione sicura dei timestamp
+        java.sql.Timestamp createdAt = null;
+        java.sql.Timestamp updatedAt = null;
+        
+        try {
+            createdAt = rs.getTimestamp("created_at");
+        } catch (SQLException e) {
+            System.out.println("Warning: created_at timestamp non valido, impostato a null");
+        }
+        
+        try {
+            updatedAt = rs.getTimestamp("updated_at");
+        } catch (SQLException e) {
+            System.out.println("Warning: updated_at timestamp non valido, impostato a null");
+        }
+        
         return new GuestCart(
             rs.getInt("id"),
             rs.getString("session_id"),
-            rs.getTimestamp("created_at"),
-            rs.getTimestamp("updated_at")
+            createdAt,
+            updatedAt
         );
     }
 } 

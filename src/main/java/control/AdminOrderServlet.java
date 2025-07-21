@@ -12,7 +12,6 @@ import java.sql.Date;
 import java.io.IOException;
 import java.util.List;
 
-@WebServlet("/AdminOrderServlet")
 public class AdminOrderServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger logger = Logger.getLogger(AdminOrderServlet.class.getName());
@@ -22,7 +21,7 @@ public class AdminOrderServlet extends HttpServlet {
         HttpSession session = request.getSession(false);
 
         if (!isAdminLoggedIn(session)) {
-            response.sendRedirect("/WEB-INF/jsp/login.jsp");
+            response.sendRedirect("LoginServlet");
             return;
         }
 
@@ -31,7 +30,7 @@ public class AdminOrderServlet extends HttpServlet {
             String dataFineStr = request.getParameter("dataFine");
             String clienteId = request.getParameter("clienteId");
 
-            OrderDAO ordineDAO = new OrderDAO(null);
+            OrderDAO ordineDAO = new OrderDAO();
             List<Order> ordini;
 
             if (dataInizioStr != null && dataFineStr != null) {
@@ -45,10 +44,11 @@ public class AdminOrderServlet extends HttpServlet {
             }
 
             request.setAttribute("ordini", ordini);
-            request.getRequestDispatcher("/WEB-INF/jsp/orders.jsp").forward(request, response);
+            request.getRequestDispatcher("/jsp/adminOrders.jsp").forward(request, response);
         } catch (Exception e) {
             logger.severe("Errore nella gestione ordini admin: " + e.getMessage());
-            response.sendRedirect("/WEB-INF/jsp/error.jsp");
+            request.setAttribute("errorMessage", "Errore nella gestione degli ordini. Riprova.");
+            request.getRequestDispatcher("/jsp/error.jsp").forward(request, response);
         }
     }
 
@@ -58,12 +58,13 @@ public class AdminOrderServlet extends HttpServlet {
         HttpSession session = request.getSession(false);
 
         if (!isValidToken(request, session)) {
-            response.sendRedirect("/WEB-INF/jsp/error.jsp");
+            request.setAttribute("errorMessage", "Token di sicurezza non valido. Riprova.");
+            request.getRequestDispatcher("/jsp/error.jsp").forward(request, response);
             return;
         }
 
         if (!isAdminLoggedIn(session)) {
-            response.sendRedirect("/WEB-INF/jsp/login.jsp");
+            response.sendRedirect("LoginServlet");
             return;
         }
 
@@ -71,13 +72,14 @@ public class AdminOrderServlet extends HttpServlet {
             int ordineId = Integer.parseInt(request.getParameter("ordineId"));
             String nuovoStato = request.getParameter("stato");
 
-            OrderDAO ordineDAO = new OrderDAO(null);
+            OrderDAO ordineDAO = new OrderDAO();
             ordineDAO.updateStato(ordineId, nuovoStato);
 
             response.sendRedirect("AdminOrderServlet");
         } catch (Exception e) {
             logger.severe("Errore nell'aggiornamento stato ordine" + e.getMessage());
-            response.sendRedirect("/WEB-INF/jsp/error.jsp");
+            request.setAttribute("errorMessage", "Errore nell'aggiornamento dello stato dell'ordine. Riprova.");
+            request.getRequestDispatcher("/jsp/error.jsp").forward(request, response);
         }
     }
 
@@ -88,7 +90,7 @@ public class AdminOrderServlet extends HttpServlet {
     }
 
     private boolean isValidToken(HttpServletRequest request, HttpSession session) {
-        String sessionToken = (String) session.getAttribute("token");
+        String sessionToken = (String) session.getAttribute("csrfToken");
         String requestToken = request.getParameter("token");
         return sessionToken != null && sessionToken.equals(requestToken);
     }

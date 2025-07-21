@@ -21,13 +21,26 @@ public class CartItem {
         this.product = product;
     }
     
-    public CartItem(int id, int cartId, Product prodotto, int quantity, String taglia) {
+
+    
+    public CartItem(int id, int cartId, Product prodotto, int quantity, String variantId) {
         this.id = id;
         this.cartId = cartId;
         this.productId = prodotto.getId();
-        this.variantId = taglia != null ? taglia.hashCode() : null;
+        this.variantId = variantId != null && !variantId.isEmpty() ? Integer.parseInt(variantId) : null;
         this.quantity = quantity;
         this.addedAt = new Timestamp(System.currentTimeMillis());
+        this.product = prodotto;
+    }
+    
+    public CartItem(int id, int cartId, Product prodotto, int quantity, Integer variantId) {
+        this.id = id;
+        this.cartId = cartId;
+        this.productId = prodotto.getId();
+        this.variantId = variantId;
+        this.quantity = quantity;
+        this.addedAt = new Timestamp(System.currentTimeMillis());
+        this.product = prodotto;
     }
     
     // Getters e Setters

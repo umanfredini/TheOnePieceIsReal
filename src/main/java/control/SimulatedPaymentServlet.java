@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.logging.Logger;
 import java.util.logging.Level;
 
-@WebServlet("/SimulatedPaymentServlet")
+// @WebServlet("/SimulatedPaymentServlet")
 public class SimulatedPaymentServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger logger = Logger.getLogger(SimulatedPaymentServlet.class.getName());
@@ -24,12 +24,23 @@ public class SimulatedPaymentServlet extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
         
         try {
-            // Simula latenza di elaborazione
-            Thread.sleep(2000);
-            
+            // Validazione parametri
             String cardNumber = request.getParameter("cardNumber");
             String amount = request.getParameter("amount");
             String cardHolder = request.getParameter("cardHolder");
+            
+            if (cardNumber == null || cardNumber.trim().isEmpty()) {
+                response.getWriter().write("{\"success\": false, \"error\": \"Numero carta mancante\", \"code\": \"MISSING_CARD\"}");
+                return;
+            }
+            
+            if (amount == null || amount.trim().isEmpty()) {
+                response.getWriter().write("{\"success\": false, \"error\": \"Importo mancante\", \"code\": \"MISSING_AMOUNT\"}");
+                return;
+            }
+            
+            // Simula latenza di elaborazione
+            Thread.sleep(2000);
             
             logger.info("Simulazione pagamento: Carta=" + maskCardNumber(cardNumber) + 
                        ", Importo=" + amount + ", Intestatario=" + cardHolder);
@@ -50,7 +61,7 @@ public class SimulatedPaymentServlet extends HttpServlet {
                 String transactionId = "TXN_" + System.currentTimeMillis();
                 response.getWriter().write("{\"success\": true, \"transactionId\": \"" + transactionId + 
                                          "\", \"amount\": \"" + amount + "\", \"timestamp\": \"" + 
-                                         new java.util.Date().toISOString() + "\"}");
+                                         new java.util.Date().toString() + "\"}");
                 logger.info("Pagamento simulato: Successo - Transaction ID: " + transactionId);
                 
             } else {

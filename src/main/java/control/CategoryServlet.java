@@ -4,15 +4,14 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import model.Product;
-import model.Character;
 import dao.ProductDAO;
-import dao.CharacterDAO;
+import util.CharacterManager;
 import java.util.*;
 
 import java.io.IOException;
 import java.sql.SQLException;
 
-@WebServlet("/CategoryServlet")
+// @WebServlet("/CategoryServlet")
 public class CategoryServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final int PRODUCTS_PER_PAGE = 12;
@@ -21,6 +20,7 @@ public class CategoryServlet extends HttpServlet {
             throws ServletException, IOException {
         
         String category = request.getParameter("category");
+        String personaggio = request.getParameter("personaggio");
         String sort = request.getParameter("sort");
         String maxPrice = request.getParameter("maxPrice");
         String[] characters = request.getParameterValues("characters");
@@ -39,14 +39,18 @@ public class CategoryServlet extends HttpServlet {
 
         try {
             ProductDAO productDAO = new ProductDAO();
-            CharacterDAO characterDAO = new CharacterDAO();
+            CharacterManager characterManager = new CharacterManager();
             
-            // Ottieni tutti i personaggi per i filtri
-            List<Character> allCharacters = characterDAO.findAll();
+            // Ottieni tutti i personaggi per i filtri (ora gestiti tramite is_featured)
+            List<String> allCharacters = characterManager.getAllCharacterNames();
             request.setAttribute("characters", allCharacters);
             
+            // Ottieni tutte le categorie per il filtro
+            List<String> allCategories = productDAO.findAllCategories();
+            request.setAttribute("categories", allCategories);
+            
             // Ottieni i prodotti filtrati
-            List<Product> products = getFilteredProducts(productDAO, category, sort, maxPrice, characters, inStock, featured);
+            List<Product> products = getFilteredProducts(productDAO, category, personaggio, sort, maxPrice, characters, inStock, featured);
             
             // Calcola la paginazione
             int totalProducts = products.size();
@@ -57,11 +61,15 @@ public class CategoryServlet extends HttpServlet {
             int endIndex = Math.min(startIndex + PRODUCTS_PER_PAGE, totalProducts);
             List<Product> paginatedProducts = products.subList(startIndex, endIndex);
             
-            // Ottieni i personaggi per ogni prodotto
-            Map<Integer, List<Character>> productCharacters = new HashMap<>();
+            // Ottieni i personaggi per ogni prodotto (ora gestiti tramite is_featured)
+            Map<Integer, List<String>> productCharacters = new HashMap<>();
             for (Product product : paginatedProducts) {
-                List<Character> productChars = characterDAO.findByProductId(product.getId());
-                productCharacters.put(product.getId(), productChars);
+                if (product.getIsFeatured() != null && !product.getIsFeatured().isEmpty()) {
+                    List<String> productChars = CharacterManager.parseCharacterNames(product.getIsFeatured());
+                    productCharacters.put(product.getId(), productChars);
+                } else {
+                    productCharacters.put(product.getId(), new ArrayList<>());
+                }
             }
             
             // Imposta gli attributi per la JSP
@@ -71,23 +79,24 @@ public class CategoryServlet extends HttpServlet {
             request.setAttribute("currentPage", currentPage);
             request.setAttribute("totalPages", totalPages);
             request.setAttribute("totalProducts", totalProducts);
+            request.setAttribute("hasNextPage", currentPage < totalPages);
+            request.setAttribute("hasPrevPage", currentPage > 1);
             
             // Mantieni i parametri di filtro per la paginazione
-            request.setAttribute("currentFilters", buildFilterParams(category, sort, maxPrice, characters, inStock, featured));
+            request.setAttribute("currentFilters", buildFilterParams(category, personaggio, sort, maxPrice, characters, inStock, featured));
             
-            request.getRequestDispatcher("/WEB-INF/jsp/category-products.jsp").forward(request, response);
+            request.getRequestDispatcher("/jsp/catalog.jsp").forward(request, response);
             
         } catch (SQLException e) {
             e.printStackTrace();
             request.setAttribute("errorMessage", "Errore nel caricamento dei prodotti");
-            request.getRequestDispatcher("/WEB-INF/jsp/error.jsp").forward(request, response);
+            request.getRequestDispatcher("/jsp/error.jsp").forward(request, response);
         }
     }
 
-    private List<Product> getFilteredProducts(ProductDAO productDAO, String category, String sort, 
+    private List<Product> getFilteredProducts(ProductDAO productDAO, String category, String personaggio, String sort, 
                                             String maxPrice, String[] characters, String inStock, String featured) 
                                             throws SQLException {
-        
         List<Product> products = new ArrayList<>();
         
         // Filtra per categoria
@@ -95,6 +104,18 @@ public class CategoryServlet extends HttpServlet {
             products = productDAO.findByCategoria(category);
         } else {
             products = productDAO.findAll();
+        }
+        
+        // Filtra per personaggio
+        if (personaggio != null && !personaggio.isEmpty()) {
+            products = products.stream()
+                .filter(p -> {
+                    if (p.getIsFeatured() != null && !p.getIsFeatured().isEmpty()) {
+                        return CharacterManager.containsCharacter(p.getIsFeatured(), personaggio);
+                    }
+                    return false;
+                })
+                .collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
         }
         
         // Filtra per prezzo massimo
@@ -119,7 +140,7 @@ public class CategoryServlet extends HttpServlet {
         // Filtra per prodotti in evidenza
         if ("true".equals(featured)) {
             products = products.stream()
-                .filter(Product::isFeatured)
+                .filter(p -> p.getIsFeatured() != null && !p.getIsFeatured().isEmpty())
                 .collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
         }
         
@@ -157,10 +178,11 @@ public class CategoryServlet extends HttpServlet {
         return products;
     }
     
-    private Map<String, String> buildFilterParams(String category, String sort, String maxPrice, 
+    private Map<String, String> buildFilterParams(String category, String personaggio, String sort, String maxPrice, 
                                                  String[] characters, String inStock, String featured) {
         Map<String, String> params = new HashMap<>();
         if (category != null) params.put("category", category);
+        if (personaggio != null) params.put("personaggio", personaggio);
         if (sort != null) params.put("sort", sort);
         if (maxPrice != null) params.put("maxPrice", maxPrice);
         if (inStock != null) params.put("inStock", inStock);

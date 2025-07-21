@@ -1,6 +1,7 @@
 package dao;
 
 import java.sql.*;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,11 +20,13 @@ public class ProductVariantDAO {
     }
 
     public void create(ProductVariant variant) throws SQLException {
-        String sql = "INSERT INTO product_variants (product_id, variant_name, stock_quantity) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO product_variants (product_id, variant_name, variant_type, stock_quantity, price_modifier) VALUES (?, ?, ?, ?, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setInt(1, variant.getProductId());
             stmt.setString(2, variant.getVariantName());
-            stmt.setInt(3, variant.getStockQuantity());
+            stmt.setString(3, variant.getVariantType());
+            stmt.setInt(4, variant.getStockQuantity());
+            stmt.setBigDecimal(5, variant.getPriceModifier());
             stmt.executeUpdate();
         }
     }
@@ -41,12 +44,14 @@ public class ProductVariantDAO {
     }
 
     public void update(ProductVariant variant) throws SQLException {
-        String sql = "UPDATE product_variants SET product_id = ?, variant_name = ?, stock_quantity = ? WHERE id = ?";
+        String sql = "UPDATE product_variants SET product_id = ?, variant_name = ?, variant_type = ?, stock_quantity = ?, price_modifier = ? WHERE id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setInt(1, variant.getProductId());
             stmt.setString(2, variant.getVariantName());
-            stmt.setInt(3, variant.getStockQuantity());
-            stmt.setInt(4, variant.getId());
+            stmt.setString(3, variant.getVariantType());
+            stmt.setInt(4, variant.getStockQuantity());
+            stmt.setBigDecimal(5, variant.getPriceModifier());
+            stmt.setInt(6, variant.getId());
             stmt.executeUpdate();
         }
     }
@@ -86,11 +91,23 @@ public class ProductVariantDAO {
     }
     
     private ProductVariant extractVariant(ResultSet rs) throws SQLException{
+        BigDecimal priceModifier = rs.getBigDecimal("price_modifier");
+        if (priceModifier == null) {
+            priceModifier = BigDecimal.ZERO;
+        }
+        
+        String variantType = rs.getString("variant_type");
+        if (variantType == null) {
+            variantType = "size"; // Default per compatibilità
+        }
+        
         return new ProductVariant(
                 rs.getInt("id"),
                 rs.getInt("product_id"),
                 rs.getString("variant_name"),
-                rs.getInt("stock_quantity")
+                variantType,
+                rs.getInt("stock_quantity"),
+                priceModifier
                 );
     }
 }

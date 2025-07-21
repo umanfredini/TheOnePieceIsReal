@@ -1,0 +1,223 @@
+/* ===== CORREZIONI IMMAGINI - UNIFICAZIONE PATH E DIMENSIONAMENTO ===== */
+
+/* ===== 1. CORREZIONE PATH IMMAGINI ===== */
+/* Assicura che tutte le immagini usino il path corretto */
+.product-image,
+.product-card img,
+.card-img-top,
+.product-detail-image {
+    /* Path corretto per tutte le immagini */
+    background-image: var(--image-path, none);
+}
+
+/* ===== 2. DIMENSIONAMENTO UNIFORME IMMAGINI ===== */
+
+/* Immagini prodotto nel carosello */
+.product-card .product-image {
+    width: 100%;
+    height: 280px;
+    object-fit: contain; /* Cambia da 'cover' a 'contain' per mostrare tutta l'immagine */
+    background-color: #f8f9fa; /* Sfondo neutro per le parti vuote */
+    border-radius: 8px 8px 0 0;
+    transition: transform 0.3s ease;
+}
+
+/* Immagini prodotto nel catalogo */
+.catalog-container .product-card img,
+.product-grid .product-card img {
+    width: 100%;
+    height: 250px;
+    object-fit: contain; /* Mostra tutta l'immagine */
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    transition: transform 0.3s ease;
+}
+
+/* Immagini prodotto nella wishlist */
+.wishlist-container .card-img-top,
+.wishlist .card-img-top {
+    width: 100%;
+    height: 200px;
+    object-fit: contain;
+    background-color: #f8f9fa;
+    border-radius: 8px 8px 0 0;
+}
+
+/* Immagini prodotto nel carrello */
+.cart-item img {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+}
+
+/* Immagini prodotto nella pagina dettaglio */
+.product-detail-image,
+.product-detail .img-fluid {
+    width: 100%;
+    max-height: 500px;
+    object-fit: contain;
+    background-color: #f8f9fa;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+/* Immagini prodotto nella pagina categoria */
+.category-products .product-image img {
+    width: 100%;
+    height: 250px;
+    object-fit: contain;
+    background-color: #f8f9fa;
+    border-radius: 8px 8px 0 0;
+}
+
+/* Immagini prodotto nella pagina admin */
+.admin-products .card-img-top {
+    width: 100%;
+    height: 200px;
+    object-fit: contain;
+    background-color: #f8f9fa;
+    border-radius: 8px 8px 0 0;
+}
+
+/* ===== 3. HOVER EFFECTS MIGLIORATI ===== */
+
+/* Effetto hover per tutte le immagini prodotto */
+.product-card:hover .product-image,
+.product-card:hover img,
+.card:hover .card-img-top {
+    transform: scale(1.02);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+}
+
+/* ===== 4. RESPONSIVE DESIGN ===== */
+
+@media (max-width: 768px) {
+    /* Carosello mobile */
+    .product-card .product-image {
+        height: 220px;
+    }
+    
+    /* Catalogo mobile */
+    .catalog-container .product-card img,
+    .product-grid .product-card img {
+        height: 200px;
+    }
+    
+    /* Wishlist mobile */
+    .wishlist-container .card-img-top,
+    .wishlist .card-img-top {
+        height: 180px;
+    }
+    
+    /* Carrello mobile */
+    .cart-item img {
+        width: 60px;
+        height: 60px;
+    }
+    
+    /* Dettaglio mobile */
+    .product-detail-image,
+    .product-detail .img-fluid {
+        max-height: 300px;
+    }
+    
+    /* Categoria mobile */
+    .category-products .product-image img {
+        height: 200px;
+    }
+    
+    /* Admin mobile */
+    .admin-products .card-img-top {
+        height: 150px;
+    }
+}
+
+@media (max-width: 480px) {
+    /* Carosello mobile piccolo */
+    .product-card .product-image {
+        height: 180px;
+    }
+    
+    /* Catalogo mobile piccolo */
+    .catalog-container .product-card img,
+    .product-grid .product-card img {
+        height: 160px;
+    }
+    
+    /* Wishlist mobile piccolo */
+    .wishlist-container .card-img-top,
+    .wishlist .card-img-top {
+        height: 140px;
+    }
+    
+    /* Carrello mobile piccolo */
+    .cart-item img {
+        width: 50px;
+        height: 50px;
+    }
+    
+    /* Dettaglio mobile piccolo */
+    .product-detail-image,
+    .product-detail .img-fluid {
+        max-height: 250px;
+    }
+    
+    /* Categoria mobile piccolo */
+    .category-products .product-image img {
+        height: 160px;
+    }
+    
+    /* Admin mobile piccolo */
+    .admin-products .card-img-top {
+        height: 120px;
+    }
+}
+
+/* ===== 5. LOADING STATE ===== */
+
+/* Stato di caricamento per le immagini */
+.product-image.loading,
+.product-card img.loading,
+.card-img-top.loading {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+/* ===== 6. FALLBACK PER IMMAGINI MANCANTI ===== */
+
+/* Stile per immagini che non si caricano */
+.product-image:not([src]),
+.product-image[src=""],
+.product-card img:not([src]),
+.product-card img[src=""],
+.card-img-top:not([src]),
+.card-img-top[src=""] {
+    background: linear-gradient(45deg, #f0f0f0, #e0e0e0);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #999;
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+.product-image:not([src])::after,
+.product-image[src=""]::after,
+.product-card img:not([src])::after,
+.product-card img[src=""]::after,
+.card-img-top:not([src])::after,
+.card-img-top[src=""]::after {
+    content: "Immagine non disponibile";
+} 

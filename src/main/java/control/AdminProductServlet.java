@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
 
-@WebServlet("/AdminProductServlet")
 public class AdminProductServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger logger = Logger.getLogger(AdminProductServlet.class.getName());
@@ -20,7 +19,7 @@ public class AdminProductServlet extends HttpServlet {
         HttpSession session = request.getSession(false);
 
         if (!isAdminLoggedIn(session)) {
-            response.sendRedirect("/WEB-INF/jsp/login.jsp");
+            response.sendRedirect("LoginServlet");
             return;
         }
 
@@ -33,19 +32,20 @@ public class AdminProductServlet extends HttpServlet {
                 int id = Integer.parseInt(request.getParameter("id"));
                 Product prodotto = prodottoDAO.findByProductId(id);
                 request.setAttribute("prodotto", prodotto);
-                request.getRequestDispatcher("/WEB-INF/jsp/product-form.jsp").forward(request, response);
+                request.getRequestDispatcher("/jsp/product-form.jsp").forward(request, response);
             } else if ("delete".equals(action)) {
                 int id = Integer.parseInt(request.getParameter("id"));
                 prodottoDAO.delete(id);
                 response.sendRedirect("AdminProductServlet");
             } else {
                 List<Product> prodotti = prodottoDAO.findAll();
-                request.setAttribute("prodotti", prodotti);
-                request.getRequestDispatcher("/WEB-INF/jsp/product.jsp").forward(request, response);
+                request.setAttribute("products", prodotti);
+                request.getRequestDispatcher("/jsp/adminProducts.jsp").forward(request, response);
             }
         } catch (Exception e) {
             logger.severe("Errore nella gestione prodotti admin" + e.getMessage());
-            response.sendRedirect("/WEB-INF/jsp/error.jsp");
+            request.setAttribute("errorMessage", "Errore nella gestione dei prodotti. Riprova.");
+            request.getRequestDispatcher("/jsp/error.jsp").forward(request, response);
         }
     }
 
@@ -54,12 +54,13 @@ public class AdminProductServlet extends HttpServlet {
         HttpSession session = request.getSession(false);
 
         if (!isValidToken(request, session)) {
-            response.sendRedirect("/WEB-INF/jsp/error.jsp");
+            request.setAttribute("errorMessage", "Token di sicurezza non valido. Riprova.");
+            request.getRequestDispatcher("/jsp/error.jsp").forward(request, response);
             return;
         }
 
         if (!isAdminLoggedIn(session)) {
-            response.sendRedirect("/WEB-INF/jsp/login.jsp");
+            response.sendRedirect("LoginServlet");
             return;
         }
 
@@ -75,25 +76,25 @@ public class AdminProductServlet extends HttpServlet {
             prodotto.setDescription(request.getParameter("descrizione"));
             prodotto.setPrice(new BigDecimal(request.getParameter("prezzo")));
             prodotto.setStockQuantity(Integer.parseInt(request.getParameter("quantita")));
-            prodotto.setPersonaggi(request.getParameter("personaggio"));
+
             prodotto.setCategory(request.getParameter("categoria"));
             prodotto.setImageUrl(request.getParameter("immagine"));
 
             ProductDAO prodottoDAO = new ProductDAO();
 
             if (prodotto.getId() > 0) {
-                prodottoDAO.update(prodotto);
+                prodottoDAO.updateProduct(prodotto);
             } else {
                 prodottoDAO.create(prodotto);
                 request.setAttribute("successMessage", "Prodotto salvato correttamente.");
-                request.getRequestDispatcher("/WEB-INF/jsp/success.jsp").forward(request, response);
+                response.sendRedirect("AdminProductServlet");
             }
 
             response.sendRedirect("AdminProductServlet");
         } catch (Exception e) {
             logger.severe("Errore durante il salvataggio del prodotto" + e.getMessage());
             request.setAttribute("errorMessage", "Errore durante il salvataggio del prodotto");
-            request.getRequestDispatcher("/WEB-INF/jsp/error.jsp").forward(request, response);
+            request.getRequestDispatcher("/jsp/error.jsp").forward(request, response);
         }
     }
 
@@ -104,7 +105,7 @@ public class AdminProductServlet extends HttpServlet {
     }
 
     private boolean isValidToken(HttpServletRequest request, HttpSession session) {
-        String sessionToken = (String) session.getAttribute("token");
+        String sessionToken = (String) session.getAttribute("csrfToken");
         String requestToken = request.getParameter("token");
         return sessionToken != null && sessionToken.equals(requestToken);
     }

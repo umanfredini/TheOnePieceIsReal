@@ -11,14 +11,14 @@ import java.io.IOException;
 import java.security.MessageDigest;
 import java.util.UUID;
 
-@WebServlet("/LoginServlet")
+//@WebServlet("/LoginServlet")
 public class LoginServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger logger = Logger.getLogger(LoginServlet.class.getName());
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getRequestDispatcher("/WEB-INF/jsp/login.jsp").forward(request, response);
+        request.getRequestDispatcher("/jsp/login.jsp").forward(request, response);
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -40,18 +40,18 @@ public class LoginServlet extends HttpServlet {
 
                 if (utente.isAdmin()) {
                     session.setAttribute("isAdmin", true);
-                    response.sendRedirect("/WEB-INF/jsp/adminDashboard.jsp");
+                    request.getRequestDispatcher("/jsp/adminDashboard.jsp").forward(request, response);
                 } else {
-                    response.sendRedirect("/WEB-INF/jsp/profilo.jsp");
+                    request.getRequestDispatcher("/jsp/profile.jsp").forward(request, response);
                 }
             } else {
                 request.setAttribute("errorMessage", "Email o password non corretti!");
-                request.getRequestDispatcher("/WEB-INF/jsp/login.jsp").forward(request, response);
+                request.getRequestDispatcher("/jsp/login.jsp").forward(request, response);
             }
         } catch (Exception e) {
             logger.severe("Errore durante il login" + e.getMessage());
             request.setAttribute("errorMessage", "Errore interno del server");
-            request.getRequestDispatcher("/WEB-INF/jsp/login.jsp").forward(request, response);
+            request.getRequestDispatcher("/jsp/login.jsp").forward(request, response);
         }
     }
 

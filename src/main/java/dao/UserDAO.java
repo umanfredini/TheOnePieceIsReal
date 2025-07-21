@@ -19,7 +19,7 @@ public class UserDAO {
     }
 
     public boolean create(User user) throws SQLException {
-        String sql = "INSERT INTO users (email, password_hash, username, role, is_active, shipping_address) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO users (email, password_hash, username, is_admin, is_active, shipping_address) VALUES (?, ?, ?, ?, ?, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, user.getEmail());
             stmt.setString(2, user.getPasswordHash());
@@ -58,7 +58,7 @@ public class UserDAO {
     }
 
     public boolean update(User user) throws SQLException {
-        String sql = "UPDATE users SET email = ?, password_hash = ?, username = ?, role = ?, is_active = ?, shipping_address = ? WHERE id = ?";
+        String sql = "UPDATE users SET email = ?, password_hash = ?, username = ?, is_admin = ?, is_active = ?, shipping_address = ? WHERE id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, user.getEmail());
             stmt.setString(2, user.getPasswordHash());
@@ -73,7 +73,7 @@ public class UserDAO {
     }
 
     public void delete(int id) throws SQLException {
-        String sql = "UPDATE products SET active = FALSE WHERE id = ?";
+        String sql = "UPDATE users SET is_active = FALSE WHERE id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setInt(1, id);
             stmt.executeUpdate();
@@ -93,6 +93,22 @@ public class UserDAO {
     }
 
     private User extractUser(ResultSet rs) throws SQLException {
+        // Gestione sicura dei timestamp
+        java.sql.Timestamp createdAt = null;
+        java.sql.Timestamp lastLogin = null;
+        
+        try {
+            createdAt = rs.getTimestamp("created_at");
+        } catch (SQLException e) {
+            System.out.println("Warning: created_at timestamp non valido, impostato a null");
+        }
+        
+        try {
+            lastLogin = rs.getTimestamp("last_login");
+        } catch (SQLException e) {
+            System.out.println("Warning: last_login timestamp non valido, impostato a null");
+        }
+        
         return new User(
             rs.getInt("id"),
             rs.getString("email"),
@@ -101,9 +117,8 @@ public class UserDAO {
             rs.getBoolean("is_admin"),
             rs.getBoolean("is_active"),
             rs.getString("shipping_address"),
-            rs.getTimestamp("created_at"),
-            rs.getTimestamp("last_login"),
-            rs.getString("avatar")
+            createdAt,
+            lastLogin
         );
     }
 
@@ -128,7 +143,15 @@ public class UserDAO {
     }
 
     public void toggleUserStatus(int id) throws SQLException {
-        String sql = "UPDATE users SET active = NOT active WHERE id = ?";
+        String sql = "UPDATE users SET is_active = NOT is_active WHERE id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, id);
+            stmt.executeUpdate();
+        }
+    }
+    
+    public void toggleAdminStatus(int id) throws SQLException {
+        String sql = "UPDATE users SET is_admin = NOT is_admin WHERE id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setInt(1, id);
             stmt.executeUpdate();
@@ -147,7 +170,7 @@ public class UserDAO {
     }
 
     public User findByEmailPassword(String email, String hashedPassword) throws SQLException {
-        String sql = "SELECT * FROM users WHERE email = ? AND password = ?";
+        String sql = "SELECT * FROM users WHERE email = ? AND password_hash = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, email);
             stmt.setString(2, hashedPassword);

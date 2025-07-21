@@ -8,13 +8,17 @@ import java.util.List;
 import dao.ProductDAO;
 import model.Product;
 
-@WebServlet("/HomeServlet")
+// @WebServlet("/HomeServlet")
 public class HomeServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private ProductDAO productDAO;
 
     public void init() throws ServletException {
-        productDAO = new ProductDAO();
+        try {
+            productDAO = new ProductDAO();
+        } catch (Exception e) {
+            throw new ServletException("Errore nell'inizializzazione del ProductDAO", e);
+        }
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) 
@@ -33,7 +37,7 @@ public class HomeServlet extends HttpServlet {
         } catch (Exception e) {
             // In caso di errore, reindirizza alla pagina di errore
             request.setAttribute("errorMessage", "Errore nel caricamento della homepage: " + e.getMessage());
-            request.getRequestDispatcher("/WEB-INF/jsp/error.jsp").forward(request, response);
+            request.getRequestDispatcher("/jsp/error.jsp").forward(request, response);
         }
     }
 

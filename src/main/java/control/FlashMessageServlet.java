@@ -5,7 +5,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import java.io.IOException;
 
-@WebServlet("/FlashMessageServlet")
+// @WebServlet("/FlashMessageServlet")
 public class FlashMessageServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 

@@ -24,16 +24,6 @@ body.profile-page {
     box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
 }
 
-/* Avatar */
-.profile-avatar {
-    width: 160px;
-    height: 160px;
-    border-radius: 50%;
-    border: 4px solid #FDB714;
-    box-shadow: 0 0 10px #D42027;
-    margin-bottom: 20px;
-}
-
 /* Username */
 .profile-username {
     font-size: 2.5em;
@@ -80,11 +70,6 @@ body.profile-page {
     .profile-actions {
         flex-direction: column;
         gap: 15px;
-    }
-
-    .profile-avatar {
-        width: 120px;
-        height: 120px;
     }
 
     .profile-username {

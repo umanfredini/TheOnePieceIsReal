@@ -28,3 +28,247 @@
 .animate-float {
   animation: float 3s ease-in-out infinite;
 }
+
+/* ===== ANIMAZIONI AVANZATE ONE PIECE ===== */
+
+/* === ANIMAZIONI GRADIENTI === */
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes gradient-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.8; }
+}
+
+@keyframes gradient-rotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* === ANIMAZIONI CARDS === */
+@keyframes card-float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes card-glow {
+  0%, 100% { box-shadow: 0 0 20px rgba(255, 193, 7, 0.3); }
+  50% { box-shadow: 0 0 30px rgba(255, 193, 7, 0.6); }
+}
+
+@keyframes card-shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+/* === ANIMAZIONI BOTTONI === */
+@keyframes button-pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+@keyframes button-bounce {
+  0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+  40% { transform: translateY(-10px); }
+  60% { transform: translateY(-5px); }
+}
+
+/* === ANIMAZIONI ICONE === */
+@keyframes icon-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes icon-wiggle {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(10deg); }
+  75% { transform: rotate(-10deg); }
+}
+
+/* === ANIMAZIONI TESTO === */
+@keyframes text-glow {
+  0%, 100% { text-shadow: 0 0 5px rgba(255, 193, 7, 0.5); }
+  50% { text-shadow: 0 0 15px rgba(255, 193, 7, 0.8); }
+}
+
+@keyframes text-fade-in {
+  0% { opacity: 0; transform: translateY(20px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* === ANIMAZIONI CAROSELLO === */
+@keyframes carousel-wave {
+  0% { transform: translateX(0) rotate(0deg); }
+  25% { transform: translateX(-10px) rotate(1deg); }
+  50% { transform: translateX(0) rotate(0deg); }
+  75% { transform: translateX(10px) rotate(-1deg); }
+  100% { transform: translateX(0) rotate(0deg); }
+}
+
+@keyframes carousel-float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-5px); }
+}
+
+/* === ANIMAZIONI HEADER === */
+@keyframes header-slide-in {
+  0% { transform: translateY(-100%); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes logo-bounce {
+  0%, 20%, 50%, 80%, 100% { transform: scale(1); }
+  40% { transform: scale(1.1); }
+  60% { transform: scale(1.05); }
+}
+
+/* === ANIMAZIONI SIDEBAR === */
+@keyframes sidebar-slide-in {
+  0% { transform: translateX(-100%); opacity: 0; }
+  100% { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes menu-item-hover {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(10px); }
+}
+
+/* === CLASSI ANIMAZIONE === */
+.animate-gradient-shift {
+  animation: gradient-shift 8s ease infinite;
+}
+
+.animate-gradient-pulse {
+  animation: gradient-pulse 3s ease-in-out infinite;
+}
+
+.animate-gradient-rotate {
+  animation: gradient-rotate 20s linear infinite;
+}
+
+.animate-card-float {
+  animation: card-float 3s ease-in-out infinite;
+}
+
+.animate-card-glow {
+  animation: card-glow 2s ease-in-out infinite;
+}
+
+.animate-card-shake {
+  animation: card-shake 0.5s ease-in-out;
+}
+
+.animate-button-pulse {
+  animation: button-pulse 0.3s ease-in-out;
+}
+
+.animate-button-bounce {
+  animation: button-bounce 0.6s ease-in-out;
+}
+
+.animate-icon-spin {
+  animation: icon-spin 1s linear infinite;
+}
+
+.animate-icon-wiggle {
+  animation: icon-wiggle 0.5s ease-in-out;
+}
+
+.animate-text-glow {
+  animation: text-glow 2s ease-in-out infinite;
+}
+
+.animate-text-fade-in {
+  animation: text-fade-in 0.8s ease-out;
+}
+
+.animate-carousel-wave {
+  animation: carousel-wave 4s ease-in-out infinite;
+}
+
+.animate-carousel-float {
+  animation: carousel-float 2s ease-in-out infinite;
+}
+
+.animate-header-slide-in {
+  animation: header-slide-in 1s ease-out;
+}
+
+.animate-logo-bounce {
+  animation: logo-bounce 0.6s ease-in-out;
+}
+
+.animate-sidebar-slide-in {
+  animation: sidebar-slide-in 0.8s ease-out;
+}
+
+.animate-menu-item-hover {
+  animation: menu-item-hover 0.3s ease-out;
+}
+
+/* === HOVER EFFECTS === */
+/* Effetti hover rimossi per design più pulito */
+
+.wishlist-btn:hover,
+.cart-btn:hover {
+  animation: button-pulse 0.3s ease-in-out;
+}
+
+.nav-item:hover i {
+  animation: icon-wiggle 0.5s ease-in-out;
+}
+
+.gradient-text:hover {
+  animation: text-glow 1s ease-in-out infinite;
+}
+
+/* === RESPONSIVE ANIMAZIONS === */
+@media (max-width: 768px) {
+  .animate-card-float {
+    animation: none;
+  }
+  
+  .animate-carousel-wave {
+    animation: none;
+  }
+  
+  .animate-gradient-shift {
+    animation-duration: 12s;
+  }
+}
+
+/* === PERFORMANCE OPTIMIZATIONS === */
+.animate-gradient-shift,
+.animate-gradient-pulse,
+.animate-gradient-rotate {
+  will-change: background-position;
+}
+
+.animate-card-float,
+.animate-card-glow {
+  will-change: transform, box-shadow;
+}
+
+.animate-button-pulse,
+.animate-button-bounce {
+  will-change: transform;
+}
+
+.animate-icon-spin,
+.animate-icon-wiggle {
+  will-change: transform;
+}
+
+.animate-text-glow {
+  will-change: text-shadow;
+}
+
+.animate-carousel-wave,
+.animate-carousel-float {
+  will-change: transform;
+}

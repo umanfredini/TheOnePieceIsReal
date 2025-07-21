@@ -22,15 +22,16 @@ public class OrderDAO {
 
 
     public void create(Order order) throws SQLException {
-        String sql = "INSERT INTO orders (user_id, total_price, shipping_address, payment_method, status, tracking_number, notes) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO orders (user_id, total_price, order_date, shipping_address, payment_method, status, tracking_number, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setInt(1, order.getUserId());
             stmt.setBigDecimal(2, order.getTotalPrice());
-            stmt.setString(3, order.getShippingAddress());
-            stmt.setString(4, order.getPaymentMethod());
-            stmt.setString(5, order.getStatus());
-            stmt.setString(6, order.getTrackingNumber());
-            stmt.setString(7, order.getNotes());
+            stmt.setTimestamp(3, order.getOrderDate());
+            stmt.setString(4, order.getShippingAddress());
+            stmt.setString(5, order.getPaymentMethod());
+            stmt.setString(6, order.getStatus());
+            stmt.setString(7, order.getTrackingNumber());
+            stmt.setString(8, order.getNotes());
             stmt.executeUpdate();
             ResultSet rs = stmt.getGeneratedKeys();
             if (rs.next()) {
@@ -85,6 +86,14 @@ public class OrderDAO {
         OrderItemDAO itemDAO = new OrderItemDAO(connection);
         List<OrderItem> items = itemDAO.findByOrderId(orderId);
 
+        // Gestione sicura del timestamp
+        java.sql.Timestamp orderDate = null;
+        try {
+            orderDate = rs.getTimestamp("order_date");
+        } catch (SQLException e) {
+            System.out.println("Warning: order_date timestamp non valido, impostato a null");
+        }
+        
         return new Order(
             orderId,
             rs.getInt("user_id"),
@@ -94,7 +103,7 @@ public class OrderDAO {
             rs.getString("status"),
             rs.getString("tracking_number"),
             rs.getString("notes"),
-            rs.getTimestamp("order_date"),
+            orderDate,
             items
         );
     }
@@ -134,6 +143,21 @@ public class OrderDAO {
     }
 
     public void updateStato(int ordineId, String nuovoStato) throws SQLException {
+        // Validazione del nuovo stato
+        String[] statiValidi = {"pending", "processing", "shipped", "delivered", "cancelled"};
+        boolean statoValido = false;
+        for (String stato : statiValidi) {
+            if (stato.equalsIgnoreCase(nuovoStato)) {
+                nuovoStato = stato; // Normalizza il case
+                statoValido = true;
+                break;
+            }
+        }
+        
+        if (!statoValido) {
+            throw new SQLException("Stato non valido: " + nuovoStato + ". Stati validi: pending, processing, shipped, delivered, cancelled");
+        }
+        
         String sql = "UPDATE orders SET status = ? WHERE id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, nuovoStato);
@@ -154,14 +178,26 @@ public class OrderDAO {
 	}
 
     public double getTotalRevenue() throws SQLException {
-    	String sql = "SELECT SUM(total_price) FROM orders";
-    	try (PreparedStatement stmt = connection.prepareStatement(sql);
-    			ResultSet rs = stmt.executeQuery()) {
-    			if (rs.next()) {
-    				return rs.getDouble(1);
-    			}
-    	}
-    	return 0.0;
+        String sql = "SELECT COALESCE(SUM(total_price), 0) FROM orders WHERE status != 'cancelled'";
+        try (PreparedStatement stmt = connection.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+            if (rs.next()) {
+                return rs.getDouble(1);
+            }
+        } catch (SQLException e) {
+            // Fallback: prova a contare solo gli ordini completati
+            String fallbackSql = "SELECT COALESCE(SUM(total_price), 0) FROM orders";
+            try (PreparedStatement stmt = connection.prepareStatement(fallbackSql);
+                 ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getDouble(1);
+                }
+            } catch (SQLException e2) {
+                // Se anche il fallback fallisce, restituisci 0
+                System.err.println("Errore nel calcolo revenue: " + e2.getMessage());
+            }
+        }
+        return 0.0;
     }
 
     public List<Order> getRecentOrders(int limit) throws SQLException {
