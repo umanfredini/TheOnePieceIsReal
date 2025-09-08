@@ -108,7 +108,7 @@ public class DashboardServlet extends HttpServlet {
             request.getRequestDispatcher("/jsp/error.jsp").forward(request, response);
         } catch (Exception e) {
             logger.severe("Errore generico nel caricamento della dashboard: " + e.getMessage());
-            e.printStackTrace();
+            logger.severe("Errore nel DashboardServlet: " + e.getMessage());
             request.setAttribute("errorMessage", "Errore nel caricamento della dashboard: " + e.getMessage());
             request.getRequestDispatcher("/jsp/error.jsp").forward(request, response);
         }

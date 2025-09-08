@@ -1,21 +1,27 @@
 package dao;
 
 import java.sql.*;
+import java.util.logging.Logger;
 
 import model.Cart;
 import util.DBConnection;
 
 public class CartDAO {
     private final Connection connection;
+    private static final Logger logger = Logger.getLogger(CartDAO.class.getName());
 
     public CartDAO(Connection connection) {
         this.connection = connection;
     }
     
 
-    public CartDAO() throws SQLException {
-    	this.connection = DBConnection.getConnection();
-	}
+    public CartDAO() {
+    	try {
+    		this.connection = DBConnection.getConnection();
+    	} catch (SQLException e) {
+    		throw new RuntimeException("Errore nella connessione al database", e);
+    	}
+    }
 
 
     public void create(Cart cart) throws SQLException {
@@ -39,13 +45,13 @@ public class CartDAO {
                 try {
                     createdAt = rs.getTimestamp("created_at");
                 } catch (SQLException e) {
-                    System.out.println("Warning: created_at timestamp non valido, impostato a null");
+                    logger.warning("Warning: created_at timestamp non valido, impostato a null");
                 }
                 
                 try {
                     modifiedAt = rs.getTimestamp("modified_at");
                 } catch (SQLException e) {
-                    System.out.println("Warning: modified_at timestamp non valido, impostato a null");
+                    logger.warning("Warning: modified_at timestamp non valido, impostato a null");
                 }
                 
                 return new Cart(

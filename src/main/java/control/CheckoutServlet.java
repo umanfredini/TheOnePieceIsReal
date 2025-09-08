@@ -218,7 +218,6 @@ public class CheckoutServlet extends HttpServlet {
             }
         } catch (Exception e) {
             logger.severe("Errore durante il checkout: " + e.getMessage());
-            e.printStackTrace(); // Aggiungi stack trace completo
             request.setAttribute("errorMessage", "Errore interno del server: " + e.getMessage());
             request.getRequestDispatcher("/jsp/checkout.jsp").forward(request, response);
         }

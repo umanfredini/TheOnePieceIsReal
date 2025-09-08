@@ -17,6 +17,12 @@
                     <i class="fas fa-copy"></i> Copia
                 </button>
             </div>
+            <div class="mt-2">
+                <a href="${pageContext.request.contextPath}/TrackingServlet?action=search&trackingNumber=${order.trackingNumber}" 
+                   class="btn btn-success btn-sm">
+                    <i class="fas fa-ship me-1"></i> Traccia Ordine
+                </a>
+            </div>
             <small class="text-muted">Usa questo ID per tracciare il tuo ordine</small>
         </div>
     </c:if>

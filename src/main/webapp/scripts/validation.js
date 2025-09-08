@@ -1,6 +1,23 @@
 // WebContent/scripts/validation.js
 
-import { showError, hideError } from './main.js';
+// Funzioni di utilità per la validazione
+function showError(element, message) {
+    const errorDiv = document.getElementById(element.name + '-error');
+    if (errorDiv) {
+        errorDiv.textContent = message;
+        errorDiv.style.display = 'block';
+        element.classList.add('is-invalid');
+    }
+}
+
+function hideError(element) {
+    const errorDiv = document.getElementById(element.name + '-error');
+    if (errorDiv) {
+        errorDiv.textContent = '';
+        errorDiv.style.display = 'none';
+        element.classList.remove('is-invalid');
+    }
+}
 
 /**
  * Validazione email

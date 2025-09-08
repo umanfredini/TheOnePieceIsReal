@@ -84,10 +84,10 @@ public class AdminProductServlet extends HttpServlet {
 
             if (prodotto.getId() > 0) {
                 prodottoDAO.updateProduct(prodotto);
+                request.setAttribute("successMessage", "Prodotto aggiornato correttamente.");
             } else {
                 prodottoDAO.create(prodotto);
                 request.setAttribute("successMessage", "Prodotto salvato correttamente.");
-                response.sendRedirect("AdminProductServlet");
             }
 
             response.sendRedirect("AdminProductServlet");
@@ -106,7 +106,7 @@ public class AdminProductServlet extends HttpServlet {
 
     private boolean isValidToken(HttpServletRequest request, HttpSession session) {
         String sessionToken = (String) session.getAttribute("csrfToken");
-        String requestToken = request.getParameter("token");
+        String requestToken = request.getParameter("csrfToken");
         return sessionToken != null && sessionToken.equals(requestToken);
     }
 }

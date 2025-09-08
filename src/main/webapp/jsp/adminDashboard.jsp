@@ -4,6 +4,10 @@
 <jsp:include page="header.jsp" />
 
 <main class="container mt-5" role="main">
+    <jsp:include page="adminBreadcrumb.jsp">
+        <jsp:param name="page" value="dashboard" />
+    </jsp:include>
+    
     <h1 class="mb-4 text-center">Dashboard Amministratore</h1>
 
     <!-- Statistiche generali -->

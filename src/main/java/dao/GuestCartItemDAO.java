@@ -16,8 +16,12 @@ public class GuestCartItemDAO {
         this.connection = connection;
     }
     
-    public GuestCartItemDAO() throws SQLException {
-        this.connection = DBConnection.getConnection();
+    public GuestCartItemDAO() {
+        try {
+            this.connection = DBConnection.getConnection();
+        } catch (SQLException e) {
+            throw new RuntimeException("Errore nella connessione al database", e);
+        }
     }
 
     public void add(int guestCartId, int productId, Integer productVariantId, int quantity) throws SQLException {
@@ -146,13 +150,13 @@ public class GuestCartItemDAO {
         try {
             createdAt = rs.getTimestamp("created_at");
         } catch (SQLException e) {
-            System.out.println("Warning: created_at timestamp non valido, impostato a null");
+            logger.warning("Warning: created_at timestamp non valido, impostato a null");
         }
         
         try {
             updatedAt = rs.getTimestamp("updated_at");
         } catch (SQLException e) {
-            System.out.println("Warning: updated_at timestamp non valido, impostato a null");
+            logger.warning("Warning: updated_at timestamp non valido, impostato a null");
         }
         
         return new GuestCartItem(
@@ -175,19 +179,19 @@ public class GuestCartItemDAO {
         try {
             createdAt = rs.getTimestamp("created_at");
         } catch (SQLException e) {
-            System.out.println("Warning: created_at timestamp non valido, impostato a null");
+            logger.warning("Warning: created_at timestamp non valido, impostato a null");
         }
         
         try {
             updatedAt = rs.getTimestamp("updated_at");
         } catch (SQLException e) {
-            System.out.println("Warning: updated_at timestamp non valido, impostato a null");
+            logger.warning("Warning: updated_at timestamp non valido, impostato a null");
         }
         
         try {
             deletedAt = rs.getTimestamp("deleted_at");
         } catch (SQLException e) {
-            System.out.println("Warning: deleted_at timestamp non valido, impostato a null");
+            logger.warning("Warning: deleted_at timestamp non valido, impostato a null");
         }
         
         return new Product(
@@ -223,13 +227,13 @@ public class GuestCartItemDAO {
         try {
             gciCreatedAt = rs.getTimestamp("gci_created_at");
         } catch (SQLException e) {
-            System.out.println("Warning: gci_created_at timestamp non valido, impostato a null");
+            logger.warning("Warning: gci_created_at timestamp non valido, impostato a null");
         }
         
         try {
             gciUpdatedAt = rs.getTimestamp("gci_updated_at");
         } catch (SQLException e) {
-            System.out.println("Warning: gci_updated_at timestamp non valido, impostato a null");
+            logger.warning("Warning: gci_updated_at timestamp non valido, impostato a null");
         }
         
         return new GuestCartItem(
@@ -252,19 +256,19 @@ public class GuestCartItemDAO {
         try {
             pCreatedAt = rs.getTimestamp("p_created_at");
         } catch (SQLException e) {
-            System.out.println("Warning: p_created_at timestamp non valido, impostato a null");
+            logger.warning("Warning: p_created_at timestamp non valido, impostato a null");
         }
         
         try {
             pUpdatedAt = rs.getTimestamp("p_updated_at");
         } catch (SQLException e) {
-            System.out.println("Warning: p_updated_at timestamp non valido, impostato a null");
+            logger.warning("Warning: p_updated_at timestamp non valido, impostato a null");
         }
         
         try {
             deletedAt = rs.getTimestamp("deleted_at");
         } catch (SQLException e) {
-            System.out.println("Warning: deleted_at timestamp non valido, impostato a null");
+            logger.warning("Warning: deleted_at timestamp non valido, impostato a null");
         }
         
         return new Product(

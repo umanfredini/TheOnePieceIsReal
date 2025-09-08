@@ -1,12 +1,10 @@
 package control;
 
 import jakarta.servlet.*;
-import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.*;
 import java.io.IOException;
 import java.util.UUID;
 
-@WebFilter("/*")
 public class CSRFTokenFilter implements Filter {
     
     @Override
@@ -15,10 +13,10 @@ public class CSRFTokenFilter implements Filter {
         
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
-        HttpSession session = httpRequest.getSession(false);
+        HttpSession session = httpRequest.getSession(true); // Crea sessione se non esiste
         
         // Genera token CSRF se non esiste
-        if (session != null && session.getAttribute("csrfToken") == null) {
+        if (session.getAttribute("csrfToken") == null) {
             String csrfToken = UUID.randomUUID().toString();
             session.setAttribute("csrfToken", csrfToken);
         }

@@ -213,11 +213,18 @@
     text-align: center;
 }
 
-.product-image:not([src])::after,
-.product-image[src=""]::after,
-.product-card img:not([src])::after,
-.product-card img[src=""]::after,
-.card-img-top:not([src])::after,
-.card-img-top[src=""]::after {
-    content: "Immagine non disponibile";
+/* Pseudo-elemento rimosso per evitare conflitti - gestito da JavaScript */
+.product-image:not([src]),
+.product-image[src=""],
+.product-card img:not([src]),
+.product-card img[src=""],
+.card-img-top:not([src]),
+.card-img-top[src=""] {
+    background-color: #f8f9fa;
+    border: 2px dashed #dee2e6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #6c757d;
+    font-size: 0.9rem;
 } 

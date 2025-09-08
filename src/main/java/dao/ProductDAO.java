@@ -31,7 +31,7 @@ public class ProductDAO {
                 products.add(mapResultSetToProduct(rs));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.severe("Errore nel metodo: " + e.getMessage());
         }
         return products;
     }
@@ -50,10 +50,10 @@ public class ProductDAO {
             }
         } catch (SQLException e) {
             System.err.println("Errore SQL nel recupero prodotto ID " + id + ": " + e.getMessage());
-            e.printStackTrace();
+            logger.severe("Errore nel metodo: " + e.getMessage());
         } catch (Exception e) {
             System.err.println("Errore generico nel recupero prodotto ID " + id + ": " + e.getMessage());
-            e.printStackTrace();
+            logger.severe("Errore nel metodo: " + e.getMessage());
         }
         return Optional.empty();
     }
@@ -72,7 +72,7 @@ public class ProductDAO {
                 products.add(mapResultSetToProduct(rs));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.severe("Errore nel metodo: " + e.getMessage());
         }
         return products;
     }
@@ -90,7 +90,7 @@ public class ProductDAO {
                 products.add(mapResultSetToProduct(rs));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.severe("Errore nel metodo: " + e.getMessage());
         }
         return products;
     }
@@ -107,7 +107,7 @@ public class ProductDAO {
                 products.add(mapResultSetToProduct(rs));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.severe("Errore nel metodo: " + e.getMessage());
         }
         return products;
     }
@@ -126,7 +126,7 @@ public class ProductDAO {
                 products.add(mapResultSetToProduct(rs));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.severe("Errore nel metodo: " + e.getMessage());
         }
         return products;
     }
@@ -149,7 +149,7 @@ public class ProductDAO {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.severe("Errore nel metodo: " + e.getMessage());
         }
         return products;
     }
@@ -183,7 +183,7 @@ public class ProductDAO {
                 products.add(mapResultSetToProduct(rs));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.severe("Errore nel metodo: " + e.getMessage());
         }
         return products;
     }
@@ -203,7 +203,7 @@ public class ProductDAO {
                 variants.add(mapResultSetToProductVariant(rs));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.severe("Errore nel metodo: " + e.getMessage());
         }
         return variants;
     }
@@ -221,7 +221,7 @@ public class ProductDAO {
                 return Optional.of(mapResultSetToProductVariant(rs));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.severe("Errore nel metodo: " + e.getMessage());
         }
         return Optional.empty();
     }
@@ -241,7 +241,7 @@ public class ProductDAO {
                 variants.add(mapResultSetToProductVariant(rs));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.severe("Errore nel metodo: " + e.getMessage());
         }
         return variants;
     }
@@ -258,7 +258,7 @@ public class ProductDAO {
             
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.severe("Errore nel metodo: " + e.getMessage());
             return false;
         }
     }
@@ -275,7 +275,7 @@ public class ProductDAO {
             
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.severe("Errore nel metodo: " + e.getMessage());
             return false;
         }
     }
@@ -304,7 +304,7 @@ public class ProductDAO {
                 products.add(mapResultSetToProduct(rs));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.severe("Errore nel metodo: " + e.getMessage());
         }
         return products;
     }
@@ -337,7 +337,7 @@ public class ProductDAO {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.severe("Errore nel metodo: " + e.getMessage());
         }
         return false;
     }
@@ -365,7 +365,7 @@ public class ProductDAO {
             
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.severe("Errore nel metodo: " + e.getMessage());
             return false;
         }
     }
@@ -395,7 +395,7 @@ public class ProductDAO {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.severe("Errore nel metodo: " + e.getMessage());
         }
         return false;
     }
@@ -418,7 +418,7 @@ public class ProductDAO {
             
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.severe("Errore nel metodo: " + e.getMessage());
             return false;
         }
     }
@@ -432,7 +432,7 @@ public class ProductDAO {
             stmt.setInt(1, variantId);
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.severe("Errore nel metodo: " + e.getMessage());
             return false;
         }
     }
@@ -546,7 +546,7 @@ public class ProductDAO {
                 categories.add(rs.getString("category"));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.severe("Errore nel metodo: " + e.getMessage());
         }
         return categories;
     }
@@ -564,10 +564,10 @@ public class ProductDAO {
             }
         } catch (SQLException e) {
             logger.severe("Errore SQL in findAll: " + e.getMessage());
-            e.printStackTrace();
+            logger.severe("Errore nel metodo: " + e.getMessage());
         } catch (Exception e) {
             logger.severe("Errore generico in findAll: " + e.getMessage());
-            e.printStackTrace();
+            logger.severe("Errore nel metodo: " + e.getMessage());
         }
         return products;
     }
@@ -586,7 +586,7 @@ public class ProductDAO {
                 products.add(mapResultSetToProduct(rs));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.severe("Errore nel metodo: " + e.getMessage());
         }
         return products;
     }
@@ -605,7 +605,7 @@ public class ProductDAO {
                 products.add(mapResultSetToProduct(rs));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.severe("Errore nel metodo: " + e.getMessage());
         }
         return products;
     }
@@ -633,7 +633,7 @@ public class ProductDAO {
                 products.add(mapResultSetToProduct(rs));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.severe("Errore nel metodo: " + e.getMessage());
         }
         return products;
     }
@@ -657,7 +657,7 @@ public class ProductDAO {
             }
         } catch (SQLException e) {
             System.err.println("ERRORE SQL nel recupero prodotto ID " + id + ": " + e.getMessage());
-            e.printStackTrace();
+            logger.severe("Errore nel metodo: " + e.getMessage());
             throw new RuntimeException("Errore nel recupero del prodotto con ID " + id + ": " + e.getMessage(), e);
         }
         return null;
@@ -723,7 +723,7 @@ public class ProductDAO {
                 products.add(mapResultSetToProduct(rs));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.severe("Errore nel metodo: " + e.getMessage());
         }
         return products;
     }
@@ -767,7 +767,7 @@ public class ProductDAO {
             }
         } catch (SQLException e) {
             logger.severe("Errore nel conteggio prodotti: " + e.getMessage());
-            e.printStackTrace();
+            logger.severe("Errore nel metodo: " + e.getMessage());
         }
         return 0;
     }
@@ -787,7 +787,7 @@ public class ProductDAO {
             }
         } catch (SQLException e) {
             logger.severe("Errore nel conteggio prodotti: " + e.getMessage());
-            e.printStackTrace();
+            logger.severe("Errore nel metodo: " + e.getMessage());
         }
         return 0;
     }
@@ -866,7 +866,7 @@ public class ProductDAO {
             
         } catch (SQLException e) {
             logger.severe("Errore anche nel fallback prodotti più venduti: " + e.getMessage());
-            e.printStackTrace();
+            logger.severe("Errore nel metodo: " + e.getMessage());
         }
         
         return topProducts;
@@ -894,7 +894,7 @@ public class ProductDAO {
             
         } catch (SQLException e) {
             logger.severe("Errore nell'eliminazione del prodotto ID " + productId + ": " + e.getMessage());
-            e.printStackTrace();
+            logger.severe("Errore nel metodo: " + e.getMessage());
             return false;
         }
     }
@@ -921,7 +921,7 @@ public class ProductDAO {
             
         } catch (SQLException e) {
             logger.severe("Errore nell'eliminazione definitiva del prodotto ID " + productId + ": " + e.getMessage());
-            e.printStackTrace();
+            logger.severe("Errore nel metodo: " + e.getMessage());
             return false;
         }
     }
@@ -948,7 +948,7 @@ public class ProductDAO {
             
         } catch (SQLException e) {
             logger.severe("Errore nella riattivazione del prodotto ID " + productId + ": " + e.getMessage());
-            e.printStackTrace();
+            logger.severe("Errore nel metodo: " + e.getMessage());
             return false;
         }
     }
@@ -999,7 +999,7 @@ public class ProductDAO {
             
         } catch (SQLException e) {
             logger.severe("Errore nella creazione del prodotto: " + e.getMessage());
-            e.printStackTrace();
+            logger.severe("Errore nel metodo: " + e.getMessage());
             return false;
         }
     }

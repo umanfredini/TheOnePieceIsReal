@@ -4,6 +4,9 @@
 <jsp:include page="header.jsp" />
 
 <main class="container mt-5" role="main">
+    <jsp:include page="adminBreadcrumb.jsp">
+        <jsp:param name="page" value="orders" />
+    </jsp:include>
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1>Gestione Ordini</h1>
         <div>

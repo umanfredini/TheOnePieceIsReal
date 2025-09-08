@@ -15,8 +15,12 @@ public class ProductVariantDAO {
         this.connection = connection;
     }
     
-    public ProductVariantDAO() throws SQLException {
-    	this.connection = DBConnection.getConnection();
+    public ProductVariantDAO() {
+    	try {
+    		this.connection = DBConnection.getConnection();
+    	} catch (SQLException e) {
+    		throw new RuntimeException("Errore nella connessione al database", e);
+    	}
     }
 
     public void create(ProductVariant variant) throws SQLException {

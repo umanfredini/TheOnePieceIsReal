@@ -5,11 +5,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.ArrayList;
+import java.util.logging.Logger;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import model.Product;
 import model.ProductVariant;
+import model.CartItem;
 import dao.ProductDAO;
 import dao.ProductVariantDAO;
 import util.CharacterManager;
@@ -17,6 +19,7 @@ import util.CharacterManager;
 // @WebServlet("/ProductServlet")
 public class ProductServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
+    private static final Logger logger = Logger.getLogger(ProductServlet.class.getName());
     
     protected void doGet(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
@@ -62,7 +65,7 @@ public class ProductServlet extends HttpServlet {
                     List<ProductVariant> variants = variantDAO.findAllByProductId(id);
                     request.setAttribute("variants", variants);
                 } catch (Exception e) {
-                    System.err.println("Errore nel caricamento varianti: " + e.getMessage());
+                    logger.warning("Errore nel caricamento varianti: " + e.getMessage());
                     request.setAttribute("variants", new ArrayList<>());
                 }
                 request.getRequestDispatcher("/jsp/product-detail.jsp").forward(request, response);
@@ -147,7 +150,7 @@ public class ProductServlet extends HttpServlet {
                 request.getRequestDispatcher("/jsp/catalog.jsp").forward(request, response);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.severe("Errore nel ProductServlet: " + e.getMessage());
             request.setAttribute("errorMessage", "Errore nel caricamento del prodotto. Prodotto non trovato.");
             request.getRequestDispatcher("/jsp/error.jsp").forward(request, response);
         }
@@ -155,7 +158,129 @@ public class ProductServlet extends HttpServlet {
     
     protected void doPost(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
-        // Reindirizza al CartServlet per gestire l'aggiunta al carrello
-        request.getRequestDispatcher("/CartServlet").include(request, response);
+        
+        // Validazione CSRF Token
+        if (!isValidCSRFToken(request)) {
+            logger.warning("Token CSRF non valido - Session: " + (request.getSession(false) != null) + 
+                          ", SessionToken: " + (request.getSession(false) != null ? request.getSession(false).getAttribute("csrfToken") : "null") +
+                          ", RequestToken: " + request.getParameter("csrfToken"));
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Token CSRF non valido");
+            return;
+        }
+        
+        String action = request.getParameter("action");
+        
+        if ("add".equals(action)) {
+            // Gestisci aggiunta al carrello
+            try {
+                addToCart(request, response);
+            } catch (Exception e) {
+                logger.severe("Errore nell'aggiunta al carrello: " + e.getMessage());
+                String errorMessage = "Errore nell'aggiunta al carrello.";
+                
+                // Controlla se è un errore di database
+                if (e.getMessage() != null && e.getMessage().contains("Could not create connection")) {
+                    errorMessage = "Database non disponibile. Verificare che MySQL sia in esecuzione.";
+                    logger.severe("Errore di connessione al database durante l'aggiunta al carrello");
+                }
+                
+                request.setAttribute("errorMessage", errorMessage);
+                request.getRequestDispatcher("/jsp/error.jsp").forward(request, response);
+            }
+        } else {
+            // Azione non riconosciuta
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Azione non valida");
+        }
     }
+    
+    private void addToCart(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        HttpSession session = request.getSession();
+        
+        // Validazione parametri
+        String productIdStr = request.getParameter("productId");
+        String quantityStr = request.getParameter("quantity");
+        String variantIdStr = request.getParameter("variantId");
+        
+        if (productIdStr == null || productIdStr.trim().isEmpty()) {
+            throw new IllegalArgumentException("ID prodotto mancante");
+        }
+        
+        int productId = Integer.parseInt(productIdStr);
+        int quantity = 1; // Default
+        
+        if (quantityStr != null && !quantityStr.trim().isEmpty()) {
+            try {
+                quantity = Integer.parseInt(quantityStr);
+                if (quantity <= 0) quantity = 1;
+            } catch (NumberFormatException e) {
+                quantity = 1;
+            }
+        }
+        
+        // Ottieni il carrello dalla sessione
+        @SuppressWarnings("unchecked")
+        Map<Integer, CartItem> carrello = (Map<Integer, CartItem>) session.getAttribute("carrello");
+        if (carrello == null) {
+            carrello = new HashMap<>();
+            session.setAttribute("carrello", carrello);
+        }
+        
+        // Ottieni il prodotto
+        ProductDAO productDAO = new ProductDAO();
+        Product product = productDAO.findByProductId(productId);
+        
+        if (product == null) {
+            throw new IllegalArgumentException("Prodotto non trovato");
+        }
+        
+        // Crea o aggiorna l'item del carrello
+        CartItem existingItem = carrello.get(productId);
+        if (existingItem != null) {
+            existingItem.setQuantity(existingItem.getQuantity() + quantity);
+        } else {
+            CartItem newItem = new CartItem();
+            newItem.setProduct(product);
+            newItem.setQuantity(quantity);
+            newItem.setAddedAt(new java.sql.Timestamp(System.currentTimeMillis()));
+            
+            // Gestisci variante se presente
+            if (variantIdStr != null && !variantIdStr.trim().isEmpty()) {
+                try {
+                    int variantId = Integer.parseInt(variantIdStr);
+                    ProductVariantDAO variantDAO = new ProductVariantDAO();
+                    ProductVariant variant = variantDAO.findByVariantId(variantId);
+                    if (variant != null) {
+                        newItem.setVariant(variant);
+                    }
+                } catch (NumberFormatException e) {
+                    logger.warning("ID variante non valido: " + variantIdStr);
+                }
+            }
+            
+            carrello.put(productId, newItem);
+        }
+        
+        // Redirect alla pagina del prodotto con messaggio di successo
+        response.sendRedirect(request.getContextPath() + "/ProductServlet?action=detail&id=" + productId + "&added=true");
+    }
+    
+    /**
+     * Valida il token CSRF della richiesta
+     */
+    private boolean isValidCSRFToken(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        if (session == null) {
+            return false;
+        }
+        
+        String sessionToken = (String) session.getAttribute("csrfToken");
+        String requestToken = request.getParameter("csrfToken");
+        
+        if (sessionToken == null || requestToken == null || requestToken.trim().isEmpty()) {
+            return false;
+        }
+        
+        return sessionToken.equals(requestToken);
+    }
+    
 }

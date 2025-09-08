@@ -136,13 +136,13 @@ function toggleWishlist(productId) {
                 if (typeof showToast !== 'undefined') {
                     showToast('Prodotto aggiunto alla wishlist!', 'success');
                 } else {
-                    console.log('Prodotto aggiunto alla wishlist!');
+                    // Prodotto aggiunto alla wishlist
                 }
             } else {
                 if (typeof showToast !== 'undefined') {
                     showToast('Prodotto rimosso dalla wishlist!', 'info');
                 } else {
-                    console.log('Prodotto rimosso dalla wishlist!');
+                    // Prodotto rimosso dalla wishlist
                 }
             }
         } else {

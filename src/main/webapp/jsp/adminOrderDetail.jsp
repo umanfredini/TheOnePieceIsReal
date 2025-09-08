@@ -21,7 +21,7 @@
     <section class="mb-4" role="region" aria-label="Aggiorna stato ordine">
                     <form action="AdminOrderServlet" method="post" class="card p-3">
             <input type="hidden" name="ordineId" value="${order.id}" />
-            <input type="hidden" name="token" value="${sessionScope.csrfToken}" />
+            <input type="hidden" name="csrfToken" value="${sessionScope.csrfToken}" />
             <div class="mb-3">
                 <label for="status" class="form-label">Aggiorna stato ordine</label>
                 <select name="stato" id="status" class="form-select">

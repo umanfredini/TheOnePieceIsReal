@@ -3,6 +3,7 @@ package dao;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 import model.CartItem;
 import model.Product;
@@ -10,14 +11,19 @@ import util.DBConnection;
 
 public class CartItemDAO {
     private final Connection connection;
+    private static final Logger logger = Logger.getLogger(CartItemDAO.class.getName());
 
     public CartItemDAO(Connection connection) {
         this.connection = connection;
     }
     
 
-    public CartItemDAO() throws SQLException {
-    	this.connection = DBConnection.getConnection();
+    public CartItemDAO() {
+    	try {
+    		this.connection = DBConnection.getConnection();
+    	} catch (SQLException e) {
+    		throw new RuntimeException("Errore nella connessione al database", e);
+    	}
     }
 
 
@@ -43,7 +49,7 @@ public class CartItemDAO {
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setInt(1, cartId);
             ResultSet rs = stmt.executeQuery();
-            ProductDAO productDAO = new ProductDAO(connection);
+            ProductDAO productDAO = new ProductDAO();
             while (rs.next()) {
                 int productId = rs.getInt("product_id");
                 Product product = productDAO.findByProductId(productId);
@@ -52,7 +58,7 @@ public class CartItemDAO {
                 try {
                     addedAt = rs.getTimestamp("added_at");
                 } catch (SQLException e) {
-                    System.out.println("Warning: added_at timestamp non valido, impostato a null");
+                    logger.warning("Warning: added_at timestamp non valido, impostato a null");
                 }
                 
                 CartItem item = new CartItem(

@@ -36,24 +36,4 @@ public class DBConnection {
             throw e;
         }
     }
-    
-    // Metodo per chiudere correttamente le connessioni e deregistrare il driver
-    public static void cleanup() {
-        try {
-            // Chiudi il thread di cleanup delle connessioni abbandonate
-            com.mysql.cj.jdbc.AbandonedConnectionCleanupThread.checkedShutdown();
-            logger.info("Thread di cleanup MySQL chiuso correttamente");
-        } catch (InterruptedException e) {
-            logger.warning("Errore durante la chiusura del thread di cleanup MySQL: " + e.getMessage());
-        }
-        
-        try {
-            // Deregistra il driver MySQL
-            java.sql.Driver driver = DriverManager.getDriver(URL);
-            DriverManager.deregister(driver);
-            logger.info("Driver MySQL deregistrato correttamente");
-        } catch (SQLException e) {
-            logger.warning("Errore durante la deregistrazione del driver MySQL: " + e.getMessage());
-        }
-    }
 }

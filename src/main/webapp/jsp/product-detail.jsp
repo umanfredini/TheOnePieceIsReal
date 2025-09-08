@@ -3,6 +3,15 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <jsp:include page="header.jsp" />
 
+<!-- Messaggio di successo per aggiunta al carrello -->
+<c:if test="${param.added == 'true'}">
+    <div class="alert alert-success alert-dismissible fade show" role="alert" style="margin: 20px;">
+        <i class="fas fa-check-circle me-2"></i>
+        <strong>Prodotto aggiunto al carrello!</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+</c:if>
+
 <style>
 /* Stili per modals personalizzati */
 .modal-overlay {
@@ -251,7 +260,7 @@
                 </li>
             </ul>
 
-                            <form id="addToCartForm" action="${pageContext.request.contextPath}/CartServlet" method="post" class="card p-3">
+                            <form id="addToCartForm" action="${pageContext.request.contextPath}/ProductServlet" method="post" class="card p-3">
                 <input type="hidden" name="action" value="add" />
                 <input type="hidden" name="productId" value="${product.id}" />
                 <input type="hidden" name="csrfToken" value="${sessionScope.csrfToken}" />

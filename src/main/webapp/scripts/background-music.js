@@ -11,8 +11,37 @@ class BackgroundMusicPlayer {
         this.currentTrack = 'One Piece OST Overtaken  EPIC VERSION (Drums of Liberation).mp3';
         this.isInitialized = false;
         
+        // Carica stato da localStorage
+        this.loadState();
+        
         // Inizializza il player
         this.init();
+    }
+    
+    loadState() {
+        try {
+            const savedState = localStorage.getItem('backgroundMusicState');
+            if (savedState) {
+                const state = JSON.parse(savedState);
+                this.volume = state.volume || 0.3;
+                this.isPlaying = state.isPlaying || false;
+            }
+        } catch (e) {
+            console.warn('Errore nel caricamento dello stato musicale:', e);
+        }
+    }
+    
+    saveState() {
+        try {
+            const state = {
+                volume: this.volume,
+                isPlaying: this.isPlaying,
+                timestamp: Date.now()
+            };
+            localStorage.setItem('backgroundMusicState', JSON.stringify(state));
+        } catch (e) {
+            console.warn('Errore nel salvataggio dello stato musicale:', e);
+        }
     }
     
     init() {
@@ -59,14 +88,26 @@ class BackgroundMusicPlayer {
     startBackgroundMusic() {
         if (!this.isInitialized || !this.audio) return;
         
-        // Prova a riprodurre automaticamente
-        this.audio.play().then(() => {
-            this.isPlaying = true;
-        }).catch(error => {
-            // Autoplay bloccato dal browser - aspetta interazione utente
-            console.info('Autoplay bloccato dal browser. La musica partirà al primo click dell\'utente.');
-            this.setupUserInteractionListener();
-        });
+        // Se la musica era in riproduzione, riprendi
+        if (this.isPlaying) {
+            this.audio.play().then(() => {
+                this.isPlaying = true;
+                this.saveState();
+            }).catch(error => {
+                console.info('Autoplay bloccato dal browser. La musica partirà al primo click dell\'utente.');
+                this.setupUserInteractionListener();
+            });
+        } else {
+            // Prova a riprodurre automaticamente solo se non era in pausa
+            this.audio.play().then(() => {
+                this.isPlaying = true;
+                this.saveState();
+            }).catch(error => {
+                // Autoplay bloccato dal browser - aspetta interazione utente
+                console.info('Autoplay bloccato dal browser. La musica partirà al primo click dell\'utente.');
+                this.setupUserInteractionListener();
+            });
+        }
     }
     
     setupUserInteractionListener() {
@@ -93,6 +134,8 @@ class BackgroundMusicPlayer {
     pause() {
         if (this.audio && this.isPlaying) {
             this.audio.pause();
+            this.isPlaying = false;
+            this.saveState();
         }
     }
     
@@ -100,6 +143,7 @@ class BackgroundMusicPlayer {
         if (this.audio && this.isInitialized && !this.isPlaying) {
             this.audio.play().then(() => {
                 this.isPlaying = true;
+                this.saveState();
             }).catch(e => {
                 console.warn('Errore nella ripresa della musica:', e);
             });
@@ -110,6 +154,7 @@ class BackgroundMusicPlayer {
         if (this.audio) {
             this.volume = Math.max(0, Math.min(1, volume));
             this.audio.volume = this.volume;
+            this.saveState();
         }
     }
     

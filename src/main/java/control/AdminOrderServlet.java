@@ -46,7 +46,7 @@ public class AdminOrderServlet extends HttpServlet {
             request.setAttribute("ordini", ordini);
             request.getRequestDispatcher("/jsp/adminOrders.jsp").forward(request, response);
         } catch (Exception e) {
-            logger.severe("Errore nella gestione ordini admin: " + e.getMessage());
+            // Errore nella gestione ordini admin
             request.setAttribute("errorMessage", "Errore nella gestione degli ordini. Riprova.");
             request.getRequestDispatcher("/jsp/error.jsp").forward(request, response);
         }
@@ -77,7 +77,7 @@ public class AdminOrderServlet extends HttpServlet {
 
             response.sendRedirect("AdminOrderServlet");
         } catch (Exception e) {
-            logger.severe("Errore nell'aggiornamento stato ordine" + e.getMessage());
+            // Errore nell'aggiornamento stato ordine
             request.setAttribute("errorMessage", "Errore nell'aggiornamento dello stato dell'ordine. Riprova.");
             request.getRequestDispatcher("/jsp/error.jsp").forward(request, response);
         }

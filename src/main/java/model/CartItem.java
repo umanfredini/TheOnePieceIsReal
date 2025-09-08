@@ -21,8 +21,6 @@ public class CartItem {
         this.product = product;
     }
     
-
-    
     public CartItem(int id, int cartId, Product prodotto, int quantity, String variantId) {
         this.id = id;
         this.cartId = cartId;

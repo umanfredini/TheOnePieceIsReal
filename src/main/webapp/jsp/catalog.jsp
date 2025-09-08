@@ -3,8 +3,49 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <jsp:include page="header.jsp" />
 <script src="${pageContext.request.contextPath}/scripts/wishlist-manager.js"></script>
+<link rel="stylesheet" href="${pageContext.request.contextPath}/styles/css/carousel.css">
 
 <style>
+/* Griglia prodotti come homepage */
+.products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 2rem;
+    padding: 2rem 0;
+}
+
+.product-click-area {
+    cursor: pointer;
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.product-click-area:hover {
+    transform: scale(1.02);
+    transition: transform 0.2s ease;
+}
+
+.product-actions, .product-actions-bottom {
+    position: absolute;
+    z-index: 10;
+}
+
+.product-actions {
+    top: 10px;
+    right: 10px;
+}
+
+.product-actions-bottom {
+    bottom: 10px;
+    right: 10px;
+}
+
+.wishlist-btn.active {
+    background: linear-gradient(135deg, #dc3545, #e74c3c) !important;
+    color: white !important;
+}
+
 /* Stili per la paginazione */
 .pagination {
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -167,37 +208,37 @@
 
 
 
-    <!-- Lista prodotti -->
-    <section class="row" role="region" aria-label="Lista prodotti">
+    <!-- Lista prodotti con design Homepage -->
+    <section class="products-grid" role="region" aria-label="Lista prodotti">
         <c:choose>
             <c:when test="${not empty products}">
                 <c:forEach var="product" items="${products}">
-                    <div class="col-md-4 mb-4">
-                        <div class="card h-100 shadow-sm">
-                            <img src="${pageContext.request.contextPath}/styles/images/prodotti/${product.imageUrl}" class="card-img-top" alt="Immagine di ${product.name}" />
-                            <div class="card-body">
-                                <h5 class="card-title"><c:out value="${product.name}" /></h5>
-                                <p class="card-text">Categoria: <c:out value="${product.category}" /></p>
-                                <p class="card-text">Personaggi: 
-                                    <c:forEach var="character" items="${productCharacters[product.id]}">
-                                        <span class="badge bg-primary me-1">${character}</span>
-                                    </c:forEach>
-                                </p>
-                                <p class="card-text fw-bold text-primary">
-                                    € <fmt:formatNumber value="${product.price}" type="currency" currencySymbol="€" />
-                                </p>
-                                <div class="d-flex gap-2">
-                                    <a href="${pageContext.request.contextPath}/ProductServlet?action=detail&id=${product.id}" class="btn btn-outline-primary flex-grow-1">Dettagli</a>
-                                    <c:if test="${sessionScope.isLoggedIn}">
-                                        <button onclick="toggleWishlist(${product.id})" class="btn btn-outline-danger" title="Aggiungi alla wishlist">
-                                            <i class="far fa-heart"></i>
-                                        </button>
-                                    </c:if>
-                                    <button onclick="addToCart(${product.id})" class="btn btn-success" title="Aggiungi al carrello">
-                                        <i class="fas fa-shopping-cart"></i>
-                                    </button>
-                                </div>
+                    <div class="product-card" data-product-id="${product.id}" data-category="${product.category}">
+                        <!-- Click sul prodotto per andare al dettaglio -->
+                        <div class="product-click-area" onclick="goToProductDetail(${product.id})">
+                            <img src="${pageContext.request.contextPath}/styles/images/prodotti/${product.imageUrl}" 
+                                 alt="${product.name}" class="product-image">
+                            
+                            <div class="product-info">
+                                <h3 class="product-title">${product.name}</h3>
+                                <div class="product-price">€${product.price}</div>
                             </div>
+                        </div>
+                        
+                        <!-- Bottoni azioni (non propagano il click) -->
+                        <c:if test="${not empty sessionScope.utente and not sessionScope.isAdmin}">
+                            <div class="product-actions" onclick="event.stopPropagation()">
+                                <button class="wishlist-btn" onclick="toggleWishlist(${product.id})" 
+                                        data-product-id="${product.id}">
+                                    <i class="fas fa-heart"></i>
+                                </button>
+                            </div>
+                        </c:if>
+                        
+                        <div class="product-actions-bottom" onclick="event.stopPropagation()">
+                            <button class="cart-btn" onclick="addToCart(${product.id})">
+                                <i class="fas fa-shopping-cart"></i>
+                            </button>
                         </div>
                     </div>
                 </c:forEach>
@@ -412,7 +453,7 @@ function validateJumpPage() {
 
 // Funzione per aggiungere al carrello
 function addToCart(productId) {
-    console.log('Aggiungendo al carrello prodotto:', productId);
+    // Aggiungendo al carrello prodotto
     
     // Ottieni il token CSRF se presente
     var csrfToken = '';
@@ -572,6 +613,39 @@ style.textContent =
         'color: #17a2b8;' +
     '}';
 document.head.appendChild(style);
+
+// Funzione per andare al dettaglio prodotto
+function goToProductDetail(productId) {
+    window.location.href = '${pageContext.request.contextPath}/ProductServlet?action=detail&id=' + productId;
+}
+
+// Funzione per mostrare toast notifications
+function showToast(message, type) {
+    var toast = document.createElement('div');
+    type = type || 'info';
+    toast.className = 'toast-notification ' + type;
+    
+    var iconClass = 'fas fa-info-circle';
+    if (type === 'success') {
+        iconClass = 'fas fa-check-circle';
+    } else if (type === 'error') {
+        iconClass = 'fas fa-times-circle';
+    }
+    
+    toast.innerHTML = '<div class="toast-content">' +
+        '<i class="' + iconClass + '"></i>' +
+        '<span>' + message + '</span>' +
+        '</div>';
+    
+    document.body.appendChild(toast);
+    
+    setTimeout(function() { toast.classList.add('show'); }, 100);
+    
+    setTimeout(function() {
+        toast.classList.remove('show');
+        setTimeout(function() { toast.remove(); }, 300);
+    }, 3000);
+}
 </script>
 
 <jsp:include page="footer.jsp" />

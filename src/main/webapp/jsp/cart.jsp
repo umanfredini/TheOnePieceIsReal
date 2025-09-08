@@ -3,83 +3,52 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <jsp:include page="header.jsp" />
 <script src="${pageContext.request.contextPath}/scripts/cart.js" defer></script>
+<link rel="stylesheet" href="${pageContext.request.contextPath}/styles/css/treasure-chest.css">
 
 <main class="container mt-5" role="main">
-    <h1 class="mb-4 text-center">Il tuo Carrello</h1>
+    <div class="treasure-chest-header">
+        <h1 class="mb-4 text-center gradient-text">🏴‍☠️ Il tuo Tesoro</h1>
+        <p class="text-center text-muted">I tuoi preziosi One Piece nel carrello</p>
+    </div>
 
-
-
-    <section role="region" aria-label="Contenuto del carrello" class="table-responsive">
+    <section role="region" aria-label="Contenuto del carrello" class="treasure-chest-container">
         <c:choose>
             <c:when test="${not empty cart.items}">
-                            <form action="${pageContext.request.contextPath}/CartServlet" method="post" id="cartForm">
-                <input type="hidden" name="csrfToken" value="${sessionScope.csrfToken}" />
-                <input type="hidden" name="productId" id="productIdToRemove" value="" />
-                    <table class="table table-striped table-hover align-middle">
-                        <thead class="table-dark">
-                            <tr>
-                                <th>Prodotto</th>
-                                <th>Variante</th>
-                                <th>Quantità</th>
-                                <th>Prezzo</th>
-                                <th>Totale</th>
-                                <th>Azioni</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <c:forEach var="item" items="${cart.items}">
-                                <tr>
-                                    <td>
-                                        <c:choose>
-                                            <c:when test="${not empty item.product}">
-                                                <strong>${item.product.name}</strong>
-                                                <br><small class="text-muted">${item.product.category}</small>
-                                            </c:when>
-                                            <c:otherwise>
-                                                <span class="text-muted">Prodotto non disponibile</span>
-                                            </c:otherwise>
-                                        </c:choose>
-                                    </td>
-                                    <td>
-                                        <c:choose>
-                                            <c:when test="${not empty item.variantId}">
-                                                <span class="badge bg-info">Variante ${item.variantId}</span>
-                                            </c:when>
-                                            <c:otherwise>
-                                                <span class="text-muted">Nessuna variante</span>
-                                            </c:otherwise>
-                                        </c:choose>
-                                    </td>
-                                    <td>
-                                        <input type="number" name="quantity_${item.productId}" value="${item.quantity}" min="1" class="form-control" style="width: 80px;" />
-                                    </td>
-                                    <td>
-                                        <c:choose>
-                                            <c:when test="${not empty item.product}">
-                                                € <fmt:formatNumber value="${item.product.price}" type="currency" currencySymbol="€" />
-                                            </c:when>
-                                            <c:otherwise>
-                                                <span class="text-muted">N/A</span>
-                                            </c:otherwise>
-                                        </c:choose>
-                                    </td>
-                                    <td>
-                                        <c:choose>
-                                            <c:when test="${not empty item.product}">
-                                                € <fmt:formatNumber value="${item.product.price.doubleValue() * item.quantity}" type="currency" currencySymbol="€" />
-                                            </c:when>
-                                            <c:otherwise>
-                                                <span class="text-muted">N/A</span>
-                                            </c:otherwise>
-                                        </c:choose>
-                                    </td>
-                                    <td>
-                                        <button type="submit" name="action" value="remove" onclick="setProductId(${item.productId})" class="btn btn-sm btn-outline-danger">Rimuovi</button>
-                                    </td>
-                                </tr>
-                            </c:forEach>
-                        </tbody>
-                    </table>
+                <form action="${pageContext.request.contextPath}/CartServlet" method="post" id="cartForm">
+                    <input type="hidden" name="csrfToken" value="${sessionScope.csrfToken}" />
+                    <input type="hidden" name="productId" id="productIdToRemove" value="" />
+                    
+                    <div class="treasure-items">
+                        <c:forEach var="item" items="${cart.items}">
+                            <div class="treasure-item" data-product-id="${item.productId}">
+                                <div class="treasure-item-image">
+                                    <img src="${pageContext.request.contextPath}/styles/images/prodotti/${item.product.imageUrl}" 
+                                         alt="${item.product.name}" 
+                                         onerror="this.src='${pageContext.request.contextPath}/styles/images/altro/zoro-lost.gif'" />
+                                </div>
+                                <div class="treasure-item-info">
+                                    <h4 class="treasure-item-title">${item.product.name}</h4>
+                                    <div class="treasure-item-category">${item.product.category}</div>
+                                    <c:if test="${not empty item.variantId}">
+                                        <div class="treasure-item-variant">Variante ${item.variantId}</div>
+                                    </c:if>
+                                </div>
+                                <div class="treasure-item-quantity">
+                                    <label>Quantità:</label>
+                                    <input type="number" name="quantity_${item.productId}" value="${item.quantity}" min="1" class="treasure-quantity-input" />
+                                </div>
+                                <div class="treasure-item-price">
+                                    <div class="unit-price">€ <fmt:formatNumber value="${item.product.price}" type="currency" currencySymbol="€" /></div>
+                                    <div class="total-price">€ <fmt:formatNumber value="${item.product.price.doubleValue() * item.quantity}" type="currency" currencySymbol="€" /></div>
+                                </div>
+                                <div class="treasure-item-actions">
+                                    <button type="submit" name="action" value="remove" onclick="setProductId(${item.productId})" class="treasure-remove-btn">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </c:forEach>
+                    </div>
                 </form>
 
                 <div class="row mt-4">

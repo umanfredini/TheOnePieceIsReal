@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     // Inizializza player musica
-    initMusicPlayer();
+    // initMusicPlayer(); // Rimosso sistema musicale complesso
     
     // Inizializza menu mobile
     initMobileMenu();

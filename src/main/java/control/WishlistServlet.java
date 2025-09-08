@@ -108,7 +108,7 @@ public class WishlistServlet extends HttpServlet {
             }
         } catch (Exception e) {
             logger.severe("Errore nella modifica della wishlist: " + e.getMessage());
-            e.printStackTrace();
+            logger.severe("Errore nel WishlistServlet: " + e.getMessage());
             if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
                 response.setContentType("application/json");
                 response.getWriter().write("{\"success\": false, \"error\": \"" + e.getMessage() + "\"}");

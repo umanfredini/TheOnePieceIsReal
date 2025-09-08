@@ -13,8 +13,14 @@
             List<Product> featuredProducts = productDAO.getFeaturedProducts(6);
             request.setAttribute("featuredProducts", featuredProducts);
         } catch (Exception e) {
+            // Log dell'errore per debug
+            System.err.println("Errore nel caricamento prodotti in evidenza: " + e.getMessage());
+            e.printStackTrace();
             // In caso di errore, lascia featuredProducts vuoto
-            request.setAttribute("featuredProducts", null);
+            request.setAttribute("featuredProducts", new java.util.ArrayList<>());
+            // Imposta un flag per mostrare un messaggio di errore
+            request.setAttribute("databaseError", true);
+            request.setAttribute("databaseErrorMessage", "Database non disponibile. Verificare che MySQL sia in esecuzione.");
         }
     }
 %>
@@ -148,7 +154,29 @@
     <main class="main-content">
         <!-- Carosello prodotti in evidenza -->
         <section class="featured-products">
-            <h2 class="gradient-text">🌟 Prodotti in Evidenza</h2>
+            <h2 class="gradient-text">Prodotti in Evidenza</h2>
+            
+            <!-- Messaggio di errore database -->
+            <c:if test="${databaseError}">
+                <div class="database-error-message">
+                    <div class="error-icon">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="error-content">
+                        <h3>Database Non Disponibile</h3>
+                        <p>${databaseErrorMessage}</p>
+                        <div class="error-solutions">
+                            <h4>Soluzioni:</h4>
+                            <ul>
+                                <li><strong>Avviare MySQL:</strong> Aprire il prompt dei comandi come amministratore e eseguire: <code>net start mysql</code></li>
+                                <li><strong>Verificare il servizio:</strong> Controllare che il servizio MySQL sia in esecuzione</li>
+                                <li><strong>Controllare le credenziali:</strong> Verificare username e password nel file di configurazione</li>
+                                <li><strong>Verificare la porta:</strong> Assicurarsi che la porta 3306 sia disponibile</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </c:if>
             
             <div class="carousel-container carousel-gradient">
                 <div class="carousel-track">
@@ -247,18 +275,21 @@
 <footer class="main-footer">
     <div class="footer-content">
         <div class="footer-section">
-            <h4>🏴‍☠️ The One Piece Is Real</h4>
+            <h4>The One Piece Is Real</h4>
             <p>Il tuo negozio ufficiale di merchandising One Piece</p>
         </div>
         <div class="footer-section">
-            <h4>📞 Contatti</h4>
+            <h4>Contatti</h4>
             <p>Email: info@onepieceisreal.it</p>
             <p>Tel: +39 123 456 7890</p>
         </div>
         <div class="footer-section">
-            <h4>🚢 Spedizioni</h4>
+            <h4>Spedizioni</h4>
             <p>Consegna in tutta Italia</p>
             <p>Spedizione gratuita sopra €50</p>
+            <a href="${pageContext.request.contextPath}/TrackingServlet" class="tracking-link">
+                <i class="fas fa-ship"></i> Traccia Ordine
+            </a>
         </div>
     </div>
 </footer>
@@ -347,6 +378,28 @@
         transform: translateX(0);
         opacity: 1;
     }
+}
+
+/* Stile per il link tracking */
+.tracking-link {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 8px 16px;
+    background: linear-gradient(135deg, #ffd700, #ffed4e);
+    color: #8B4513;
+    text-decoration: none;
+    border-radius: 20px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.tracking-link:hover {
+    background: linear-gradient(135deg, #ffed4e, #fff);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    color: #8B4513;
+    text-decoration: none;
 }
 </style>
 

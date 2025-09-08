@@ -14,8 +14,12 @@ public class UserDAO {
         this.connection = connection;
     }
     
-    public UserDAO() throws SQLException {
-    	this.connection = DBConnection.getConnection();
+    public UserDAO() {
+    	try {
+    		this.connection = DBConnection.getConnection();
+    	} catch (SQLException e) {
+    		throw new RuntimeException("Errore nella connessione al database", e);
+    	}
     }
 
     public boolean create(User user) throws SQLException {
@@ -100,13 +104,13 @@ public class UserDAO {
         try {
             createdAt = rs.getTimestamp("created_at");
         } catch (SQLException e) {
-            System.out.println("Warning: created_at timestamp non valido, impostato a null");
+            // Warning: created_at timestamp non valido, impostato a null
         }
         
         try {
             lastLogin = rs.getTimestamp("last_login");
         } catch (SQLException e) {
-            System.out.println("Warning: last_login timestamp non valido, impostato a null");
+            // Warning: last_login timestamp non valido, impostato a null
         }
         
         return new User(

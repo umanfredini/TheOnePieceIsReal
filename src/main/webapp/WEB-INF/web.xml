@@ -243,5 +243,24 @@
         <url-pattern>/catalog</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>TrackingServlet</servlet-name>
+        <servlet-class>control.TrackingServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>TrackingServlet</servlet-name>
+        <url-pattern>/TrackingServlet</url-pattern>
+    </servlet-mapping>
+
+    <!-- CSRF Token Filter -->
+    <filter>
+        <filter-name>CSRFTokenFilter</filter-name>
+        <filter-class>control.CSRFTokenFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>CSRFTokenFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
 </web-app>
 

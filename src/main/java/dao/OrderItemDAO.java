@@ -14,8 +14,12 @@ public class OrderItemDAO {
         this.connection = connection;
     }
     
-    public OrderItemDAO() throws SQLException {
-    	this.connection = DBConnection.getConnection();
+    public OrderItemDAO() {
+    	try {
+    		this.connection = DBConnection.getConnection();
+    	} catch (SQLException e) {
+    		throw new RuntimeException("Errore nella connessione al database", e);
+    	}
     }
 
     public void add(OrderItem item) throws SQLException {

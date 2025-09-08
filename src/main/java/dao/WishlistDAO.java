@@ -3,12 +3,14 @@ package dao;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 import model.Product;
 import util.DBConnection;
 
 public class WishlistDAO {
     private final Connection connection;
+    private static final Logger logger = Logger.getLogger(WishlistDAO.class.getName());
 
     public WishlistDAO(Connection connection) {
         this.connection = connection;
@@ -58,14 +60,14 @@ public class WishlistDAO {
                 try {
                     product.setCreatedAt(rs.getTimestamp("created_at"));
                 } catch (SQLException e) {
-                    System.out.println("Warning: created_at timestamp non valido, impostato a null");
+                    logger.warning("Warning: created_at timestamp non valido, impostato a null");
                     product.setCreatedAt(null);
                 }
                 
                 try {
                     product.setUpdatedAt(rs.getTimestamp("updated_at"));
                 } catch (SQLException e) {
-                    System.out.println("Warning: updated_at timestamp non valido, impostato a null");
+                    logger.warning("Warning: updated_at timestamp non valido, impostato a null");
                     product.setUpdatedAt(null);
                 }
 

@@ -11,10 +11,12 @@ import dao.ProductDAO;
 import model.CartItem;
 import model.Cart;
 import model.Product;
+import java.util.logging.Logger;
 
 //@WebServlet("/CartServlet")
 public class CartServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
+    private static final Logger logger = Logger.getLogger(CartServlet.class.getName());
     
     protected void doGet(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
@@ -112,7 +114,7 @@ public class CartServlet extends HttpServlet {
                 response.sendRedirect("CartServlet");
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.severe("Errore nel CartServlet: " + e.getMessage());
             System.err.println("Errore in CartServlet: " + e.getMessage());
             
             String errorMessage = "Errore durante l'operazione";

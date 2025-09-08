@@ -2,10 +2,13 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <jsp:include page="header.jsp" />
+<link rel="stylesheet" href="${pageContext.request.contextPath}/styles/css/grand-line-route.css">
 
-<main class="container-fluid mt-5" role="main">
-    <div class="checkout-header">
-        <h1>🏴‍☠️ Checkout</h1>
+<main class="grand-line-route" role="main">
+    <div class="ship-animation"></div>
+    <div class="route-header">
+        <h1 class="gradient-text">🏴‍☠️ Rotta del Grand Line</h1>
+        <p class="route-subtitle">Naviga verso il tuo tesoro One Piece</p>
     </div>
     
     <!-- Messaggio per ospiti -->
@@ -21,7 +24,7 @@
         <!-- Sezione Form -->
         <div class="checkout-form-section">
             <!-- Riepilogo Ordine -->
-            <section class="form-section" role="region" aria-label="Riepilogo ordine">
+            <section class="form-section checkout-step" role="region" aria-label="Riepilogo ordine">
                 <h3><i class="fas fa-shopping-cart"></i> Riepilogo Ordine</h3>
                 <c:if test="${not empty cart.items}">
                     <div class="summary-table">
@@ -52,13 +55,14 @@
             </section>
 
             <!-- Form Checkout -->
-            <section class="form-section" role="region" aria-label="Modulo di checkout">
+            <section class="form-section checkout-step" role="region" aria-label="Modulo di checkout">
                 <h3><i class="fas fa-shipping-fast"></i> Informazioni di Spedizione</h3>
                 <form action="${pageContext.request.contextPath}/CheckoutServlet" method="post" class="checkout-form">
                     <input type="hidden" name="csrfToken" value="${sessionScope.csrfToken}" />
 
                     <!-- Nota simulazione -->
                     <div class="simulation-note">
+                        <span style="font-size: 1.2rem; margin-right: 8px;">⚠️</span>
                         <i class="fas fa-info-circle"></i>
                         <strong>Modalità Simulazione:</strong> Questo è un ambiente di test. I dati di pagamento sono precompilati per facilitare i test.
                     </div>
@@ -81,6 +85,9 @@
 
                     <!-- Sezione Pagamento Simulato -->
                     <div class="payment-simulation">
+                        <div style="position: absolute; top: -10px; left: 20px; background: #6c757d; color: white; padding: 5px 15px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; z-index: 10; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);">
+                            💳 SIMULAZIONE
+                        </div>
                         <h5 class="mb-3">
                             <i class="fas fa-credit-card me-2"></i>Dati di Pagamento (Simulazione)
                         </h5>

@@ -14,8 +14,12 @@ public class UserSettingsDAO {
         this.connection = connection;
     }
     
-    public UserSettingsDAO() throws SQLException {
-    	this.connection = DBConnection.getConnection();
+    public UserSettingsDAO() {
+    	try {
+    		this.connection = DBConnection.getConnection();
+    	} catch (SQLException e) {
+    		throw new RuntimeException("Errore nella connessione al database", e);
+    	}
     }
 
     public void save(UserSettings setting) throws SQLException {

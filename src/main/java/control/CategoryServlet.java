@@ -10,10 +10,12 @@ import java.util.*;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.logging.Logger;
 
 // @WebServlet("/CategoryServlet")
 public class CategoryServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
+    private static final Logger logger = Logger.getLogger(CategoryServlet.class.getName());
     private static final int PRODUCTS_PER_PAGE = 12;
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -88,7 +90,7 @@ public class CategoryServlet extends HttpServlet {
             request.getRequestDispatcher("/jsp/catalog.jsp").forward(request, response);
             
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.severe("Errore nel CategoryServlet: " + e.getMessage());
             request.setAttribute("errorMessage", "Errore nel caricamento dei prodotti");
             request.getRequestDispatcher("/jsp/error.jsp").forward(request, response);
         }

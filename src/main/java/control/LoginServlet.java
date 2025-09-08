@@ -23,15 +23,27 @@ public class LoginServlet extends HttpServlet {
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        HttpSession session = request.getSession(false);
+        
+        // Validazione CSRF token
+        if (!isValidToken(request, session)) {
+            request.setAttribute("errorMessage", "Token di sicurezza non valido. Riprova.");
+            request.getRequestDispatcher("/jsp/error.jsp").forward(request, response);
+            return;
+        }
+        
         String email = request.getParameter("email");
         String password = request.getParameter("password");
 
         try {
             UserDAO utenteDAO = new UserDAO();
-            User utente = utenteDAO.findByEmailPassword(email, hashPassword(password));
+            String hashedPassword = hashPassword(password);
+            logger.info("Tentativo login - Email: " + email);
+            logger.info("Password hash generato: " + hashedPassword);
+            User utente = utenteDAO.findByEmailPassword(email, hashedPassword);
 
             if (utente != null) {
-                HttpSession session = request.getSession();
+                session = request.getSession();
                 String token = generateToken();
 
                 session.setAttribute("utente", utente);
@@ -67,5 +79,11 @@ public class LoginServlet extends HttpServlet {
 
     private String generateToken() {
         return UUID.randomUUID().toString();
+    }
+    
+    private boolean isValidToken(HttpServletRequest request, HttpSession session) {
+        String sessionToken = (String) session.getAttribute("csrfToken");
+        String requestToken = request.getParameter("csrfToken");
+        return sessionToken != null && sessionToken.equals(requestToken);
     }
 }

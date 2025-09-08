@@ -6,16 +6,22 @@ import util.DBConnection;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 public class GuestCartDAO {
     private final Connection connection;
+    private static final Logger logger = Logger.getLogger(GuestCartDAO.class.getName());
 
     public GuestCartDAO(Connection connection) {
         this.connection = connection;
     }
     
-    public GuestCartDAO() throws SQLException {
-        this.connection = DBConnection.getConnection();
+    public GuestCartDAO() {
+        try {
+            this.connection = DBConnection.getConnection();
+        } catch (SQLException e) {
+            throw new RuntimeException("Errore nella connessione al database", e);
+        }
     }
 
     public GuestCart create(String sessionId) throws SQLException {
@@ -97,13 +103,13 @@ public class GuestCartDAO {
         try {
             createdAt = rs.getTimestamp("created_at");
         } catch (SQLException e) {
-            System.out.println("Warning: created_at timestamp non valido, impostato a null");
+            logger.warning("Warning: created_at timestamp non valido, impostato a null");
         }
         
         try {
             updatedAt = rs.getTimestamp("updated_at");
         } catch (SQLException e) {
-            System.out.println("Warning: updated_at timestamp non valido, impostato a null");
+            logger.warning("Warning: updated_at timestamp non valido, impostato a null");
         }
         
         return new GuestCart(

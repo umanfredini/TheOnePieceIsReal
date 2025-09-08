@@ -1,0 +1,267 @@
+/* Treasure Chest Design - The One Piece Is Real */
+
+.treasure-chest-header {
+    background: linear-gradient(135deg, #8B4513, #A0522D);
+    padding: 2rem;
+    border-radius: 15px;
+    margin-bottom: 2rem;
+    border: 3px solid #DAA520;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    text-align: center;
+}
+
+.treasure-chest-header h1 {
+    color: #FFD700;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    margin-bottom: 0.5rem;
+}
+
+.treasure-chest-header p {
+    color: #FFF;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+}
+
+.treasure-chest-container {
+    background: linear-gradient(135deg, #2F4F4F, #556B2F);
+    border-radius: 15px;
+    padding: 2rem;
+    border: 3px solid #DAA520;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+.treasure-items {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.treasure-item {
+    background: linear-gradient(135deg, #8B4513, #A0522D);
+    border: 2px solid #DAA520;
+    border-radius: 15px;
+    padding: 1.5rem;
+    display: grid;
+    grid-template-columns: 120px 1fr auto auto auto;
+    gap: 1.5rem;
+    align-items: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.treasure-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, transparent, rgba(255, 215, 0, 0.1), transparent);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+    border-radius: 15px;
+}
+
+.treasure-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+}
+
+.treasure-item:hover::before {
+    opacity: 1;
+}
+
+.treasure-item-image {
+    width: 120px;
+    height: 120px;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 2px solid #DAA520;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.treasure-item-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.treasure-item:hover .treasure-item-image img {
+    transform: scale(1.1);
+}
+
+.treasure-item-info {
+    color: #FFF;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+}
+
+.treasure-item-title {
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #FFD700;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.treasure-item-category {
+    background: linear-gradient(135deg, #DAA520, #FFD700);
+    color: #8B4513;
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    display: inline-block;
+    margin-bottom: 0.5rem;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.treasure-item-variant {
+    background: linear-gradient(135deg, #4169E1, #1E90FF);
+    color: white;
+    padding: 0.2rem 0.6rem;
+    border-radius: 15px;
+    font-size: 0.7rem;
+    font-weight: bold;
+    display: inline-block;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.treasure-item-quantity {
+    text-align: center;
+    color: #FFF;
+}
+
+.treasure-item-quantity label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+    color: #FFD700;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+}
+
+.treasure-quantity-input {
+    width: 80px;
+    padding: 0.5rem;
+    border: 2px solid #DAA520;
+    border-radius: 8px;
+    background: #2F4F4F;
+    color: #FFF;
+    text-align: center;
+    font-weight: bold;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.treasure-quantity-input:focus {
+    outline: none;
+    border-color: #FFD700;
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+}
+
+.treasure-item-price {
+    text-align: center;
+    color: #FFF;
+}
+
+.unit-price {
+    font-size: 0.9rem;
+    color: #CCC;
+    margin-bottom: 0.3rem;
+}
+
+.total-price {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #FFD700;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+.treasure-item-actions {
+    text-align: center;
+}
+
+.treasure-remove-btn {
+    background: linear-gradient(135deg, #DC143C, #B22222);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.treasure-remove-btn:hover {
+    background: linear-gradient(135deg, #B22222, #DC143C);
+    transform: scale(1.1);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .treasure-item {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        text-align: center;
+    }
+    
+    .treasure-item-image {
+        width: 100px;
+        height: 100px;
+        margin: 0 auto;
+    }
+    
+    .treasure-item-quantity,
+    .treasure-item-price,
+    .treasure-item-actions {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .treasure-chest-container {
+        padding: 1rem;
+    }
+    
+    .treasure-item {
+        padding: 1rem;
+    }
+    
+    .treasure-item-title {
+        font-size: 1.1rem;
+    }
+}
+
+/* Animazioni */
+@keyframes treasureAppear {
+    from {
+        opacity: 0;
+        transform: translateY(30px) scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.treasure-item {
+    animation: treasureAppear 0.6s ease-out;
+}
+
+.treasure-item:nth-child(1) { animation-delay: 0.1s; }
+.treasure-item:nth-child(2) { animation-delay: 0.2s; }
+.treasure-item:nth-child(3) { animation-delay: 0.3s; }
+.treasure-item:nth-child(4) { animation-delay: 0.4s; }
+.treasure-item:nth-child(5) { animation-delay: 0.5s; }
+.treasure-item:nth-child(6) { animation-delay: 0.6s; }

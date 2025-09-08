@@ -16,8 +16,12 @@ public class OrderDAO {
     }
     
 
-    public OrderDAO() throws SQLException {
-    	this.connection = DBConnection.getConnection();
+    public OrderDAO() {
+    	try {
+    		this.connection = DBConnection.getConnection();
+    	} catch (SQLException e) {
+    		throw new RuntimeException("Errore nella connessione al database", e);
+    	}
     }
 
 
@@ -47,6 +51,19 @@ public class OrderDAO {
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 return extractOrder(rs);
+            }
+        }
+        return null;
+    }
+    
+    public Order findByOrderId(int orderId) throws SQLException {
+        String sql = "SELECT * FROM orders WHERE id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, orderId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return extractOrder(rs);
+                }
             }
         }
         return null;
@@ -91,7 +108,7 @@ public class OrderDAO {
         try {
             orderDate = rs.getTimestamp("order_date");
         } catch (SQLException e) {
-            System.out.println("Warning: order_date timestamp non valido, impostato a null");
+            logger.warning("Warning: order_date timestamp non valido, impostato a null");
         }
         
         return new Order(
@@ -212,5 +229,20 @@ public class OrderDAO {
     	}
     	return orders;
     	}
+    
+    /**
+     * Trova un ordine per tracking number
+     */
+    public Order findByTrackingNumber(String trackingNumber) throws Exception {
+        String sql = "SELECT * FROM orders WHERE tracking_number = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, trackingNumber);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return extractOrder(rs);
+            }
+        }
+        return null;
+    }
 
 }
