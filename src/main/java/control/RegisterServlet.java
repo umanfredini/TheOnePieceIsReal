@@ -63,7 +63,7 @@ public class RegisterServlet extends HttpServlet {
             boolean success = utenteDAO.create(utente);
 
             if (success) {
-                HttpSession session = request.getSession();
+                session = request.getSession();
                 session.setAttribute("utente", utente);
                 session.setAttribute("isLoggedIn", true);
                 session.setAttribute("isAdmin", false);

@@ -247,11 +247,7 @@ public class ProductServlet extends HttpServlet {
             if (variantIdStr != null && !variantIdStr.trim().isEmpty()) {
                 try {
                     int variantId = Integer.parseInt(variantIdStr);
-                    ProductVariantDAO variantDAO = new ProductVariantDAO();
-                    ProductVariant variant = variantDAO.findByVariantId(variantId);
-                    if (variant != null) {
-                        newItem.setVariant(variant);
-                    }
+                    newItem.setVariantId(variantId);
                 } catch (NumberFormatException e) {
                     logger.warning("ID variante non valido: " + variantIdStr);
                 }

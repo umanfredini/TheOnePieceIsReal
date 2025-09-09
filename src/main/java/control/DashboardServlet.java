@@ -43,56 +43,27 @@ public class DashboardServlet extends HttpServlet {
             OrderDAO ordineDAO;
             UserDAO utenteDAO;
             
-            try {
-                ordineDAO = new OrderDAO();
-            } catch (SQLException e) {
-                logger.severe("Errore nella connessione OrderDAO: " + e.getMessage());
-                throw new ServletException("Errore di connessione al database", e);
-            }
-            
-            try {
-                utenteDAO = new UserDAO();
-            } catch (SQLException e) {
-                logger.severe("Errore nella connessione UserDAO: " + e.getMessage());
-                throw new ServletException("Errore di connessione al database", e);
-            }
+            ordineDAO = new OrderDAO();
+            utenteDAO = new UserDAO();
 
             // Recupera i dati con gestione errori
             int totaleProdotti = prodottoDAO.countAll();
             
-            int totaleOrdini;
+            int totaleOrdini = 0;
+            int totaleUtenti = 0;
+            double ricaviTotali = 0.0;
+            List<Order> ordiniRecenti = new java.util.ArrayList<>();
+            
             try {
                 totaleOrdini = ordineDAO.countAll();
-            } catch (SQLException e) {
-                logger.warning("Errore nel conteggio ordini: " + e.getMessage());
-                totaleOrdini = 0;
-            }
-            
-            int totaleUtenti;
-            try {
                 totaleUtenti = utenteDAO.countAll();
-            } catch (SQLException e) {
-                logger.warning("Errore nel conteggio utenti: " + e.getMessage());
-                totaleUtenti = 0;
-            }
-            
-            double ricaviTotali;
-            try {
                 ricaviTotali = ordineDAO.getTotalRevenue();
-            } catch (SQLException e) {
-                logger.warning("Errore nel calcolo ricavi: " + e.getMessage());
-                ricaviTotali = 0.0;
+                ordiniRecenti = ordineDAO.getRecentOrders(10);
+            } catch (Exception e) {
+                logger.warning("Errore nel recupero dati dashboard: " + e.getMessage());
             }
             
             List<Map<String, Object>> prodottiTopSelling = prodottoDAO.getTopSellingProducts(5);
-            
-            List<Order> ordiniRecenti;
-            try {
-                ordiniRecenti = ordineDAO.getRecentOrders(10);
-            } catch (SQLException e) {
-                logger.warning("Errore nel recupero ordini recenti: " + e.getMessage());
-                ordiniRecenti = new java.util.ArrayList<>();
-            }
 
             request.setAttribute("productCount", totaleProdotti);
             request.setAttribute("orderCount", totaleOrdini);

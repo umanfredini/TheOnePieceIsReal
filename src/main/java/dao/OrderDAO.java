@@ -45,7 +45,7 @@ public class OrderDAO {
     }
 
     public Order read(int id) throws SQLException {
-        String sql = "SELECT * FROM orders WHERE id = ?";
+        String sql = "SELECT o.*, u.email FROM orders o LEFT JOIN users u ON o.user_id = u.id WHERE o.id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setInt(1, id);
             ResultSet rs = stmt.executeQuery();
@@ -57,7 +57,7 @@ public class OrderDAO {
     }
     
     public Order findByOrderId(int orderId) throws SQLException {
-        String sql = "SELECT * FROM orders WHERE id = ?";
+        String sql = "SELECT o.*, u.email FROM orders o LEFT JOIN users u ON o.user_id = u.id WHERE o.id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setInt(1, orderId);
             try (ResultSet rs = stmt.executeQuery()) {
@@ -71,7 +71,7 @@ public class OrderDAO {
 
     public List<Order> findByUserId(int userId) throws SQLException {
         List<Order> orders = new ArrayList<>();
-        String sql = "SELECT * FROM orders WHERE user_id = ?";
+        String sql = "SELECT o.*, u.email FROM orders o LEFT JOIN users u ON o.user_id = u.id WHERE o.user_id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setInt(1, userId);
             ResultSet rs = stmt.executeQuery();
@@ -84,7 +84,7 @@ public class OrderDAO {
 
     public List<Order> findByDateRange(Date from, Date to) throws SQLException {
         List<Order> orders = new ArrayList<>();
-        String sql = "SELECT * FROM orders WHERE order_date BETWEEN ? AND ?";
+        String sql = "SELECT o.*, u.email FROM orders o LEFT JOIN users u ON o.user_id = u.id WHERE o.order_date BETWEEN ? AND ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setDate(1, from);
             stmt.setDate(2, to);
@@ -108,12 +108,13 @@ public class OrderDAO {
         try {
             orderDate = rs.getTimestamp("order_date");
         } catch (SQLException e) {
-            logger.warning("Warning: order_date timestamp non valido, impostato a null");
+            // Warning: order_date timestamp non valido, impostato a null
         }
         
         return new Order(
             orderId,
             rs.getInt("user_id"),
+            rs.getString("email"), // userEmail dalla JOIN
             rs.getBigDecimal("total_price"),
             rs.getString("shipping_address"),
             rs.getString("payment_method"),
@@ -128,7 +129,7 @@ public class OrderDAO {
 
     public List<Order> findAll() throws SQLException {
         List<Order> orders = new ArrayList<>();
-        String sql = "SELECT * FROM orders";
+        String sql = "SELECT o.*, u.email FROM orders o LEFT JOIN users u ON o.user_id = u.id";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
@@ -219,7 +220,7 @@ public class OrderDAO {
 
     public List<Order> getRecentOrders(int limit) throws SQLException {
     	List<Order> orders = new ArrayList<>();
-    	String sql = "SELECT * FROM orders ORDER BY order_date DESC LIMIT ?";
+    	String sql = "SELECT o.*, u.email FROM orders o LEFT JOIN users u ON o.user_id = u.id ORDER BY o.order_date DESC LIMIT ?";
     	try (PreparedStatement stmt = connection.prepareStatement(sql)) {
     		stmt.setInt(1, limit);
     		ResultSet rs = stmt.executeQuery();
@@ -234,8 +235,8 @@ public class OrderDAO {
      * Trova un ordine per tracking number
      */
     public Order findByTrackingNumber(String trackingNumber) throws Exception {
-        String sql = "SELECT * FROM orders WHERE tracking_number = ?";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+        String sql = "SELECT o.*, u.email FROM orders o LEFT JOIN users u ON o.user_id = u.id WHERE o.tracking_number = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, trackingNumber);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {

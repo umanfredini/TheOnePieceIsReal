@@ -147,7 +147,7 @@
                                     </div>
                                 </td>
                                 <td>
-                                    <strong>€ <fmt:formatNumber value="${order.totalAmount}" type="currency" currencySymbol="€" /></strong>
+                                    <strong>€ <fmt:formatNumber value="${order.totalPrice}" type="currency" currencySymbol="€" /></strong>
                                 </td>
                                 <td>
                                     <span class="badge 

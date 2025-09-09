@@ -28,20 +28,10 @@ public class AdminProductServlet extends HttpServlet {
         try {
             ProductDAO prodottoDAO = new ProductDAO();
 
-            if ("edit".equals(action)) {
-                int id = Integer.parseInt(request.getParameter("id"));
-                Product prodotto = prodottoDAO.findByProductId(id);
-                request.setAttribute("prodotto", prodotto);
-                request.getRequestDispatcher("/jsp/product-form.jsp").forward(request, response);
-            } else if ("delete".equals(action)) {
-                int id = Integer.parseInt(request.getParameter("id"));
-                prodottoDAO.delete(id);
-                response.sendRedirect("AdminProductServlet");
-            } else {
-                List<Product> prodotti = prodottoDAO.findAll();
-                request.setAttribute("products", prodotti);
-                request.getRequestDispatcher("/jsp/adminProducts.jsp").forward(request, response);
-            }
+            // Carica sempre la lista dei prodotti per la pagina di gestione
+            List<Product> prodotti = prodottoDAO.findAll();
+            request.setAttribute("products", prodotti);
+            request.getRequestDispatcher("/jsp/adminProducts.jsp").forward(request, response);
         } catch (Exception e) {
             logger.severe("Errore nella gestione prodotti admin" + e.getMessage());
             request.setAttribute("errorMessage", "Errore nella gestione dei prodotti. Riprova.");
@@ -54,46 +44,121 @@ public class AdminProductServlet extends HttpServlet {
         HttpSession session = request.getSession(false);
 
         if (!isValidToken(request, session)) {
+            // Se è una richiesta AJAX, restituisci JSON
+            String action = request.getParameter("action");
+            if (action != null && (action.equals("updateStock") || action.equals("delete"))) {
+                response.setContentType("application/json");
+                response.setCharacterEncoding("UTF-8");
+                response.getWriter().write("{\"success\": false, \"error\": \"Token di sicurezza non valido\"}");
+                return;
+            }
             request.setAttribute("errorMessage", "Token di sicurezza non valido. Riprova.");
             request.getRequestDispatcher("/jsp/error.jsp").forward(request, response);
             return;
         }
 
         if (!isAdminLoggedIn(session)) {
+            // Se è una richiesta AJAX, restituisci JSON
+            String action = request.getParameter("action");
+            if (action != null && (action.equals("updateStock") || action.equals("delete"))) {
+                response.setContentType("application/json");
+                response.setCharacterEncoding("UTF-8");
+                response.getWriter().write("{\"success\": false, \"error\": \"Sessione non valida\"}");
+                return;
+            }
             response.sendRedirect("LoginServlet");
             return;
         }
 
+        String action = request.getParameter("action");
+        logger.info("AdminProductServlet doPost - Action: " + action);
+        
         try {
-            String idStr = request.getParameter("id");
-            Product prodotto = new Product();
-
-            if (idStr != null && !idStr.isEmpty()) {
-                prodotto.setId(Integer.parseInt(idStr));
-            }
-
-            prodotto.setName(request.getParameter("nome"));
-            prodotto.setDescription(request.getParameter("descrizione"));
-            prodotto.setPrice(new BigDecimal(request.getParameter("prezzo")));
-            prodotto.setStockQuantity(Integer.parseInt(request.getParameter("quantita")));
-
-            prodotto.setCategory(request.getParameter("categoria"));
-            prodotto.setImageUrl(request.getParameter("immagine"));
-
             ProductDAO prodottoDAO = new ProductDAO();
-
-            if (prodotto.getId() > 0) {
-                prodottoDAO.updateProduct(prodotto);
-                request.setAttribute("successMessage", "Prodotto aggiornato correttamente.");
-            } else {
+            
+            if ("add".equals(action)) {
+                // Aggiungi nuovo prodotto
+                Product prodotto = new Product();
+                prodotto.setName(request.getParameter("name"));
+                prodotto.setDescription(request.getParameter("description"));
+                prodotto.setPrice(new BigDecimal(request.getParameter("price")));
+                prodotto.setStockQuantity(Integer.parseInt(request.getParameter("stockQuantity")));
+                prodotto.setCategory(request.getParameter("category"));
+                prodotto.setImageUrl(request.getParameter("image"));
+                prodotto.setActive(true);
+                
                 prodottoDAO.create(prodotto);
-                request.setAttribute("successMessage", "Prodotto salvato correttamente.");
+                request.setAttribute("successMessage", "Prodotto aggiunto correttamente.");
+                
+            } else if ("update".equals(action)) {
+                // Aggiorna prodotto esistente
+                int productId = Integer.parseInt(request.getParameter("productId"));
+                Product prodotto = prodottoDAO.findByProductId(productId);
+                
+                if (prodotto != null) {
+                    prodotto.setName(request.getParameter("name"));
+                    prodotto.setDescription(request.getParameter("description"));
+                    prodotto.setPrice(new BigDecimal(request.getParameter("price")));
+                    prodotto.setStockQuantity(Integer.parseInt(request.getParameter("stockQuantity")));
+                    prodotto.setCategory(request.getParameter("category"));
+                    
+                    // Gestisci immagine solo se fornita
+                    String imageUrl = request.getParameter("image");
+                    if (imageUrl != null && !imageUrl.trim().isEmpty()) {
+                        prodotto.setImageUrl(imageUrl);
+                    }
+                    
+                    prodottoDAO.updateProduct(prodotto);
+                    request.setAttribute("successMessage", "Prodotto aggiornato correttamente.");
+                }
+                
+            } else if ("updateStock".equals(action)) {
+                // Aggiorna solo lo stock
+                int productId = Integer.parseInt(request.getParameter("productId"));
+                int newStock = Integer.parseInt(request.getParameter("stockQuantity"));
+                
+                Product prodotto = prodottoDAO.findByProductId(productId);
+                if (prodotto != null) {
+                    prodotto.setStockQuantity(newStock);
+                    prodottoDAO.updateProduct(prodotto);
+                    
+                    // Risposta JSON per AJAX
+                    response.setContentType("application/json");
+                    response.setCharacterEncoding("UTF-8");
+                    response.getWriter().write("{\"success\": true, \"message\": \"Stock aggiornato correttamente.\"}");
+                    return;
+                } else {
+                    response.setContentType("application/json");
+                    response.setCharacterEncoding("UTF-8");
+                    response.getWriter().write("{\"success\": false, \"error\": \"Prodotto non trovato.\"}");
+                    return;
+                }
+                
+            } else if ("delete".equals(action)) {
+                // Elimina prodotto
+                int productId = Integer.parseInt(request.getParameter("productId"));
+                prodottoDAO.delete(productId);
+                
+                // Risposta JSON per AJAX
+                response.setContentType("application/json");
+                response.setCharacterEncoding("UTF-8");
+                response.getWriter().write("{\"success\": true, \"message\": \"Prodotto eliminato correttamente.\"}");
+                return;
             }
 
             response.sendRedirect("AdminProductServlet");
         } catch (Exception e) {
-            logger.severe("Errore durante il salvataggio del prodotto" + e.getMessage());
-            request.setAttribute("errorMessage", "Errore durante il salvataggio del prodotto");
+            logger.severe("Errore durante l'operazione sul prodotto: " + e.getMessage());
+            
+            // Se è una richiesta AJAX, restituisci JSON
+            if (action != null && (action.equals("updateStock") || action.equals("delete"))) {
+                response.setContentType("application/json");
+                response.setCharacterEncoding("UTF-8");
+                response.getWriter().write("{\"success\": false, \"error\": \"Errore durante l'operazione sul prodotto\"}");
+                return;
+            }
+            
+            request.setAttribute("errorMessage", "Errore durante l'operazione sul prodotto");
             request.getRequestDispatcher("/jsp/error.jsp").forward(request, response);
         }
     }

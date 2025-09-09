@@ -31,6 +31,10 @@ public class CartItem {
         this.product = prodotto;
     }
     
+    public CartItem() {
+        // Costruttore vuoto per compatibilità
+    }
+    
     public CartItem(int id, int cartId, Product prodotto, int quantity, Integer variantId) {
         this.id = id;
         this.cartId = cartId;

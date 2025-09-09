@@ -56,9 +56,11 @@ public class User {
     public void setUsername(String username) { this.username = username; }
 
     public boolean isAdmin() { return isAdmin; }
+    public boolean getIsAdmin() { return isAdmin; }
     public void setAdmin(boolean admin) { isAdmin = admin; }
 
     public boolean isActive() { return isActive; }
+    public boolean getIsActive() { return isActive; }
     public void setActive(boolean active) { isActive = active; }
 
     public String getShippingAddress() { return shippingAddress; }

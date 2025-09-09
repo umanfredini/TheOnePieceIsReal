@@ -7,6 +7,7 @@ import java.util.List;
 public class Order {
     private int id;
     private int userId;
+    private String userEmail;
     private BigDecimal totalPrice;
     private Timestamp orderDate;
     private String shippingAddress;
@@ -19,6 +20,20 @@ public class Order {
     public Order(int id, int userId, BigDecimal totalprice, String shippingAddress, String paymentMethod, String status, String trackingnumber, String note, Timestamp orderDate, List<OrderItem> items) {
         this.id = id;
         this.userId = userId;
+        this.shippingAddress = shippingAddress;
+        this.paymentMethod = paymentMethod;
+        this.status = status;
+        this.orderDate = orderDate;
+        this.items = items;
+        this.totalPrice = totalprice;
+        this.trackingNumber = trackingnumber;
+        this.notes = note;
+    }
+    
+    public Order(int id, int userId, String userEmail, BigDecimal totalprice, String shippingAddress, String paymentMethod, String status, String trackingnumber, String note, Timestamp orderDate, List<OrderItem> items) {
+        this.id = id;
+        this.userId = userId;
+        this.userEmail = userEmail;
         this.shippingAddress = shippingAddress;
         this.paymentMethod = paymentMethod;
         this.status = status;
@@ -43,6 +58,9 @@ public class Order {
     
     public int getUserId() { return userId; }
     public void setUserId(int userId) { this.userId = userId; }
+    
+    public String getUserEmail() { return userEmail; }
+    public void setUserEmail(String userEmail) { this.userEmail = userEmail; }
     
     public BigDecimal getTotalPrice() { return totalPrice; }
     public void setTotalPrice(BigDecimal totalPrice) { this.totalPrice = totalPrice; }

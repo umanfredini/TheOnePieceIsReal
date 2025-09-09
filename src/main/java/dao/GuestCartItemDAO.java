@@ -8,8 +8,10 @@ import util.DBConnection;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 public class GuestCartItemDAO {
+    private static final Logger logger = Logger.getLogger(GuestCartItemDAO.class.getName());
     private final Connection connection;
 
     public GuestCartItemDAO(Connection connection) {
@@ -212,11 +214,13 @@ public class GuestCartItemDAO {
 
     private ProductVariant extractProductVariant(ResultSet rs) throws SQLException {
         return new ProductVariant(
-        	    rs.getInt("product_variant_id"),
-        	    rs.getInt("product_id"),
-        	    rs.getString("variant_name"),
-        	    rs.getInt("stock_quantity")
-        	);
+    	    rs.getInt("product_variant_id"),
+    	    rs.getInt("product_id"),
+    	    rs.getString("variant_name"),
+    	    rs.getString("variant_type"),
+    	    rs.getInt("stock_quantity"),
+    	    rs.getBigDecimal("price_modifier")
+        );
     }
     
     private GuestCartItem extractGuestCartItemWithAliases(ResultSet rs) throws SQLException {

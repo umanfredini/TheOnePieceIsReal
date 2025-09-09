@@ -9,11 +9,6 @@
     </jsp:include>
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1>Gestione Utenti</h1>
-        <div>
-            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addUserModal">
-                <i class="fas fa-user-plus me-1"></i>Nuovo Utente
-            </button>
-        </div>
     </div>
 
     <!-- Statistiche rapide -->
@@ -22,7 +17,7 @@
             <div class="card bg-primary text-white">
                 <div class="card-body text-center">
                     <h5 class="card-title">Totale Utenti</h5>
-                    <h3 class="mb-0">${users.size()}</h3>
+                    <h3 class="mb-0">${users != null ? users.size() : 0}</h3>
                 </div>
             </div>
         </div>
@@ -32,11 +27,13 @@
                     <h5 class="card-title">Utenti Attivi</h5>
                     <h3 class="mb-0">
                         <c:set var="activeCount" value="0"/>
-                        <c:forEach var="user" items="${users}">
-                            <c:if test="${user.isActive}">
-                                <c:set var="activeCount" value="${activeCount + 1}"/>
-                            </c:if>
-                        </c:forEach>
+                        <c:if test="${users != null}">
+                            <c:forEach var="user" items="${users}">
+                                <c:if test="${user.getIsActive()}">
+                                    <c:set var="activeCount" value="${activeCount + 1}"/>
+                                </c:if>
+                            </c:forEach>
+                        </c:if>
                         ${activeCount}
                     </h3>
                 </div>
@@ -48,11 +45,13 @@
                     <h5 class="card-title">Amministratori</h5>
                     <h3 class="mb-0">
                         <c:set var="adminCount" value="0"/>
-                        <c:forEach var="user" items="${users}">
-                            <c:if test="${user.isAdmin}">
-                                <c:set var="adminCount" value="${adminCount + 1}"/>
-                            </c:if>
-                        </c:forEach>
+                        <c:if test="${users != null}">
+                            <c:forEach var="user" items="${users}">
+                                <c:if test="${user.getIsAdmin()}">
+                                    <c:set var="adminCount" value="${adminCount + 1}"/>
+                                </c:if>
+                            </c:forEach>
+                        </c:if>
                         ${adminCount}
                     </h3>
                 </div>
@@ -64,11 +63,13 @@
                     <h5 class="card-title">Utenti Inattivi</h5>
                     <h3 class="mb-0">
                         <c:set var="inactiveCount" value="0"/>
-                        <c:forEach var="user" items="${users}">
-                            <c:if test="${!user.isActive}">
-                                <c:set var="inactiveCount" value="${inactiveCount + 1}"/>
-                            </c:if>
-                        </c:forEach>
+                        <c:if test="${users != null}">
+                            <c:forEach var="user" items="${users}">
+                                <c:if test="${!user.getIsActive()}">
+                                    <c:set var="inactiveCount" value="${inactiveCount + 1}"/>
+                                </c:if>
+                            </c:forEach>
+                        </c:if>
                         ${inactiveCount}
                     </h3>
                 </div>
@@ -132,7 +133,8 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <c:forEach var="user" items="${users}">
+                        <c:if test="${users != null}">
+                            <c:forEach var="user" items="${users}">
                             <tr>
                                 <td>
                                     <strong>#<c:out value="${user.id}" /></strong>
@@ -146,11 +148,11 @@
                                 <td>
                                     <span class="badge 
                                         <c:choose>
-                                            <c:when test="${user.isAdmin}">bg-danger</c:when>
+                                            <c:when test="${user.getIsAdmin()}">bg-danger</c:when>
                                             <c:otherwise>bg-secondary</c:otherwise>
                                         </c:choose>">
                                         <c:choose>
-                                            <c:when test="${user.isAdmin}">Amministratore</c:when>
+                                            <c:when test="${user.getIsAdmin()}">Amministratore</c:when>
                                             <c:otherwise>Utente</c:otherwise>
                                         </c:choose>
                                     </span>
@@ -158,18 +160,18 @@
                                 <td>
                                     <span class="badge 
                                         <c:choose>
-                                            <c:when test="${user.isActive}">bg-success</c:when>
+                                            <c:when test="${user.getIsActive()}">bg-success</c:when>
                                             <c:otherwise>bg-danger</c:otherwise>
                                         </c:choose>">
                                         <c:choose>
-                                            <c:when test="${user.isActive}">Attivo</c:when>
+                                            <c:when test="${user.getIsActive()}">Attivo</c:when>
                                             <c:otherwise>Inattivo</c:otherwise>
                                         </c:choose>
                                     </span>
                                 </td>
                                 <td>
-                                    <c:if test="${not empty user.registrationDate}">
-                                        <fmt:formatDate value="${user.registrationDate}" pattern="dd/MM/yyyy"/>
+                                    <c:if test="${not empty user.createdAt}">
+                                        <fmt:formatDate value="${user.createdAt}" pattern="dd/MM/yyyy"/>
                                     </c:if>
                                 </td>
                                 <td>
@@ -183,12 +185,12 @@
                                             <i class="fas fa-cog"></i>
                                         </button>
                                         <ul class="dropdown-menu">
-                                            <c:if test="${!user.isAdmin}">
+                                            <c:if test="${!user.getIsAdmin()}">
                                                 <li><a class="dropdown-item" href="#" onclick="toggleUserRole(${user.id})">
                                                     <i class="fas fa-user-shield me-2"></i>Promuovi Admin
                                                 </a></li>
                                             </c:if>
-                                            <c:if test="${user.isAdmin}">
+                                            <c:if test="${user.getIsAdmin()}">
                                                 <li><a class="dropdown-item" href="#" onclick="toggleUserRole(${user.id})">
                                                     <i class="fas fa-user me-2"></i>Rimuovi Admin
                                                 </a></li>
@@ -204,7 +206,16 @@
                                     </div>
                                 </td>
                             </tr>
-                        </c:forEach>
+                            </c:forEach>
+                        </c:if>
+                        <c:if test="${users == null}">
+                            <tr>
+                                <td colspan="6" class="text-center text-muted">
+                                    <i class="fas fa-exclamation-triangle me-2"></i>
+                                    Errore nel caricamento degli utenti
+                                </td>
+                            </tr>
+                        </c:if>
                     </tbody>
                 </table>
             </c:when>

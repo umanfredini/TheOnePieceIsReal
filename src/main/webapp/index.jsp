@@ -164,16 +164,7 @@
                     </div>
                     <div class="error-content">
                         <h3>Database Non Disponibile</h3>
-                        <p>${databaseErrorMessage}</p>
-                        <div class="error-solutions">
-                            <h4>Soluzioni:</h4>
-                            <ul>
-                                <li><strong>Avviare MySQL:</strong> Aprire il prompt dei comandi come amministratore e eseguire: <code>net start mysql</code></li>
-                                <li><strong>Verificare il servizio:</strong> Controllare che il servizio MySQL sia in esecuzione</li>
-                                <li><strong>Controllare le credenziali:</strong> Verificare username e password nel file di configurazione</li>
-                                <li><strong>Verificare la porta:</strong> Assicurarsi che la porta 3306 sia disponibile</li>
-                            </ul>
-                        </div>
+                        <p>${databaseErrorMessage}</p>                      
                     </div>
                 </div>
             </c:if>

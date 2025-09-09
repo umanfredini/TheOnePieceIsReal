@@ -12,8 +12,7 @@
         </div>
         <div class="footer-section">
             <h4>Spedizioni</h4>
-            <p>Consegna in tutta Italia</p>
-            <p>Spedizione gratuita sopra €50</p>
+            <p>Consegna in tutta Italia</p>            
             <a href="${pageContext.request.contextPath}/TrackingServlet" class="tracking-link">
                 <i class="fas fa-ship"></i> Traccia Ordine
             </a>

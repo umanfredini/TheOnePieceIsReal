@@ -18,6 +18,11 @@ public class ProductDAO {
     private static final Logger logger = Logger.getLogger(ProductDAO.class.getName());
     private CharacterManager characterManager = new CharacterManager();
     
+    // Costruttore senza parametri
+    public ProductDAO() {
+        // Costruttore vuoto per compatibilità
+    }
+    
     // Metodi base per prodotti
     public List<Product> getAllProducts() {
         List<Product> products = new ArrayList<>();
@@ -359,13 +364,31 @@ public class ProductDAO {
             stmt.setString(4, product.getImageUrl());
             stmt.setString(5, product.getCategory());
             stmt.setInt(6, product.getStockQuantity());
-            stmt.setString(7, product.getIsFeatured());
+            stmt.setString(7, product.getIsFeatured() != null ? product.getIsFeatured() : "");
             stmt.setBoolean(8, product.isActive());
             stmt.setInt(9, product.getId());
             
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
             logger.severe("Errore nel metodo: " + e.getMessage());
+            return false;
+        }
+    }
+    
+    public boolean toggleProductStatus(int productId, boolean newStatus) {
+        String sql = "UPDATE products SET active = ? WHERE id = ?";
+        
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            
+            stmt.setBoolean(1, newStatus);
+            stmt.setInt(2, productId);
+            
+            int rowsAffected = stmt.executeUpdate();
+            logger.info("Toggle status - Rows affected: " + rowsAffected);
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            logger.severe("Errore nel toggle status del prodotto ID " + productId + ": " + e.getMessage());
             return false;
         }
     }
@@ -643,6 +666,7 @@ public class ProductDAO {
     }
     
     public Product findByProductId(int id) {
+        logger.info("ProductDAO.findByProductId - Ricerca prodotto con ID: " + id);
         String sql = "SELECT * FROM products WHERE id = ? AND deleted_at IS NULL";
         
         try (Connection conn = DBConnection.getConnection();
@@ -653,11 +677,13 @@ public class ProductDAO {
             
             if (rs.next()) {
                 Product product = mapResultSetToProduct(rs);
+                logger.info("ProductDAO.findByProductId - Prodotto trovato: " + product.getName());
                 return product;
+            } else {
+                logger.info("ProductDAO.findByProductId - Nessun prodotto trovato con ID: " + id);
             }
         } catch (SQLException e) {
-            System.err.println("ERRORE SQL nel recupero prodotto ID " + id + ": " + e.getMessage());
-            logger.severe("Errore nel metodo: " + e.getMessage());
+            logger.severe("ERRORE SQL nel recupero prodotto ID " + id + ": " + e.getMessage());
             throw new RuntimeException("Errore nel recupero del prodotto con ID " + id + ": " + e.getMessage(), e);
         }
         return null;

@@ -39,13 +39,21 @@ public class AdminUserServlet extends HttpServlet {
                 response.sendRedirect("AdminUserServlet");
             } else {
                 List<User> utenti = utenteDAO.findAll();
-                request.setAttribute("utenti", utenti);
+                request.setAttribute("users", utenti);
                 request.getRequestDispatcher("/jsp/adminUsers.jsp").forward(request, response);
             }
         } catch (Exception e) {
-            logger.severe("Errore nella gestione utenti admin" + e.getMessage());
-            request.setAttribute("errorMessage", "Errore nella gestione degli utenti. Riprova.");
-            request.getRequestDispatcher("/jsp/error.jsp").forward(request, response);
+            logger.severe("Errore nella gestione utenti admin: " + e.getMessage());
+            e.printStackTrace();
+            
+            // Se la response non è ancora stata committata, fai il forward
+            if (!response.isCommitted()) {
+                request.setAttribute("errorMessage", "Errore nella gestione degli utenti. Riprova.");
+                request.getRequestDispatcher("/jsp/error.jsp").forward(request, response);
+            } else {
+                // Se la response è già stata committata, scrivi direttamente
+                response.getWriter().println("<h1>Errore</h1><p>Errore nella gestione degli utenti. Riprova.</p>");
+            }
         }
     }
 
