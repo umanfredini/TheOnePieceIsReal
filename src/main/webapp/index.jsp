@@ -30,58 +30,88 @@
 <!-- Token CSRF per le operazioni AJAX -->
 <input type="hidden" name="csrfToken" value="${sessionScope.csrfToken}" />
 
-<!-- Menu hamburger per mobile -->
-<button class="mobile-menu-toggle" id="mobileMenuToggle">
-    <span class="hamburger-line"></span>
-    <span class="hamburger-line"></span>
-    <span class="hamburger-line"></span>
-</button>
-
-<!-- Menu mobile -->
-<nav class="mobile-menu" id="mobileMenu">
-    <div class="mobile-menu-content">
-        <c:choose>
-            <c:when test="${empty sessionScope.utente}">
-                <a href="${pageContext.request.contextPath}/jsp/login.jsp" class="mobile-menu-item">
-                    <i class="fas fa-user"></i>
-                    <span>Login</span>
-                </a>
-            </c:when>
-            <c:otherwise>
-                <c:choose>
-                    <c:when test="${sessionScope.isAdmin}">
-                        <a href="${pageContext.request.contextPath}/DashboardServlet" class="mobile-menu-item">
-                            <i class="fas fa-tachometer-alt"></i>
-                            <span>Dashboard</span>
-                        </a>
-                    </c:when>
-                    <c:otherwise>
-                        <a href="${pageContext.request.contextPath}/ProfileServlet" class="mobile-menu-item">
-                            <i class="fas fa-user"></i>
-                            <span>Profilo</span>
-                        </a>
-                    </c:otherwise>
-                </c:choose>
-            </c:otherwise>
-        </c:choose>
-        <a href="${pageContext.request.contextPath}/catalog" class="mobile-menu-item">
-            <i class="fas fa-th-large"></i>
-            <span>Catalogo</span>
-        </a>
-        <a href="${pageContext.request.contextPath}/CartServlet" class="mobile-menu-item">
-            <i class="fas fa-shopping-cart"></i>
-            <span>Carrello</span>
-        </a>
-        <a href="${pageContext.request.contextPath}/WishlistServlet" class="mobile-menu-item">
-            <i class="fas fa-heart"></i>
-            <span>Wishlist</span>
-        </a>
-        <a href="${pageContext.request.contextPath}/" class="mobile-menu-item">
-            <i class="fas fa-home"></i>
-            <span>Home</span>
-        </a>
-    </div>
-</nav>
+<script>
+// Aggiungi classe homepage al body per CSS specifici
+document.addEventListener('DOMContentLoaded', function() {
+    document.body.classList.add('homepage');
+    
+    // Debug: verifica se il menu hamburger è presente
+    const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+    const mobileMenu = document.getElementById('mobileMenu');
+    
+    console.log('Homepage - Menu hamburger presente:', !!mobileMenuToggle);
+    console.log('Homepage - Menu mobile presente:', !!mobileMenu);
+    
+    if (mobileMenuToggle) {
+        console.log('Homepage - Z-index menu toggle:', getComputedStyle(mobileMenuToggle).zIndex);
+        console.log('Homepage - Position menu toggle:', getComputedStyle(mobileMenuToggle).position);
+    }
+    
+    if (mobileMenu) {
+        console.log('Homepage - Z-index menu mobile:', getComputedStyle(mobileMenu).zIndex);
+    }
+    
+    // ===== SCRIPT MENU HAMBURGER PER HOMEPAGE =====
+    if (mobileMenuToggle && mobileMenu) {
+        console.log('Homepage - Inizializzazione menu hamburger...');
+        
+        mobileMenuToggle.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Homepage - Click su menu hamburger!');
+            
+            mobileMenuToggle.classList.toggle('active');
+            mobileMenu.classList.toggle('active');
+            
+            // Prevenire scroll del body quando il menu è aperto
+            if (mobileMenu.classList.contains('active')) {
+                document.body.classList.add('menu-open');
+                console.log('Homepage - Menu aperto');
+            } else {
+                document.body.classList.remove('menu-open');
+                console.log('Homepage - Menu chiuso');
+            }
+        });
+        
+        // Chiudi menu quando si clicca su un link
+        const mobileMenuItems = mobileMenu.querySelectorAll('.mobile-menu-item');
+        mobileMenuItems.forEach(item => {
+            item.addEventListener('click', function() {
+                mobileMenuToggle.classList.remove('active');
+                mobileMenu.classList.remove('active');
+                document.body.classList.remove('menu-open');
+                console.log('Homepage - Menu chiuso per click su link');
+            });
+        });
+        
+        // Chiudi menu quando si clicca fuori
+        mobileMenu.addEventListener('click', function(e) {
+            if (e.target === mobileMenu) {
+                mobileMenuToggle.classList.remove('active');
+                mobileMenu.classList.remove('active');
+                document.body.classList.remove('menu-open');
+                console.log('Homepage - Menu chiuso per click fuori');
+            }
+        });
+        
+        // Chiudi menu con tasto Escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && mobileMenu.classList.contains('active')) {
+                mobileMenuToggle.classList.remove('active');
+                mobileMenu.classList.remove('active');
+                document.body.classList.remove('menu-open');
+                console.log('Homepage - Menu chiuso con Escape');
+            }
+        });
+        
+        console.log('Homepage - Menu hamburger inizializzato correttamente');
+    } else {
+        console.error('Homepage - ERRORE: Elementi menu hamburger non trovati!');
+        console.log('mobileMenuToggle:', mobileMenuToggle);
+        console.log('mobileMenu:', mobileMenu);
+    }
+});
+</script>
 
 <!-- Layout principale -->
 <div class="main-container">
@@ -504,27 +534,6 @@
         }, 3000);
     }
     
-    // Script per menu mobile
-    document.addEventListener('DOMContentLoaded', function() {
-        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
-        const mobileMenu = document.getElementById('mobileMenu');
-        
-        if (mobileMenuToggle && mobileMenu) {
-            mobileMenuToggle.addEventListener('click', function() {
-                mobileMenuToggle.classList.toggle('active');
-                mobileMenu.classList.toggle('active');
-            });
-            
-            // Chiudi menu quando si clicca su un link
-            const mobileMenuItems = mobileMenu.querySelectorAll('.mobile-menu-item');
-            mobileMenuItems.forEach(item => {
-                item.addEventListener('click', function() {
-                    mobileMenuToggle.classList.remove('active');
-                    mobileMenu.classList.remove('active');
-                });
-            });
-        }
-    });
 </script>
 
 </body>

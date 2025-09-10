@@ -64,6 +64,56 @@
 }
 </style>
 
+<!-- Script per menu mobile -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+    const mobileMenu = document.getElementById('mobileMenu');
+    
+    if (mobileMenuToggle && mobileMenu) {
+        mobileMenuToggle.addEventListener('click', function() {
+            mobileMenuToggle.classList.toggle('active');
+            mobileMenu.classList.toggle('active');
+            
+            // Prevenire scroll del body quando il menu è aperto
+            if (mobileMenu.classList.contains('active')) {
+                document.body.classList.add('menu-open');
+            } else {
+                document.body.classList.remove('menu-open');
+            }
+        });
+        
+        // Chiudi menu quando si clicca su un link
+        const mobileMenuItems = mobileMenu.querySelectorAll('.mobile-menu-item');
+        mobileMenuItems.forEach(item => {
+            item.addEventListener('click', function() {
+                mobileMenuToggle.classList.remove('active');
+                mobileMenu.classList.remove('active');
+                document.body.classList.remove('menu-open');
+            });
+        });
+        
+        // Chiudi menu quando si clicca fuori
+        mobileMenu.addEventListener('click', function(e) {
+            if (e.target === mobileMenu) {
+                mobileMenuToggle.classList.remove('active');
+                mobileMenu.classList.remove('active');
+                document.body.classList.remove('menu-open');
+            }
+        });
+        
+        // Chiudi menu con tasto ESC
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && mobileMenu.classList.contains('active')) {
+                mobileMenuToggle.classList.remove('active');
+                mobileMenu.classList.remove('active');
+                document.body.classList.remove('menu-open');
+            }
+        });
+    }
+});
+</script>
+
 </main>
 </body>
 </html>

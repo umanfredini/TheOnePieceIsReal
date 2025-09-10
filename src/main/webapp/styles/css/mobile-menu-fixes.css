@@ -154,10 +154,12 @@
     
     .mobile-menu-toggle {
         display: flex;
+        z-index: 1002 !important; /* Forza z-index per homepage */
     }
     
     .mobile-menu {
         display: block;
+        z-index: 1001 !important; /* Forza z-index per homepage */
     }
     
     .header-content {
@@ -171,6 +173,12 @@
     
     .header-title .subtitle {
         font-size: 0.9rem;
+    }
+    
+    /* Assicura che il menu hamburger sia sempre visibile nella homepage */
+    .main-container {
+        position: relative;
+        z-index: 1;
     }
 }
 
@@ -467,4 +475,32 @@ body.menu-open {
         font-size: 1.6rem;
         width: 35px;
     }
+}
+
+/* ===== 16. FIX SPECIFICO PER HOMEPAGE ===== */
+/* Assicura che il menu hamburger funzioni sempre nella homepage */
+.main-container ~ .mobile-menu-toggle,
+body:has(.main-container) .mobile-menu-toggle {
+    z-index: 1002 !important;
+    pointer-events: auto !important;
+    position: fixed !important;
+    top: 20px !important;
+    right: 20px !important;
+}
+
+body:has(.main-container) .mobile-menu {
+    z-index: 1001 !important;
+}
+
+/* Fix per browser che non supportano :has() */
+.homepage .mobile-menu-toggle {
+    z-index: 1002 !important;
+    pointer-events: auto !important;
+    position: fixed !important;
+    top: 20px !important;
+    right: 20px !important;
+}
+
+.homepage .mobile-menu {
+    z-index: 1001 !important;
 } 

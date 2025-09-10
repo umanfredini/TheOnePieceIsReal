@@ -46,7 +46,7 @@ public class AdminProductServlet extends HttpServlet {
         if (!isValidToken(request, session)) {
             // Se è una richiesta AJAX, restituisci JSON
             String action = request.getParameter("action");
-            if (action != null && (action.equals("updateStock") || action.equals("delete"))) {
+            if (action != null && (action.equals("updateStock") || action.equals("delete") || action.equals("add"))) {
                 response.setContentType("application/json");
                 response.setCharacterEncoding("UTF-8");
                 response.getWriter().write("{\"success\": false, \"error\": \"Token di sicurezza non valido\"}");
@@ -60,7 +60,7 @@ public class AdminProductServlet extends HttpServlet {
         if (!isAdminLoggedIn(session)) {
             // Se è una richiesta AJAX, restituisci JSON
             String action = request.getParameter("action");
-            if (action != null && (action.equals("updateStock") || action.equals("delete"))) {
+            if (action != null && (action.equals("updateStock") || action.equals("delete") || action.equals("add"))) {
                 response.setContentType("application/json");
                 response.setCharacterEncoding("UTF-8");
                 response.getWriter().write("{\"success\": false, \"error\": \"Sessione non valida\"}");
@@ -151,7 +151,7 @@ public class AdminProductServlet extends HttpServlet {
             logger.severe("Errore durante l'operazione sul prodotto: " + e.getMessage());
             
             // Se è una richiesta AJAX, restituisci JSON
-            if (action != null && (action.equals("updateStock") || action.equals("delete"))) {
+            if (action != null && (action.equals("updateStock") || action.equals("delete") || action.equals("add"))) {
                 response.setContentType("application/json");
                 response.setCharacterEncoding("UTF-8");
                 response.getWriter().write("{\"success\": false, \"error\": \"Errore durante l'operazione sul prodotto\"}");
@@ -172,6 +172,14 @@ public class AdminProductServlet extends HttpServlet {
     private boolean isValidToken(HttpServletRequest request, HttpSession session) {
         String sessionToken = (String) session.getAttribute("csrfToken");
         String requestToken = request.getParameter("csrfToken");
-        return sessionToken != null && sessionToken.equals(requestToken);
+        
+        logger.info("Validazione CSRF Token - SessionToken: " + sessionToken + 
+                   ", RequestToken: " + requestToken + 
+                   ", Session: " + (session != null ? "presente" : "null"));
+        
+        boolean isValid = sessionToken != null && sessionToken.equals(requestToken);
+        logger.info("Token CSRF valido: " + isValid);
+        
+        return isValid;
     }
 }

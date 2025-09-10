@@ -146,6 +146,8 @@ public class UserDAO {
         return null;
     }
 
+    // DISABILITATO: Toggle status ora modifica solo l'interfaccia utente
+    /*
     public void toggleUserStatus(int id) throws SQLException {
         String sql = "UPDATE users SET is_active = NOT is_active WHERE id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -153,6 +155,7 @@ public class UserDAO {
             stmt.executeUpdate();
         }
     }
+    */
     
     public void toggleAdminStatus(int id) throws SQLException {
         String sql = "UPDATE users SET is_admin = NOT is_admin WHERE id = ?";

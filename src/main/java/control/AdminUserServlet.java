@@ -33,9 +33,10 @@ public class AdminUserServlet extends HttpServlet {
                 request.setAttribute("utente", utente);
                 request.getRequestDispatcher("/jsp/user-detail.jsp").forward(request, response);
             } else if ("toggle".equals(action)) {
-                int id = Integer.parseInt(request.getParameter("id"));
-                utenteDAO.toggleUserStatus(id);
-                request.setAttribute("successMessage", "Stato utente aggiornato con successo.");
+                // Rimosso: non modifichiamo più il database per il toggle status
+                // int id = Integer.parseInt(request.getParameter("id"));
+                // utenteDAO.toggleUserStatus(id);
+                request.setAttribute("successMessage", "Toggle status disabilitato - solo modifica visiva.");
                 response.sendRedirect("AdminUserServlet");
             } else {
                 List<User> utenti = utenteDAO.findAll();

@@ -264,28 +264,63 @@ function toggleUserRole(userId) {
 
 function toggleUserStatus(userId) {
     if (confirm('Sei sicuro di voler cambiare lo stato di questo utente?')) {
-        const formData = new FormData();
-        formData.append('action', 'toggleStatus');
-        formData.append('userId', userId);
-        formData.append('csrfToken', '${sessionScope.csrfToken}');
+        // Trova la riga dell'utente nella tabella cercando l'ID
+        const allRows = document.querySelectorAll('tbody tr');
+        let userRow = null;
         
-        fetch('AdminUserServlet', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                location.reload();
-            } else {
-                alert('Errore: ' + data.error);
+        for (let row of allRows) {
+            const firstCell = row.querySelector('td:first-child');
+            if (firstCell && firstCell.textContent.includes(`#${userId}`)) {
+                userRow = row;
+                break;
             }
-        })
-        .catch(error => {
-            console.error('Errore:', error);
-            alert('Errore di connessione');
-        });
+        }
+        
+        if (userRow) {
+            // Trova il badge dello stato (5a colonna)
+            const statusBadge = userRow.querySelector('td:nth-child(5) .badge');
+            const statusText = statusBadge.textContent.trim();
+            
+            // Cambia lo stato visivamente
+            if (statusText === 'Attivo') {
+                statusBadge.className = 'badge bg-danger';
+                statusBadge.textContent = 'Inattivo';
+            } else {
+                statusBadge.className = 'badge bg-success';
+                statusBadge.textContent = 'Attivo';
+            }
+            
+            // Aggiorna le statistiche
+            updateUserStats();
+            
+            // Mostra alert di conferma
+            alert('Stato utente aggiornato con successo! (Modifica solo visiva)');
+        } else {
+            alert('Errore: Impossibile trovare l\'utente nella tabella');
+        }
     }
+}
+
+function updateUserStats() {
+    // Ricalcola le statistiche basandosi sui badge visibili
+    const allBadges = document.querySelectorAll('td:nth-child(5) .badge');
+    let activeCount = 0;
+    let inactiveCount = 0;
+    
+    allBadges.forEach(badge => {
+        if (badge.textContent.trim() === 'Attivo') {
+            activeCount++;
+        } else {
+            inactiveCount++;
+        }
+    });
+    
+    // Aggiorna i contatori nelle card delle statistiche
+    const activeCard = document.querySelector('.card.bg-success h3');
+    const inactiveCard = document.querySelector('.card.bg-warning h3');
+    
+    if (activeCard) activeCard.textContent = activeCount;
+    if (inactiveCard) inactiveCard.textContent = inactiveCount;
 }
 
 function deleteUser(userId) {

@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/css/image-fixes.css?v=${System.currentTimeMillis()}">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/css/image-error.css?v=${System.currentTimeMillis()}">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/css/mobile-menu-fixes.css?v=${System.currentTimeMillis()}">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/css/admin-responsive.css?v=${System.currentTimeMillis()}">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/css/checkout.css?v=${System.currentTimeMillis()}">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/css/background-music.css?v=${System.currentTimeMillis()}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -31,6 +32,14 @@
                 <div class="subtitle">One day we will find it and we can see it</div>
             </div>
         </div>
+        
+        <!-- Menu hamburger per mobile -->
+        <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Apri menu">
+            <span class="hamburger-line"></span>
+            <span class="hamburger-line"></span>
+            <span class="hamburger-line"></span>
+        </button>
+        
         <nav class="main-nav">
             <ul>
                 <c:choose>
@@ -80,6 +89,72 @@
         </nav>
     </div>
 </header>
+
+<!-- Menu mobile -->
+<nav class="mobile-menu" id="mobileMenu">
+    <div class="mobile-menu-content">
+        <c:choose>
+            <c:when test="${empty sessionScope.utente}">
+                <a href="${pageContext.request.contextPath}/jsp/register.jsp" class="mobile-menu-item">
+                    <i class="fas fa-user-plus"></i>
+                    <span>Registrazione</span>
+                </a>
+                <a href="${pageContext.request.contextPath}/jsp/login.jsp" class="mobile-menu-item">
+                    <i class="fas fa-sign-in-alt"></i>
+                    <span>Login</span>
+                </a>
+            </c:when>
+            <c:otherwise>
+                <c:choose>
+                    <c:when test="${sessionScope.isAdmin}">
+                        <a href="${pageContext.request.contextPath}/DashboardServlet" class="mobile-menu-item">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span>Dashboard</span>
+                        </a>
+                        <a href="${pageContext.request.contextPath}/AdminProductServlet" class="mobile-menu-item">
+                            <i class="fas fa-box"></i>
+                            <span>Gestione Prodotti</span>
+                        </a>
+                        <a href="${pageContext.request.contextPath}/AdminOrderServlet" class="mobile-menu-item">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span>Gestione Ordini</span>
+                        </a>
+                        <a href="${pageContext.request.contextPath}/AdminUserServlet" class="mobile-menu-item">
+                            <i class="fas fa-users"></i>
+                            <span>Gestione Utenti</span>
+                        </a>
+                    </c:when>
+                    <c:otherwise>
+                        <a href="${pageContext.request.contextPath}/ProfileServlet" class="mobile-menu-item">
+                            <i class="fas fa-user-circle"></i>
+                            <span>Profilo</span>
+                        </a>
+                    </c:otherwise>
+                </c:choose>
+                <a href="${pageContext.request.contextPath}/jsp/logout.jsp" class="mobile-menu-item">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+            </c:otherwise>
+        </c:choose>
+        <a href="${pageContext.request.contextPath}/catalog" class="mobile-menu-item">
+            <i class="fas fa-th-large"></i>
+            <span>Catalogo</span>
+        </a>
+        <a href="${pageContext.request.contextPath}/CartServlet" class="mobile-menu-item">
+            <i class="fas fa-shopping-cart"></i>
+            <span>Carrello</span>
+        </a>
+        <a href="${pageContext.request.contextPath}/WishlistServlet" class="mobile-menu-item">
+            <i class="fas fa-heart"></i>
+            <span>Wishlist</span>
+        </a>
+        <a href="${pageContext.request.contextPath}/" class="mobile-menu-item">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+        </a>
+    </div>
+</nav>
 
 <!-- Includi messaggi flash -->
 <jsp:include page="flash-message.jsp" />

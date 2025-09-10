@@ -3,6 +3,13 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <jsp:include page="header.jsp" />
 
+<!-- Debug CSRF Token -->
+<script>
+console.log('CSRF Token disponibile:', '${sessionScope.csrfToken}');
+console.log('CSRF Token è vuoto?', '${sessionScope.csrfToken}' === '');
+console.log('CSRF Token è null?', '${sessionScope.csrfToken}' === 'null');
+</script>
+
 <main class="container mt-5" role="main">
     <jsp:include page="adminBreadcrumb.jsp">
         <jsp:param name="page" value="products" />
@@ -82,7 +89,7 @@
     <section role="region" aria-label="Tabella prodotti" class="table-responsive">
         <c:choose>
             <c:when test="${not empty products}">
-                <table class="table table-striped table-hover align-middle">
+                <table class="table table-striped table-hover align-middle" style="min-width: 800px;">
                     <thead class="table-dark">
                         <tr>
                             <th scope="col">Immagine</th>
@@ -143,7 +150,7 @@
                                             <i class="fas fa-cog"></i>
                                         </button>
                                         <ul class="dropdown-menu">
-                                            <li><a class="dropdown-item" href="#" onclick="toggleProductStatus('${product.id}')">
+                                            <li><a class="dropdown-item" href="#" onclick="console.log('Chiamata toggleProductStatus con ID:', '${product.id}'); toggleProductStatus('${product.id}')">
                                                 <i class="fas fa-toggle-on me-2"></i>Cambia Stato
                                             </a></li>
                                             <li><a class="dropdown-item" href="#" onclick="updateStock(this, '${product.id}')">
@@ -346,6 +353,11 @@
 <script>
 // Validazione form prodotto
 document.getElementById('addProductForm').addEventListener('submit', function(e) {
+    // Debug: verifica se il token CSRF è presente nel form
+    const csrfInput = this.querySelector('input[name="csrfToken"]');
+    console.log('CSRF Token nel form:', csrfInput ? csrfInput.value : 'NON TROVATO');
+    console.log('Form data:', new FormData(this));
+    
     let isValid = true;
     
     // Validazione nome
@@ -386,6 +398,9 @@ document.getElementById('addProductForm').addEventListener('submit', function(e)
     
     if (!isValid) {
         e.preventDefault();
+        console.log('Form non valido - submit bloccato');
+    } else {
+        console.log('Form valido - submit permesso');
     }
 });
 
@@ -531,11 +546,51 @@ function editProduct(buttonElement, productId) {
 }
 
 function toggleProductStatus(productId) {
-    console.log('toggleProductStatus chiamata con ID:', productId);
+    console.log('toggleProductStatus chiamata con ID:', productId, 'tipo:', typeof productId);
+    
+    // Verifica che productId sia valido
+    if (!productId || productId === '' || productId === 'undefined') {
+        alert('Errore: ID prodotto non valido');
+        console.error('ProductId non valido:', productId);
+        return;
+    }
     
     if (confirm('Sei sicuro di voler cambiare lo stato del prodotto?')) {
-        // Trova la riga del prodotto usando data-product-id
-        const targetRow = document.querySelector(`tr[data-product-id="${productId}"]`);
+        let targetRow = null;
+        
+        // Prima prova: cerca direttamente in tutte le righe (approccio più sicuro)
+        const allRows = document.querySelectorAll('tbody tr[data-product-id]');
+        console.log('Tutte le righe con data-product-id:', allRows.length);
+        
+        for (let row of allRows) {
+            const rowId = row.getAttribute('data-product-id');
+            console.log('Riga ID:', rowId, 'tipo:', typeof rowId, 'confronto con:', productId);
+            if (rowId == productId) { // Usa == per confronto flessibile
+                targetRow = row;
+                console.log('Riga trovata tramite ricerca manuale:', targetRow);
+                break;
+            }
+        }
+        
+        // Fallback: prova i selettori CSS solo se productId è valido
+        if (!targetRow && productId && productId !== '') {
+            try {
+                targetRow = document.querySelector(`tr[data-product-id="${productId}"]`);
+                console.log('Riga trovata tramite selettore CSS con virgolette:', targetRow);
+            } catch (e) {
+                console.log('Errore selettore CSS con virgolette:', e.message);
+            }
+            
+            if (!targetRow) {
+                try {
+                    targetRow = document.querySelector(`tr[data-product-id=${productId}]`);
+                    console.log('Riga trovata tramite selettore CSS senza virgolette:', targetRow);
+                } catch (e) {
+                    console.log('Errore selettore CSS senza virgolette:', e.message);
+                }
+            }
+        }
+        
         console.log('Riga trovata:', targetRow);
         
         if (!targetRow) {
@@ -543,30 +598,54 @@ function toggleProductStatus(productId) {
             return;
         }
         
+        // Debug: mostra tutte le celle della riga
+        const allCells = targetRow.querySelectorAll('td');
+        console.log('Tutte le celle trovate:', allCells.length);
+        allCells.forEach((cell, index) => {
+            console.log(`Cella ${index + 1}:`, cell.textContent.trim());
+        });
+        
         // Trova il badge dello status (6a colonna: Stato)
+        const statusCell = targetRow.querySelector('td:nth-child(6)');
+        console.log('Cella status (6a colonna):', statusCell);
+        
         const statusBadge = targetRow.querySelector('td:nth-child(6) .badge');
         console.log('Badge status trovato:', statusBadge);
+        console.log('Badge status HTML:', statusBadge ? statusBadge.outerHTML : 'NON TROVATO');
         
         if (!statusBadge) {
-            alert('Errore: Badge status non trovato');
+            alert('Errore: Badge status non trovato nella 6a colonna');
             return;
         }
         
         // Cambia il display del badge
-        const isCurrentlyActive = statusBadge.textContent.trim() === 'Attivo';
+        const currentText = statusBadge.textContent.trim();
+        const isCurrentlyActive = currentText === 'Attivo';
+        console.log('Testo attuale del badge:', currentText);
         console.log('Status attuale:', isCurrentlyActive ? 'Attivo' : 'Non attivo');
         
         if (isCurrentlyActive) {
             // Cambia da Attivo a Non attivo
+            console.log('Cambiando da Attivo a Non attivo...');
             statusBadge.className = 'badge bg-danger';
             statusBadge.textContent = 'Non attivo';
+            console.log('Nuova classe:', statusBadge.className);
+            console.log('Nuovo testo:', statusBadge.textContent);
         } else {
             // Cambia da Non attivo a Attivo
+            console.log('Cambiando da Non attivo a Attivo...');
             statusBadge.className = 'badge bg-success';
             statusBadge.textContent = 'Attivo';
+            console.log('Nuova classe:', statusBadge.className);
+            console.log('Nuovo testo:', statusBadge.textContent);
         }
         
+        // Verifica finale
+        console.log('Verifica finale - Badge HTML dopo il cambio:', statusBadge.outerHTML);
         console.log('Status cambiato da', isCurrentlyActive ? 'Attivo' : 'Non attivo', 'a', isCurrentlyActive ? 'Non attivo' : 'Attivo');
+        
+        // Mostra alert di conferma
+        alert('Stato prodotto aggiornato con successo!');
     }
 }
 
