@@ -1,6 +1,11 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+
+<!-- ID utente per gestione wishlist per-utente -->
+<c:if test="${not empty sessionScope.utente}">
+    <meta name="user-id" content="${sessionScope.utente.id}">
+</c:if>
 <%@ page import="dao.ProductDAO" %>
 <%@ page import="model.Product" %>
 <%@ page import="java.util.List" %>
@@ -13,105 +18,107 @@
             List<Product> featuredProducts = productDAO.getFeaturedProducts(6);
             request.setAttribute("featuredProducts", featuredProducts);
         } catch (Exception e) {
-            // Log dell'errore per debug
-            System.err.println("Errore nel caricamento prodotti in evidenza: " + e.getMessage());
-            e.printStackTrace();
             // In caso di errore, lascia featuredProducts vuoto
-            request.setAttribute("featuredProducts", new java.util.ArrayList<>());
-            // Imposta un flag per mostrare un messaggio di errore
-            request.setAttribute("databaseError", true);
-            request.setAttribute("databaseErrorMessage", "Database non disponibile. Verificare che MySQL sia in esecuzione.");
+            request.setAttribute("featuredProducts", null);
         }
     }
 %>
 
 <jsp:include page="jsp/header.jsp" />
 
+<!-- Flash Messages -->
+<jsp:include page="jsp/flash-message.jsp" />
+
 <!-- Token CSRF per le operazioni AJAX -->
 <input type="hidden" name="csrfToken" value="${sessionScope.csrfToken}" />
 
+<!-- Menu hamburger per mobile -->
+<button class="mobile-menu-toggle" id="mobileMenuToggle">
+    <span class="hamburger-line"></span>
+    <span class="hamburger-line"></span>
+    <span class="hamburger-line"></span>
+</button>
+
 <script>
-// Aggiungi classe homepage al body per CSS specifici
-document.addEventListener('DOMContentLoaded', function() {
-    document.body.classList.add('homepage');
+    // Funzioni semplificate per i prodotti
     
-    // Debug: verifica se il menu hamburger è presente
-    const mobileMenuToggle = document.getElementById('mobileMenuToggle');
-    const mobileMenu = document.getElementById('mobileMenu');
+    // Controllo wishlist - usa la funzione completa dal wishlist-manager.js
+    // La funzione toggleWishlist è definita in wishlist-manager.js
     
-    console.log('Homepage - Menu hamburger presente:', !!mobileMenuToggle);
-    console.log('Homepage - Menu mobile presente:', !!mobileMenu);
-    
-    if (mobileMenuToggle) {
-        console.log('Homepage - Z-index menu toggle:', getComputedStyle(mobileMenuToggle).zIndex);
-        console.log('Homepage - Position menu toggle:', getComputedStyle(mobileMenuToggle).position);
+    // Controllo carrello
+    function addToCart(productId) {
+        // Qui puoi aggiungere la logica AJAX per aggiungere al carrello
+        console.log('Aggiungi al carrello prodotto:', productId);
     }
     
-    if (mobileMenu) {
-        console.log('Homepage - Z-index menu mobile:', getComputedStyle(mobileMenu).zIndex);
-    }
-    
-    // ===== SCRIPT MENU HAMBURGER PER HOMEPAGE =====
-    if (mobileMenuToggle && mobileMenu) {
-        console.log('Homepage - Inizializzazione menu hamburger...');
+    // Script per menu mobile
+    document.addEventListener('DOMContentLoaded', function() {
+        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+        const mobileMenu = document.getElementById('mobileMenu');
         
-        mobileMenuToggle.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            console.log('Homepage - Click su menu hamburger!');
-            
-            mobileMenuToggle.classList.toggle('active');
-            mobileMenu.classList.toggle('active');
-            
-            // Prevenire scroll del body quando il menu è aperto
-            if (mobileMenu.classList.contains('active')) {
-                document.body.classList.add('menu-open');
-                console.log('Homepage - Menu aperto');
-            } else {
-                document.body.classList.remove('menu-open');
-                console.log('Homepage - Menu chiuso');
-            }
-        });
-        
-        // Chiudi menu quando si clicca su un link
-        const mobileMenuItems = mobileMenu.querySelectorAll('.mobile-menu-item');
-        mobileMenuItems.forEach(item => {
-            item.addEventListener('click', function() {
-                mobileMenuToggle.classList.remove('active');
-                mobileMenu.classList.remove('active');
-                document.body.classList.remove('menu-open');
-                console.log('Homepage - Menu chiuso per click su link');
+        if (mobileMenuToggle && mobileMenu) {
+            mobileMenuToggle.addEventListener('click', function() {
+                mobileMenuToggle.classList.toggle('active');
+                mobileMenu.classList.toggle('active');
             });
-        });
-        
-        // Chiudi menu quando si clicca fuori
-        mobileMenu.addEventListener('click', function(e) {
-            if (e.target === mobileMenu) {
-                mobileMenuToggle.classList.remove('active');
-                mobileMenu.classList.remove('active');
-                document.body.classList.remove('menu-open');
-                console.log('Homepage - Menu chiuso per click fuori');
-            }
-        });
-        
-        // Chiudi menu con tasto Escape
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape' && mobileMenu.classList.contains('active')) {
-                mobileMenuToggle.classList.remove('active');
-                mobileMenu.classList.remove('active');
-                document.body.classList.remove('menu-open');
-                console.log('Homepage - Menu chiuso con Escape');
-            }
-        });
-        
-        console.log('Homepage - Menu hamburger inizializzato correttamente');
-    } else {
-        console.error('Homepage - ERRORE: Elementi menu hamburger non trovati!');
-        console.log('mobileMenuToggle:', mobileMenuToggle);
-        console.log('mobileMenu:', mobileMenu);
-    }
-});
+            
+            // Chiudi menu quando si clicca su un link
+            const mobileMenuItems = mobileMenu.querySelectorAll('.mobile-menu-item');
+            mobileMenuItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    mobileMenuToggle.classList.remove('active');
+                    mobileMenu.classList.remove('active');
+                });
+            });
+        }
+    });
 </script>
+
+<!-- Menu mobile -->
+<nav class="mobile-menu" id="mobileMenu">
+    <div class="mobile-menu-content">
+        <c:choose>
+            <c:when test="${empty sessionScope.utente}">
+                <a href="${pageContext.request.contextPath}/jsp/login.jsp" class="mobile-menu-item">
+                    <i class="fas fa-user"></i>
+                    <span>Login</span>
+                </a>
+            </c:when>
+            <c:otherwise>
+                <c:choose>
+                    <c:when test="${sessionScope.isAdmin}">
+                        <a href="${pageContext.request.contextPath}/DashboardServlet" class="mobile-menu-item">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </c:when>
+                    <c:otherwise>
+                        <a href="${pageContext.request.contextPath}/ProfileServlet" class="mobile-menu-item">
+                            <i class="fas fa-user"></i>
+                            <span>Profilo</span>
+                        </a>
+                    </c:otherwise>
+                </c:choose>
+            </c:otherwise>
+        </c:choose>
+        <a href="${pageContext.request.contextPath}/catalog" class="mobile-menu-item">
+            <i class="fas fa-th-large"></i>
+            <span>Catalogo</span>
+        </a>
+        <a href="${pageContext.request.contextPath}/CartServlet" class="mobile-menu-item">
+            <i class="fas fa-shopping-cart"></i>
+            <span>Carrello</span>
+        </a>
+        <a href="${pageContext.request.contextPath}/WishlistServlet" class="mobile-menu-item">
+            <i class="fas fa-heart"></i>
+            <span>Wishlist</span>
+        </a>
+        <a href="${pageContext.request.contextPath}/" class="mobile-menu-item">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+        </a>
+    </div>
+</nav>
 
 <!-- Layout principale -->
 <div class="main-container">
@@ -182,111 +189,58 @@ document.addEventListener('DOMContentLoaded', function() {
 
     <!-- Contenuto principale -->
     <main class="main-content">
-        <!-- Carosello prodotti in evidenza -->
+        <!-- Prodotti in evidenza -->
         <section class="featured-products">
-            <h2 class="gradient-text">Prodotti in Evidenza</h2>
+            <h2 class="gradient-text">🌟 Prodotti in Evidenza</h2>
             
-            <!-- Messaggio di errore database -->
-            <c:if test="${databaseError}">
-                <div class="database-error-message">
-                    <div class="error-icon">
-                        <i class="fas fa-exclamation-triangle"></i>
-                    </div>
-                    <div class="error-content">
-                        <h3>Database Non Disponibile</h3>
-                        <p>${databaseErrorMessage}</p>                      
-                    </div>
-                </div>
-            </c:if>
-            
-            <div class="carousel-container carousel-gradient">
-                <div class="carousel-track">
-                    <!-- Controllo se ci sono prodotti -->
-                    <c:choose>
-                        <c:when test="${not empty featuredProducts}">
-                            <!-- Prodotti duplicati per effetto infinito -->
-                            <c:forEach var="product" items="${featuredProducts}" varStatus="status" end="4">
-                                <div class="product-card product-card-gradient" data-product-id="${product.id}" data-category="${product.category}">
-                                    <!-- Click sul prodotto per andare al dettaglio -->
-                                    <div class="product-click-area" onclick="goToProductDetail(${product.id})">
-                                        <img src="${pageContext.request.contextPath}/styles/images/prodotti/${product.imageUrl}" 
-                                             alt="${product.name}" class="product-image product-image-gradient">
-                                        
-                                        <div class="product-info">
-                                            <h3 class="product-title gradient-text">${product.name}</h3>
-                                            <div class="product-price">€${product.price}</div>
-                                        </div>
-                                        
-                                        <!-- Overlay rimosso per design più pulito -->
-                                    </div>
+            <div class="products-grid">
+                <!-- Controllo se ci sono prodotti -->
+                <c:choose>
+                    <c:when test="${not empty featuredProducts}">
+                        <!-- Mostra solo i primi 3 prodotti -->
+                        <c:forEach var="product" items="${featuredProducts}" varStatus="status" begin="0" end="2">
+                            <div class="product-card" data-product-id="${product.id}" data-category="${product.category}">
+                                <!-- Click sul prodotto per andare al dettaglio -->
+                                <div class="product-click-area" onclick="goToProductDetail('${product.id}')">
+                                    <img src="${pageContext.request.contextPath}/styles/images/prodotti/${product.imageUrl}" 
+                                         alt="${product.name}" class="product-image">
                                     
-                                    <!-- Bottoni azioni (non propagano il click) -->
-                                    <c:if test="${not empty sessionScope.utente and not sessionScope.isAdmin}">
-                                        <div class="product-actions" onclick="event.stopPropagation()">
-                                            <button class="wishlist-btn btn-gradient-primary" onclick="toggleWishlist(${product.id})" 
-                                                    data-product-id="${product.id}">
-                                                <i class="fas fa-heart"></i>
-                                            </button>
-                                        </div>
-                                    </c:if>
-                                    
-                                    <div class="product-actions-bottom" onclick="event.stopPropagation()">
-                                        <button class="cart-btn btn-gradient-success" onclick="addToCart(${product.id})">
-                                            <i class="fas fa-shopping-cart"></i>
-                                        </button>
+                                    <div class="product-info">
+                                        <h3 class="product-name">${product.name}</h3>
+                                        <div class="product-price">€${product.price}</div>
                                     </div>
                                 </div>
-                            </c:forEach>
-                            
-                            <!-- Duplicazione per effetto infinito -->
-                            <c:forEach var="product" items="${featuredProducts}" varStatus="status" end="4">
-                                <div class="product-card product-card-gradient" data-product-id="${product.id}" data-category="${product.category}">
-                                    <!-- Click sul prodotto per andare al dettaglio -->
-                                    <div class="product-click-area" onclick="goToProductDetail(${product.id})">
-                                        <img src="${pageContext.request.contextPath}/styles/images/prodotti/${product.imageUrl}" 
-                                             alt="${product.name}" class="product-image product-image-gradient">
-                                        
-                                        <div class="product-info">
-                                            <h3 class="product-title gradient-text">${product.name}</h3>
-                                            <div class="product-price">€${product.price}</div>
-                                        </div>
-                                        
-                                        <!-- Overlay rimosso per design più pulito -->
-                                    </div>
-                                    
-                                    <!-- Bottoni azioni (non propagano il click) -->
-                                    <c:if test="${not empty sessionScope.utente and not sessionScope.isAdmin}">
-                                        <div class="product-actions" onclick="event.stopPropagation()">
-                                            <button class="wishlist-btn btn-gradient-primary" onclick="toggleWishlist(${product.id})" 
-                                                    data-product-id="${product.id}">
-                                                <i class="fas fa-heart"></i>
-                                            </button>
-                                        </div>
-                                    </c:if>
-                                    
-                                    <div class="product-actions-bottom" onclick="event.stopPropagation()">
-                                        <button class="cart-btn btn-gradient-success" onclick="addToCart(${product.id})">
-                                            <i class="fas fa-shopping-cart"></i>
+                                
+                                <!-- Bottoni azioni (non propagano il click) -->
+                                <c:if test="${not empty sessionScope.utente}">
+                                    <div class="product-actions" onclick="event.stopPropagation()">
+                                        <button class="wishlist-btn" onclick="toggleWishlist('${product.id}')" 
+                                                data-product-id="${product.id}">
+                                            <i class="fas fa-heart"></i>
                                         </button>
                                     </div>
-                                </div>
-                            </c:forEach>
-                        </c:when>
-                        <c:otherwise>
-                            <!-- Messaggio quando non ci sono prodotti -->
-                            <div class="no-products-message">
-                                <div class="no-products-content">
-                                    <i class="fas fa-ship" style="font-size: 3rem; color: #ff6b6b; margin-bottom: 20px;"></i>
-                                    <h3>🏴‍☠️ Nessun prodotto disponibile</h3>
-                                    <p>Al momento non ci sono prodotti in evidenza. Torna presto per nuove scoperte!</p>
-                                    <a href="${pageContext.request.contextPath}/catalog" class="hero-btn primary">Esplora Tutti i Prodotti</a>
+                                </c:if>
+                                
+                                <div class="product-actions-bottom" onclick="event.stopPropagation()">
+                                    <button class="cart-btn" onclick="addToCart('${product.id}')">
+                                        <i class="fas fa-shopping-cart"></i>
+                                    </button>
                                 </div>
                             </div>
-                        </c:otherwise>
-                    </c:choose>
-                </div>
-                
-                <!-- Controlli carosello rimossi per design più pulito -->
+                        </c:forEach>
+                    </c:when>
+                    <c:otherwise>
+                        <!-- Messaggio quando non ci sono prodotti -->
+                        <div class="no-products-message">
+                            <div class="no-products-content">
+                                <i class="fas fa-ship" style="font-size: 3rem; color: #ff6b6b; margin-bottom: 20px;"></i>
+                                <h3>🏴‍☠️ Nessun prodotto disponibile</h3>
+                                <p>Al momento non ci sono prodotti in evidenza. Torna presto per nuove scoperte!</p>
+                                <a href="${pageContext.request.contextPath}/catalog" class="hero-btn primary">Esplora Tutti i Prodotti</a>
+                            </div>
+                        </div>
+                    </c:otherwise>
+                </c:choose>
             </div>
         </section>
     </main>
@@ -296,16 +250,16 @@ document.addEventListener('DOMContentLoaded', function() {
 <footer class="main-footer">
     <div class="footer-content">
         <div class="footer-section">
-            <h4>The One Piece Is Real</h4>
+            <h4>🏴‍☠️ The One Piece Is Real</h4>
             <p>Il tuo negozio ufficiale di merchandising One Piece</p>
         </div>
         <div class="footer-section">
-            <h4>Contatti</h4>
+            <h4>📞 Contatti</h4>
             <p>Email: info@onepieceisreal.it</p>
             <p>Tel: +39 123 456 7890</p>
         </div>
         <div class="footer-section">
-            <h4>Spedizioni</h4>
+            <h4>🚢 Spedizioni</h4>
             <p>Consegna in tutta Italia</p>
             <p>Spedizione gratuita sopra €50</p>
             <a href="${pageContext.request.contextPath}/TrackingServlet" class="tracking-link">
@@ -313,41 +267,15 @@ document.addEventListener('DOMContentLoaded', function() {
             </a>
         </div>
     </div>
+    
+    <!-- Background Music Player - Dentro il footer -->
+    <div class="footer-music-section">
+        <jsp:include page="jsp/music-player.jsp" />
+    </div>
 </footer>
 
 <!-- Stili per il carosello funzionale -->
 <style>
-.product-click-area {
-    cursor: pointer;
-    position: relative;
-    width: 100%;
-    height: 100%;
-}
-
-.product-click-area:hover {
-    transform: scale(1.02);
-    transition: transform 0.2s ease;
-}
-
-.product-actions, .product-actions-bottom {
-    position: absolute;
-    z-index: 10;
-}
-
-.product-actions {
-    top: 10px;
-    right: 10px;
-}
-
-.product-actions-bottom {
-    bottom: 10px;
-    right: 10px;
-}
-
-.wishlist-btn.active {
-    background: linear-gradient(135deg, #dc3545, #e74c3c) !important;
-    color: white !important;
-}
 
 /* Toast notifications */
 .toast-notification {
@@ -400,48 +328,64 @@ document.addEventListener('DOMContentLoaded', function() {
         opacity: 1;
     }
 }
-
-/* Stile per il link tracking */
-.tracking-link {
-    display: inline-block;
-    margin-top: 10px;
-    padding: 8px 16px;
-    background: linear-gradient(135deg, #ffd700, #ffed4e);
-    color: #8B4513;
-    text-decoration: none;
-    border-radius: 20px;
-    font-weight: bold;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-}
-
-.tracking-link:hover {
-    background: linear-gradient(135deg, #ffed4e, #fff);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-    color: #8B4513;
-    text-decoration: none;
-}
 </style>
 
 <!-- Scripts -->
 <script src="${pageContext.request.contextPath}/scripts/main.js"></script>
 <script src="${pageContext.request.contextPath}/scripts/cart.js"></script>
 <script src="${pageContext.request.contextPath}/scripts/wishlist-manager.js"></script>
+<script>
+    // Test se wishlist-manager.js è caricato
+    console.log('=== TEST WISHLIST MANAGER ===');
+    console.log('toggleWishlist function exists:', typeof toggleWishlist);
+    console.log('window.backgroundMusicPlayer exists:', typeof window.backgroundMusicPlayer);
+    
+    // Test di base
+    console.log('=== TEST BASE ===');
+    console.log('Document ready state:', document.readyState);
+    console.log('Window loaded:', window.loaded);
+    
+    // Test semplice
+    function testFunction() {
+        console.log('TEST FUNCTION CHIAMATA!');
+        alert('TEST FUNCTION FUNZIONA!');
+    }
+    
+    // Test dopo caricamento
+    window.addEventListener('load', function() {
+        console.log('=== WINDOW LOADED ===');
+        console.log('Tutti i bottoni nella pagina:', document.querySelectorAll('button').length);
+    });
+    
+    // Cattura errori JavaScript
+    window.addEventListener('error', function(e) {
+        console.error('=== ERRORE JAVASCRIPT ===');
+        console.error('Errore:', e.error);
+        console.error('Messaggio:', e.message);
+        console.error('File:', e.filename);
+        console.error('Linea:', e.lineno);
+    });
+</script>
 
 <script>
-    // Funzioni per il carosello
-    function moveCarousel(direction) {
-        const track = document.querySelector('.carousel-track');
-        const currentTransform = getComputedStyle(track).transform;
-        const matrix = new DOMMatrix(currentTransform);
-        const currentX = matrix.m41;
+    // Caricamento semplice delle immagini
+    document.addEventListener('DOMContentLoaded', function() {
+        const productImages = document.querySelectorAll('.products-grid .product-image');
         
-        const cardWidth = 280 + 32; // larghezza card + margin
-        const newX = currentX + (direction * cardWidth * 3);
-        
-        track.style.transform = `translateX(${newX}px)`;
-    }
+        // Preload semplice delle immagini
+        productImages.forEach((img, index) => {
+            if (img.complete && img.naturalHeight !== 0) {
+                img.classList.remove('loading');
+            } else {
+                img.classList.add('loading');
+                img.onload = () => {
+                    img.classList.remove('loading');
+                };
+            }
+        });
+    });
+    
+    // Funzioni per i prodotti
     
     // Funzione per andare al dettaglio prodotto
     function goToProductDetail(productId) {
@@ -534,7 +478,158 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 3000);
     }
     
+    // Script per menu mobile
+    document.addEventListener('DOMContentLoaded', function() {
+        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+        const mobileMenu = document.getElementById('mobileMenu');
+        
+        if (mobileMenuToggle && mobileMenu) {
+            mobileMenuToggle.addEventListener('click', function() {
+                mobileMenuToggle.classList.toggle('active');
+                mobileMenu.classList.toggle('active');
+            });
+            
+            // Chiudi menu quando si clicca su un link
+            const mobileMenuItems = mobileMenu.querySelectorAll('.mobile-menu-item');
+            mobileMenuItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    mobileMenuToggle.classList.remove('active');
+                    mobileMenu.classList.remove('active');
+                });
+            });
+        }
+        
+        // Configurazione per il file wishlist-manager.js
+        var isUserAdmin = ${sessionScope.isAdmin != null ? sessionScope.isAdmin : false};
+        
+        // DEBUG: Test bottoni wishlist
+        console.log('=== DEBUG BOTTONI WISHLIST ===');
+        console.log('DOMContentLoaded eseguito!');
+        console.log('isUserAdmin:', isUserAdmin);
+        
+        // DEBUG: Analisi completa delle product card
+        setTimeout(() => {
+            console.log('=== ANALISI COMPLETA PRODUCT CARD ===');
+            
+            // 1. Analizza tutte le product card
+            const productCards = document.querySelectorAll('.product-card');
+            console.log('Product cards trovate:', productCards.length);
+            
+            productCards.forEach((card, index) => {
+                const productId = card.getAttribute('data-product-id');
+                console.log(`\n--- PRODUCT CARD ${index + 1} (ID: ${productId}) ---`);
+                
+                // 2. Analizza bottoni wishlist
+                const wishlistBtn = card.querySelector('.wishlist-btn');
+                if (wishlistBtn) {
+                    console.log('Bottone wishlist trovato:', wishlistBtn);
+                    console.log('- Classi:', wishlistBtn.className);
+                    console.log('- Icona:', wishlistBtn.querySelector('i').className);
+                    console.log('- Colore icona:', window.getComputedStyle(wishlistBtn.querySelector('i')).color);
+                } else {
+                    console.log('Nessun bottone wishlist trovato');
+                }
+                
+                // 3. Analizza bottoni carrello
+                const cartBtn = card.querySelector('.cart-btn');
+                if (cartBtn) {
+                    console.log('Bottone carrello trovato:', cartBtn);
+                    console.log('- Classi:', cartBtn.className);
+                    console.log('- Icona:', cartBtn.querySelector('i').className);
+                    console.log('- Colore icona:', window.getComputedStyle(cartBtn.querySelector('i')).color);
+                    console.log('- Content CSS:', window.getComputedStyle(cartBtn.querySelector('i'), '::before').content);
+                    console.log('- HTML interno:', cartBtn.innerHTML);
+                } else {
+                    console.log('Nessun bottone carrello trovato');
+                }
+                
+                // 4. Analizza stato wishlist
+                if (typeof getWishlistState === 'function') {
+                    const wishlistState = getWishlistState();
+                    console.log('- Stato wishlist per questo prodotto:', wishlistState[productId]);
+                }
+            });
+            
+            // 5. Analizza tutti i bottoni nella pagina
+            console.log('\n=== TUTTI I BOTTONI NELLA PAGINA ===');
+            const allButtons = document.querySelectorAll('button');
+            allButtons.forEach((btn, index) => {
+                console.log(`Bottone ${index + 1}:`, {
+                    classes: btn.className,
+                    onclick: btn.getAttribute('onclick'),
+                    icon: btn.querySelector('i')?.className
+                });
+            });
+        }, 2000);
+        
+        // Test semplice
+        setTimeout(() => {
+            console.log('Test dopo 1 secondo...');
+            const wishlistButtons = document.querySelectorAll('.wishlist-btn');
+            console.log('Bottoni wishlist trovati:', wishlistButtons.length);
+            
+            if (wishlistButtons.length === 0) {
+                console.log('NESSUN BOTTONE WISHLIST TROVATO!');
+                console.log('Tutti i bottoni:', document.querySelectorAll('button'));
+                console.log('Tutti gli elementi con classe wishlist:', document.querySelectorAll('[class*="wishlist"]'));
+            } else {
+                wishlistButtons.forEach((btn, index) => {
+                    console.log(`Bottone ${index}:`, btn);
+                    console.log(`- onclick:`, btn.getAttribute('onclick'));
+                    console.log(`- data-product-id:`, btn.getAttribute('data-product-id'));
+                    console.log(`- classList:`, btn.classList.toString());
+                    
+                    // Aggiungi listener di test
+                    btn.addEventListener('click', function(e) {
+                        console.log('CLICK DETECTED su bottone wishlist!', e);
+                        console.log('Product ID dal data attribute:', this.getAttribute('data-product-id'));
+                        alert('CLICK FUNZIONA! Product ID: ' + this.getAttribute('data-product-id'));
+                    });
+                });
+            }
+        }, 1000);
+    });
 </script>
+
+<!-- Stili per il footer -->
+<style>
+/* Stile per il link tracking nel footer */
+.tracking-link {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 8px 16px;
+    background: linear-gradient(135deg, #ffd700, #ffed4e);
+    color: #8B4513;
+    text-decoration: none;
+    border-radius: 20px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.tracking-link:hover {
+    background: linear-gradient(135deg, #ffed4e, #fff);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    color: #8B4513;
+    text-decoration: none;
+}
+
+/* Sezione musicale del footer */
+.footer-music-section {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+/* Override del player musicale per il footer */
+.footer-music-section .background-music-player {
+    margin: 0;
+    max-width: 400px;
+}
+</style>
 
 </body>
 </html> 

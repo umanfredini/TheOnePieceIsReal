@@ -1,7 +1,13 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <jsp:include page="header.jsp" />
-<link rel="stylesheet" href="${pageContext.request.contextPath}/styles/css/vivre-cards.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/styles/css/carousel.css">
+<meta name="csrf-token" content="${sessionScope.csrfToken}">
+
+<!-- ID utente per gestione wishlist per-utente -->
+<c:if test="${not empty sessionScope.utente}">
+    <meta name="user-id" content="${sessionScope.utente.id}">
+</c:if>
 
 <main class="container mt-5" role="main">
     <div class="collection-header">
@@ -9,49 +15,34 @@
         <p class="text-center text-muted">I tuoi tesori One Piece preferiti</p>
     </div>
 
-    <section class="vivre-cards-container" role="region" aria-label="Collezione prodotti">
+    <section class="products-grid" role="region" aria-label="Collezione prodotti">
         <c:choose>
             <c:when test="${not empty wishlist}">
                 <c:forEach var="product" items="${wishlist}">
-                    <div class="vivre-card collection-card" data-product-id="${product.id}">
-                        <div class="vivre-card-inner">
-                            <div class="vivre-card-front">
-                                <div class="vivre-card-image">
-                                    <img src="${pageContext.request.contextPath}/styles/images/prodotti/${product.imageUrl}" 
-                                         alt="Immagine di ${product.name}" 
-                                         onerror="this.src='${pageContext.request.contextPath}/styles/images/altro/zoro-lost.gif'" />
-                                    <div class="collection-badge">
-                                        <i class="fas fa-heart"></i>
-                                    </div>
-                                </div>
-                                <div class="vivre-card-info">
-                                    <h3 class="vivre-card-title"><c:out value="${product.name}" /></h3>
-                                    <div class="vivre-card-category">
-                                        <span class="category-badge"><c:out value="${product.category}" /></span>
-                                    </div>
-                                    <div class="vivre-card-price">
-                                        <span class="price-amount">€ <c:out value="${product.price}" /></span>
-                                    </div>
-                                </div>
+                    <div class="product-card btn-danger active" data-product-id="${product.id}" data-category="${product.category}">
+                        <!-- Click sul prodotto per andare al dettaglio -->
+                        <div class="product-click-area" onclick="goToProductDetail(${product.id})">
+                            <img src="${pageContext.request.contextPath}/styles/images/prodotti/${product.imageUrl}" 
+                                 alt="${product.name}" class="product-image">
+                            
+                            <div class="product-info">
+                                <h3 class="product-title gradient-text">${product.name}</h3>
+                                <div class="product-price">€${product.price}</div>
                             </div>
-                            <div class="vivre-card-back">
-                                <div class="vivre-card-actions">
-                                    <a href="${pageContext.request.contextPath}/ProductServlet?action=detail&id=${product.id}" 
-                                       class="vivre-btn detail-btn">
-                                        <i class="fas fa-eye"></i> Dettagli
-                                    </a>
-                                    <button onclick="addToCart(${product.id})" 
-                                            class="vivre-btn cart-btn" 
-                                            title="Aggiungi al carrello">
-                                        <i class="fas fa-shopping-cart"></i> Carrello
-                                    </button>
-                                    <button onclick="removeFromWishlist(${product.id})" 
-                                            class="vivre-btn remove-btn" 
-                                            title="Rimuovi dalla collezione">
-                                        <i class="fas fa-trash"></i> Rimuovi
-                                    </button>
-                                </div>
-                            </div>
+                        </div>
+                        
+                        <!-- Bottoni azioni (non propagano il click) -->
+                        <div class="product-actions" onclick="event.stopPropagation()">
+                            <button class="wishlist-btn active" onclick="toggleWishlist('${product.id}')" 
+                                    data-product-id="${product.id}" title="Rimuovi dalla wishlist">
+                                <i class="fas fa-heart"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="product-actions-bottom" onclick="event.stopPropagation()">
+                            <button class="cart-btn btn-gradient-success" onclick="addToCart(${product.id})">
+                                <i class="fas fa-shopping-cart"></i>
+                            </button>
                         </div>
                     </div>
                 </c:forEach>
@@ -62,7 +53,7 @@
                         <i class="fas fa-heart-broken" style="font-size: 4rem; color: #ff6b6b; margin-bottom: 20px;"></i>
                         <h3>🏴‍☠️ La tua collezione è vuota</h3>
                         <p>Non hai ancora salvato nessun tesoro One Piece nella tua collezione.</p>
-                        <a href="${pageContext.request.contextPath}/catalog" class="vivre-btn detail-btn">
+                        <a href="${pageContext.request.contextPath}/catalog" class="btn btn-primary">
                             <i class="fas fa-search"></i> Esplora Prodotti
                         </a>
                     </div>
@@ -73,6 +64,41 @@
 </main>
 
 <style>
+/* Griglia prodotti come homepage */
+.products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 2rem;
+    padding: 2rem 0;
+}
+
+.product-click-area {
+    cursor: pointer;
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.product-click-area:hover {
+    transform: scale(1.02);
+    transition: transform 0.2s ease;
+}
+
+.product-actions, .product-actions-bottom {
+    position: absolute;
+    z-index: 10;
+}
+
+.product-actions {
+    top: 10px;
+    right: 10px;
+}
+
+.product-actions-bottom {
+    bottom: 10px;
+    right: 10px;
+}
+
 .collection-header {
     background: linear-gradient(135deg, #8B4513, #A0522D);
     padding: 2rem;
@@ -80,31 +106,6 @@
     margin-bottom: 2rem;
     border: 3px solid #DAA520;
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-}
-
-.collection-badge {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: linear-gradient(135deg, #DC143C, #FF1493);
-    color: white;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-    animation: heartbeat 2s infinite;
-}
-
-@keyframes heartbeat {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.1); }
-}
-
-.collection-card .vivre-card-front {
-    background: linear-gradient(135deg, #2F4F4F, #556B2F);
 }
 
 .empty-collection {
@@ -122,55 +123,51 @@
     margin-bottom: 1rem;
 }
 
-.remove-btn {
-    background: linear-gradient(135deg, #DC143C, #B22222);
-    color: white;
-}
-
-.remove-btn:hover {
-    background: linear-gradient(135deg, #B22222, #DC143C);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+@keyframes cardDisappear {
+    from {
+        opacity: 1;
+        transform: scale(1);
+    }
+    to {
+        opacity: 0;
+        transform: scale(0.8);
+    }
 }
 </style>
 
 <script>
-function removeFromWishlist(productId) {
-    if (confirm('Sei sicuro di voler rimuovere questo prodotto dalla tua collezione?')) {
-        const formData = new FormData();
-        formData.append('action', 'remove');
-        formData.append('productId', productId);
-        formData.append('csrfToken', '${sessionScope.csrfToken}');
-        
-        fetch('${pageContext.request.contextPath}/WishlistServlet', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                // Rimuovi la card dalla pagina
-                const card = document.querySelector(`[data-product-id="${productId}"]`);
-                if (card) {
-                    card.style.animation = 'cardDisappear 0.5s ease-out';
-                    setTimeout(() => {
-                        card.remove();
-                        // Se non ci sono più card, mostra il messaggio vuoto
-                        if (document.querySelectorAll('.vivre-card').length === 0) {
-                            location.reload();
-                        }
-                    }, 500);
+// La wishlist ora usa la funzione standard toggleWishlist dal wishlist-manager.js
+function toggleWishlistInPage(productId) {
+    // Usa la funzione standard toggleWishlist
+    toggleWishlist(productId);
+    
+    // Rimuovi la card dalla pagina dopo un breve delay
+    setTimeout(() => {
+        const card = document.querySelector(`[data-product-id="${productId}"]`);
+        if (card && !card.querySelector('.wishlist-btn').classList.contains('active')) {
+            card.style.animation = 'cardDisappear 0.5s ease-out';
+            setTimeout(() => {
+                card.remove();
+                // Se non ci sono più card, mostra il messaggio vuoto
+                if (document.querySelectorAll('.product-card').length === 0) {
+                    document.querySelector('.wishlist-container').innerHTML = `
+                        <div class="text-center py-5">
+                            <i class="fas fa-heart-broken fa-3x text-muted mb-3"></i>
+                            <h3>La tua wishlist è vuota</h3>
+                            <p class="text-muted">Aggiungi alcuni prodotti per iniziare!</p>
+                            <a href="${pageContext.request.contextPath}/catalog" class="btn btn-primary">
+                                <i class="fas fa-shopping-bag me-2"></i>Vai al Catalogo
+                            </a>
+                        </div>
+                    `;
                 }
-                showToast('Prodotto rimosso dalla collezione', 'success');
-            } else {
-                showToast(data.error || 'Errore durante la rimozione', 'error');
-            }
-        })
-        .catch(error => {
-            console.error('Errore:', error);
-            showToast('Errore di connessione', 'error');
-        });
-    }
+            }, 500);
+        }
+    }, 1000);
+}
+
+function goToProductDetail(productId) {
+    window.location.href = window.location.origin + '/TheOnePieceIsReal/ProductServlet?action=detail&id=' + productId;
 }
 
 function addToCart(productId) {
@@ -178,9 +175,9 @@ function addToCart(productId) {
     formData.append('action', 'add');
     formData.append('productId', productId);
     formData.append('quantity', '1');
-    formData.append('csrfToken', '${sessionScope.csrfToken}');
+    formData.append('csrfToken', document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
     
-    fetch('${pageContext.request.contextPath}/CartServlet', {
+    fetch(window.location.origin + '/TheOnePieceIsReal/CartServlet', {
         method: 'POST',
         body: formData
     })
@@ -200,13 +197,13 @@ function addToCart(productId) {
 
 function showToast(message, type) {
     const toast = document.createElement('div');
-    toast.className = `toast-notification ${type}`;
-    toast.innerHTML = `
-        <div class="toast-content">
-            <i class="fas fa-${type === 'success' ? 'check-circle' : 'times-circle'}"></i>
-            <span>${message}</span>
-        </div>
-    `;
+    toast.className = 'toast-notification ' + type;
+    const iconClass = type === 'success' ? 'check-circle' : 'times-circle';
+    toast.innerHTML = 
+        '<div class="toast-content">' +
+            '<i class="fas fa-' + iconClass + '"></i>' +
+            '<span>' + message + '</span>' +
+        '</div>';
     document.body.appendChild(toast);
     
     setTimeout(() => toast.classList.add('show'), 100);
@@ -214,17 +211,6 @@ function showToast(message, type) {
         toast.classList.remove('show');
         setTimeout(() => toast.remove(), 300);
     }, 3000);
-}
-
-@keyframes cardDisappear {
-    from {
-        opacity: 1;
-        transform: scale(1);
-    }
-    to {
-        opacity: 0;
-        transform: scale(0.8);
-    }
 }
 </script>
 

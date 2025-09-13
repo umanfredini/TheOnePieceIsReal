@@ -21,22 +21,76 @@ public class WishlistServlet extends HttpServlet {
         HttpSession session = request.getSession();
 
         if (!isUserLoggedIn(session)) {
-            session.setAttribute("errorMessage", "Devi essere loggato per usare la wishlist!");
-            response.sendRedirect(request.getContextPath() + "/jsp/login.jsp");
+            if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
+                response.setContentType("application/json");
+                response.getWriter().write("{\"success\": false, \"error\": \"Non autenticato\"}");
+            } else {
+                // Mostra avviso e reindirizza alla pagina di login
+                session.setAttribute("warningMessage", "Per accedere alla wishlist devi essere loggato");
+                response.sendRedirect(request.getContextPath() + "/jsp/login.jsp");
+            }
             return;
         }
 
         try {
             User utente = (User) session.getAttribute("utente");
+            logger.info("WishlistServlet - Utente: " + (utente != null ? utente.getEmail() : "null"));
+            logger.info("WishlistServlet - User ID: " + (utente != null ? utente.getId() : "null"));
+            
+            if (utente == null) {
+                logger.warning("WishlistServlet - Utente non trovato in sessione");
+                if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
+                    response.setContentType("application/json");
+                    response.getWriter().write("{\"success\": false, \"error\": \"Sessione scaduta\"}");
+                } else {
+                    session.setAttribute("errorMessage", "Sessione scaduta. Effettua nuovamente il login.");
+                    response.sendRedirect(request.getContextPath() + "/jsp/login.jsp");
+                }
+                return;
+            }
+            
             WishlistDAO wishlistDAO = new WishlistDAO();
             List<Product> wishlist = wishlistDAO.findProductsByUserId(utente.getId());
+            logger.info("WishlistServlet - Prodotti trovati: " + wishlist.size());
 
-            request.setAttribute("wishlist", wishlist);
-            request.getRequestDispatcher("/jsp/wishlist.jsp").forward(request, response);
+            // Se è una richiesta AJAX, restituisci JSON
+            if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
+                response.setContentType("application/json");
+                response.setCharacterEncoding("UTF-8");
+                
+                // Serializzazione JSON manuale
+                StringBuilder json = new StringBuilder();
+                json.append("{\"success\": true, \"wishlist\": [");
+                
+                for (int i = 0; i < wishlist.size(); i++) {
+                    Product product = wishlist.get(i);
+                    if (i > 0) json.append(",");
+                    json.append("{");
+                    json.append("\"id\": ").append(product.getId()).append(",");
+                    json.append("\"name\": \"").append(escapeJson(product.getName())).append("\",");
+                    json.append("\"price\": ").append(product.getPrice()).append(",");
+                    json.append("\"imageUrl\": \"").append(escapeJson(product.getImageUrl())).append("\",");
+                    json.append("\"category\": \"").append(escapeJson(product.getCategory())).append("\"");
+                    json.append("}");
+                }
+                
+                json.append("]}");
+                response.getWriter().write(json.toString());
+            } else {
+                // Altrimenti forward alla pagina JSP
+                request.setAttribute("wishlist", wishlist);
+                request.getRequestDispatcher("/jsp/wishlist.jsp").forward(request, response);
+            }
         } catch (Exception e) {
-            logger.severe("Errore nel caricamento della wishlist" + e.getMessage());
-            request.setAttribute("errorMessage", "Errore di autenticazione. Effettua nuovamente il login.");
-            request.getRequestDispatcher("/jsp/error.jsp").forward(request, response);
+            logger.severe("Errore nel caricamento della wishlist: " + e.getMessage());
+            e.printStackTrace();
+            if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
+                response.setContentType("application/json");
+                response.getWriter().write("{\"success\": false, \"error\": \"Errore nel caricamento della wishlist\"}");
+            } else {
+                request.setAttribute("errorMessage", "Errore nel caricamento della wishlist: " + e.getMessage());
+                request.getRequestDispatcher("/jsp/error.jsp").forward(request, response);
+            }
         }
     }
 
@@ -47,8 +101,9 @@ public class WishlistServlet extends HttpServlet {
         if (!isUserLoggedIn(session)) {
             if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
                 response.setContentType("application/json");
-                response.getWriter().write("{\"success\": false, \"error\": \"Non autenticato\"}");
+                response.getWriter().write("{\"success\": false, \"error\": \"Per accedere alla wishlist devi essere loggato\"}");
             } else {
+                session.setAttribute("warningMessage", "Per accedere alla wishlist devi essere loggato");
                 response.sendRedirect(request.getContextPath() + "/jsp/login.jsp");
             }
             return;
@@ -95,6 +150,7 @@ public class WishlistServlet extends HttpServlet {
                 
                 if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
                     response.setContentType("application/json");
+                    response.setCharacterEncoding("UTF-8");
                     response.getWriter().write("{\"success\": true, \"inWishlist\": " + !isInWishlist + "}");
                     return;
                 }
@@ -102,6 +158,7 @@ public class WishlistServlet extends HttpServlet {
 
             if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
                 response.setContentType("application/json");
+                response.setCharacterEncoding("UTF-8");
                 response.getWriter().write("{\"success\": true}");
             } else {
                 response.sendRedirect("WishlistServlet");
@@ -111,6 +168,7 @@ public class WishlistServlet extends HttpServlet {
             logger.severe("Errore nel WishlistServlet: " + e.getMessage());
             if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
                 response.setContentType("application/json");
+                response.setCharacterEncoding("UTF-8");
                 response.getWriter().write("{\"success\": false, \"error\": \"" + e.getMessage() + "\"}");
             } else {
             	request.getRequestDispatcher("/jsp/error.jsp").forward(request, response);
@@ -121,5 +179,16 @@ public class WishlistServlet extends HttpServlet {
     private boolean isUserLoggedIn(HttpSession session) {
         User utente = (User) session.getAttribute("utente");
         return utente != null;
+    }
+    
+    private String escapeJson(String input) {
+        if (input == null) return "";
+        return input.replace("\\", "\\\\")
+                   .replace("\"", "\\\"")
+                   .replace("\b", "\\b")
+                   .replace("\f", "\\f")
+                   .replace("\n", "\\n")
+                   .replace("\r", "\\r")
+                   .replace("\t", "\\t");
     }
 }

@@ -26,32 +26,39 @@
             <!-- Riepilogo Ordine -->
             <section class="form-section checkout-step" role="region" aria-label="Riepilogo ordine">
                 <h3><i class="fas fa-shopping-cart"></i> Riepilogo Ordine</h3>
-                <c:if test="${not empty cart.items}">
-                    <div class="summary-table">
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>Prodotto</th>
-                                    <th>Variante</th>
-                                    <th>Quantità</th>
-                                    <th>Prezzo</th>
-                                    <th>Totale</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <c:forEach var="item" items="${cart.items}">
+                
+                
+                <c:choose>
+                    <c:when test="${not empty cart.items}">
+                        <div class="summary-table">
+                            <table class="table">
+                                <thead>
                                     <tr>
-                                        <td><c:out value="${item.product.name}" /></td>
-                                        <td><c:out value="${item.variantId != null ? item.variantId : 'Nessuna variante'}" /></td>
-                                        <td><c:out value="${item.quantity}" /></td>
-                                        <td>€ <fmt:formatNumber value="${item.product.price}" type="currency" currencySymbol="€" /></td>
-                                        <td>€ <fmt:formatNumber value="${item.product.price.doubleValue() * item.quantity}" type="currency" currencySymbol="€" /></td>
+                                        <th>Prodotto</th>
+                                        <th>Quantità</th>
+                                        <th>Prezzo</th>
                                     </tr>
-                                </c:forEach>
-                            </tbody>
-                        </table>
-                    </div>
-                </c:if>
+                                </thead>
+                                <tbody>
+                                    <c:forEach var="item" items="${cart.items}">
+                                        <tr>
+                                            <td><c:out value="${item.product.name}" /></td>
+                                            <td><c:out value="${item.quantity}" /></td>
+                                            <td>€ <fmt:formatNumber value="${item.product.price.doubleValue() * item.quantity}" type="currency" currencySymbol="€" /></td>
+                                        </tr>
+                                    </c:forEach>
+                                </tbody>
+                            </table>
+                        </div>
+                    </c:when>
+                    <c:otherwise>
+                        <div class="alert alert-warning">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <strong>Nessun prodotto nel carrello</strong><br>
+                            Torna al <a href="${pageContext.request.contextPath}/CartServlet">carrello</a> per aggiungere prodotti.
+                        </div>
+                    </c:otherwise>
+                </c:choose>
             </section>
 
             <!-- Form Checkout -->
@@ -136,5 +143,6 @@
     </div> <!-- Fine checkout-container -->
 
 </main>
+
 
 <jsp:include page="footer.jsp" />

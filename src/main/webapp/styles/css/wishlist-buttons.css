@@ -1,0 +1,336 @@
+/* ===== BOTTONI WISHLIST STANDARDIZZATI ===== */
+
+/* Bottone wishlist base - SEMPRE cerchio bianco */
+.wishlist-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid #ffffff;
+    background: rgba(255, 255, 255, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Icona cuore base */
+.wishlist-btn i {
+    font-size: 16px;
+    transition: all 0.3s ease;
+}
+
+/* STATO: Prodotto NON in wishlist */
+.wishlist-btn:not(.active) {
+    background: rgba(255, 255, 255, 0.9);
+    border-color: #ffffff;
+}
+
+.wishlist-btn:not(.active) i {
+    color: #cccccc; /* Cuore grigio chiaro */
+}
+
+/* STATO: Prodotto IN wishlist */
+.wishlist-btn.active {
+    background: rgba(255, 255, 255, 0.9);
+    border-color: #ffffff;
+    transform: scale(1.1);
+}
+
+.wishlist-btn.active i {
+    color: #ff4757; /* Cuore rosso */
+}
+
+/* Hover effects */
+.wishlist-btn:hover {
+    background: rgba(255, 255, 255, 1);
+    transform: scale(1.15);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.wishlist-btn:hover:not(.active) i {
+    color: #ff6b6b; /* Cuore rosa al hover se non in wishlist */
+}
+
+.wishlist-btn:hover.active i {
+    color: #ff3742; /* Cuore rosso più intenso al hover se in wishlist */
+}
+
+/* Animazione quando si aggiunge alla wishlist */
+.wishlist-btn.adding {
+    animation: heartBeat 0.6s ease-in-out;
+}
+
+/* Effetto ripple al click */
+.wishlist-btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 71, 87, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.3s ease, height 0.3s ease;
+}
+
+.wishlist-btn:active::before {
+    width: 100%;
+    height: 100%;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .wishlist-btn {
+        width: 36px;
+        height: 36px;
+    }
+    
+    .wishlist-btn i {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .wishlist-btn {
+        width: 32px;
+        height: 32px;
+    }
+    
+    .wishlist-btn i {
+        font-size: 12px;
+    }
+}
+
+/* Override per compatibilità con stili esistenti */
+.background-music-player .wishlist-btn,
+.products-grid .wishlist-btn,
+.catalog-container .wishlist-btn {
+    /* Applica gli stili standard */
+}
+
+/* Stili specifici per il carosello/homepage */
+.products-grid .wishlist-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid #ffffff;
+    background: rgba(255, 255, 255, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    position: relative;
+    overflow: hidden;
+}
+
+.products-grid .wishlist-btn i {
+    font-size: 16px;
+    transition: all 0.3s ease;
+}
+
+/* STATO: Prodotto NON in wishlist - Cuore grigio */
+.products-grid .wishlist-btn:not(.active) {
+    background: rgba(255, 255, 255, 0.9);
+    border-color: #ffffff;
+}
+
+.products-grid .wishlist-btn:not(.active) i {
+    color: #cccccc;
+}
+
+/* STATO: Prodotto IN wishlist - Cuore rosso */
+.products-grid .wishlist-btn.active {
+    background: rgba(255, 255, 255, 0.9);
+    border-color: #ffffff;
+    transform: scale(1.1);
+}
+
+.products-grid .wishlist-btn.active i {
+    color: #ff4757;
+}
+
+/* ===== BOTTONI CARRELLO ===== */
+
+/* Bottone carrello base - SEMPRE verde */
+.cart-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid #ffffff;
+    background: rgba(40, 167, 69, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Icona carrello base */
+.cart-btn i {
+    font-size: 16px;
+    color: #ffffff;
+    transition: all 0.3s ease;
+}
+
+/* Hover effects per carrello */
+.cart-btn:hover {
+    background: rgba(40, 167, 69, 1);
+    transform: scale(1.15);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.cart-btn:hover i {
+    color: #ffffff;
+}
+
+/* Effetto ripple al click per carrello */
+.cart-btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.3s ease, height 0.3s ease;
+}
+
+.cart-btn:active::before {
+    width: 100%;
+    height: 100%;
+}
+
+/* Responsive per carrello */
+@media (max-width: 768px) {
+    .cart-btn {
+        width: 36px;
+        height: 36px;
+    }
+    
+    .cart-btn i {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .cart-btn {
+        width: 32px;
+        height: 32px;
+    }
+    
+    .cart-btn i {
+        font-size: 12px;
+    }
+}
+
+/* ===== FORZATURA STILI BOTTONI CARRELLO ===== */
+
+/* Forza sempre l'icona carrello sui bottoni carrello */
+.cart-btn i {
+    color: #ffffff !important;
+    display: inline-block !important;
+}
+
+/* Se per qualche motivo ha icona cuore, sostituisci con carrello */
+.cart-btn i.fa-heart::before {
+    content: "\f07a" !important; /* Codice Unicode per fa-shopping-cart */
+    font-family: "Font Awesome 5 Free" !important;
+    font-weight: 900 !important;
+}
+
+/* Forza sempre l'icona carrello - specificità massima */
+.product-card .cart-btn i,
+.products-grid .cart-btn i,
+.catalog-container .cart-btn i,
+button.cart-btn i {
+    color: #ffffff !important;
+    display: inline-block !important;
+}
+
+/* Assicurati che l'icona carrello sia sempre visibile */
+.cart-btn i.fa-shopping-cart {
+    display: inline-block !important;
+    color: #ffffff !important;
+}
+
+/* Forza l'icona carrello su TUTTI i bottoni carrello */
+.cart-btn i[class*="fa-"] {
+    color: #ffffff !important;
+    display: inline-block !important;
+}
+
+/* Se l'icona è nascosta, forzala a essere visibile */
+.cart-btn i[style*="display: none"] {
+    display: inline-block !important;
+}
+
+/* Forza sempre l'icona carrello - override completo */
+.cart-btn i::before {
+    content: "\f07a" !important; /* fa-shopping-cart */
+    font-family: "Font Awesome 5 Free" !important;
+    font-weight: 900 !important;
+    color: #ffffff !important;
+}
+
+/* Impedisci ai bottoni carrello di ereditare stili wishlist */
+.cart-btn.active {
+    background: rgba(40, 167, 69, 0.9) !important;
+    border-color: #ffffff !important;
+    transform: none !important;
+}
+
+.cart-btn.active i {
+    color: #ffffff !important;
+}
+
+/* ===== RIMUOVI BORDI ROSSI DALLE PRODUCT CARD ===== */
+
+/* Impedisci QUALSIASI bordo rosso sulle product card */
+.product-card,
+.products-grid .product-card,
+.catalog-container .product-card,
+.product-card.active,
+.product-card.btn-danger,
+.product-card.btn-danger.active {
+    border: 2px solid transparent !important;
+    border-color: transparent !important;
+}
+
+/* Hover delle product card - solo blu */
+.product-card:hover,
+.products-grid .product-card:hover,
+.catalog-container .product-card:hover {
+    border-color: #007bff !important;
+}
+
+/* Rimuovi qualsiasi classe che potrebbe causare bordi rossi */
+.product-card.btn-danger {
+    border: 2px solid transparent !important;
+    background: white !important;
+}
+
+.product-card.btn-danger.active {
+    border: 2px solid transparent !important;
+    background: white !important;
+}
+
+/* Rimuovi stili conflittuali */
+.wishlist-btn[style*="background"] {
+    background: rgba(255, 255, 255, 0.9) !important;
+}
+
+.wishlist-btn[style*="color"] i {
+    /* Il colore viene gestito dalle classi .active */
+}

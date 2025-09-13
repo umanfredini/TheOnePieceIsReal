@@ -168,30 +168,33 @@
                                     </span>
                                 </td>
                                 <td>
-                                    <div class="btn-group" role="group">
+                                    <div class="d-flex gap-1">
                                         <a href="AdminOrderServlet?action=detail&id=${order.id}" 
                                            class="btn btn-sm btn-outline-primary" title="Visualizza Dettagli">
                                             <i class="fas fa-eye"></i>
                                         </a>
-                                        <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle" 
-                                                data-bs-toggle="dropdown" aria-expanded="false">
-                                            <i class="fas fa-cog"></i>
-                                        </button>
-                                        <ul class="dropdown-menu">
-                                            <li><a class="dropdown-item" href="#" onclick="updateOrderStatus(${order.id}, 'processing')">
-                                                <i class="fas fa-cogs me-2"></i>In Elaborazione
-                                            </a></li>
-                                            <li><a class="dropdown-item" href="#" onclick="updateOrderStatus(${order.id}, 'shipped')">
-                                                <i class="fas fa-shipping-fast me-2"></i>Spedito
-                                            </a></li>
-                                            <li><a class="dropdown-item" href="#" onclick="updateOrderStatus(${order.id}, 'delivered')">
-                                                <i class="fas fa-check-circle me-2"></i>Consegnato
-                                            </a></li>
-                                            <li><hr class="dropdown-divider"></li>
-                                            <li><a class="dropdown-item text-danger" href="#" onclick="deleteOrder(${order.id})">
-                                                <i class="fas fa-trash me-2"></i>Elimina
-                                            </a></li>
-                                        </ul>
+                                        <div class="dropdown">
+                                            <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle" 
+                                                    data-bs-toggle="dropdown" aria-expanded="false" title="Azioni">
+                                                <i class="fas fa-ellipsis-v"></i>
+                                            </button>
+                                            <ul class="dropdown-menu dropdown-menu-end">
+                                                <li><h6 class="dropdown-header">Aggiorna Stato</h6></li>
+                                                <li><a class="dropdown-item" href="#" onclick="updateOrderStatus(${order.id}, 'processing')">
+                                                    <i class="fas fa-cogs me-2 text-info"></i>In Elaborazione
+                                                </a></li>
+                                                <li><a class="dropdown-item" href="#" onclick="updateOrderStatus(${order.id}, 'shipped')">
+                                                    <i class="fas fa-shipping-fast me-2 text-primary"></i>Spedito
+                                                </a></li>
+                                                <li><a class="dropdown-item" href="#" onclick="updateOrderStatus(${order.id}, 'delivered')">
+                                                    <i class="fas fa-check-circle me-2 text-success"></i>Consegnato
+                                                </a></li>
+                                                <li><hr class="dropdown-divider"></li>
+                                                <li><a class="dropdown-item text-danger" href="#" onclick="deleteOrder(${order.id})">
+                                                    <i class="fas fa-trash me-2"></i>Elimina Ordine
+                                                </a></li>
+                                            </ul>
+                                        </div>
                                     </div>
                                 </td>
                             </tr>

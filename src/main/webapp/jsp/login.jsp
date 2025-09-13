@@ -1,6 +1,10 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <jsp:include page="header.jsp" />
+
+<!-- Flash Messages -->
+<jsp:include page="flash-message.jsp" />
+
 <script src="${pageContext.request.contextPath}/scripts/validation.js"></script>
 
 <style>

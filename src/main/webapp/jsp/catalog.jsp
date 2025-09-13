@@ -1,6 +1,11 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+
+<!-- ID utente per gestione wishlist per-utente -->
+<c:if test="${not empty sessionScope.utente}">
+    <meta name="user-id" content="${sessionScope.utente.id}">
+</c:if>
 <jsp:include page="header.jsp" />
 <script src="${pageContext.request.contextPath}/scripts/wishlist-manager.js"></script>
 <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/css/carousel.css">
@@ -41,10 +46,7 @@
     right: 10px;
 }
 
-.wishlist-btn.active {
-    background: linear-gradient(135deg, #dc3545, #e74c3c) !important;
-    color: white !important;
-}
+/* Gli stili wishlist sono ora gestiti da wishlist-buttons.css */
 
 /* Stili per la paginazione */
 .pagination {
@@ -226,7 +228,7 @@
                         </div>
                         
                         <!-- Bottoni azioni (non propagano il click) -->
-                        <c:if test="${not empty sessionScope.utente and not sessionScope.isAdmin}">
+                        <c:if test="${not empty sessionScope.utente}">
                             <div class="product-actions" onclick="event.stopPropagation()">
                                 <button class="wishlist-btn" onclick="toggleWishlist(${product.id})" 
                                         data-product-id="${product.id}">
@@ -507,8 +509,29 @@ function addToCart(productId) {
 }
 
 // Configurazione per il file wishlist-manager.js
-    var isUserLoggedIn = ${sessionScope.isLoggedIn != null ? sessionScope.isLoggedIn : false};
+    var isUserLoggedIn = ${sessionScope.utente != null ? true : false};
     var isUserAdmin = ${sessionScope.isAdmin != null ? sessionScope.isAdmin : false};
+    
+    // Inizializza wishlist per il catalogo
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('=== INIZIALIZZAZIONE WISHLIST CATALOGO ===');
+        console.log('isUserLoggedIn:', isUserLoggedIn);
+        console.log('isUserAdmin:', isUserAdmin);
+        
+        if (isUserLoggedIn && !isUserAdmin) {
+            // Sincronizza con il server e inizializza i bottoni
+            if (typeof syncWishlistFromServer === 'function') {
+                syncWishlistFromServer();
+            } else {
+                // Fallback: inizializza solo con stato locale
+                if (typeof initializeLocalWishlist === 'function') {
+                    initializeLocalWishlist();
+                }
+            }
+        } else {
+            console.log('Utente non loggato o admin - wishlist non inizializzata');
+        }
+    });
 
 // Funzione per mostrare toast notifications
 function showToast(message, type) {

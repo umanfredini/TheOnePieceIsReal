@@ -49,6 +49,21 @@ nav a {
   font-weight: bold;
 }
 
+/* Rimuovi sottolineature dai link dell'header */
+.main-nav a,
+.main-nav li a,
+.main-header nav a,
+.main-header .main-nav a {
+  text-decoration: none !important;
+}
+
+.main-nav a:hover,
+.main-nav li a:hover,
+.main-header nav a:hover,
+.main-header .main-nav a:hover {
+  text-decoration: none !important;
+}
+
 input, select, textarea {
   width: 100%;
   padding: 0.5rem;

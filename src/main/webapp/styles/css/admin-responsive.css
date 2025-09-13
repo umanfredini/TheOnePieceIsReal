@@ -470,20 +470,39 @@
     }
 }
 
+/* ===== 17.5. TABELLE ADMIN SEMPRE CHIARE ===== */
+main .table {
+    background-color: #ffffff !important;
+    color: #333 !important;
+}
+
+main .table th {
+    background-color: #f8f9fa !important;
+    color: #333 !important;
+}
+
+main .table-striped tbody tr:nth-of-type(odd) {
+    background-color: rgba(0, 0, 0, 0.05) !important;
+}
+
+main .table-striped tbody tr:nth-of-type(even) {
+    background-color: #ffffff !important;
+}
+
 /* ===== 18. DARK MODE SUPPORT ===== */
 @media (prefers-color-scheme: dark) {
     .table {
-        background-color: #1a1a1a;
-        color: #fff;
+        background-color: #ffffff;
+        color: #333;
     }
     
     .table th {
-        background-color: #2d2d2d !important;
-        color: #fff !important;
+        background-color: #f8f9fa !important;
+        color: #333 !important;
     }
     
     .table-striped tbody tr:nth-of-type(odd) {
-        background-color: rgba(255, 255, 255, 0.05);
+        background-color: rgba(0, 0, 0, 0.05);
     }
     
     .card {
@@ -494,5 +513,80 @@
     .modal-content {
         background-color: #2d2d2d;
         color: #fff;
+    }
+}
+
+/* ===== 19. DROPDOWN MENU MIGLIORATI ===== */
+.dropdown-menu {
+    min-width: 200px;
+    max-width: 250px;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    padding: 0.5rem 0;
+}
+
+.dropdown-header {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #6c757d;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 0.5rem 1rem 0.25rem;
+    margin-bottom: 0.25rem;
+}
+
+.dropdown-item {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    transition: all 0.2s ease;
+    border: none;
+    background: none;
+}
+
+.dropdown-item:hover {
+    background-color: #f8f9fa;
+    color: #495057;
+    transform: translateX(2px);
+}
+
+.dropdown-item i {
+    width: 16px;
+    text-align: center;
+}
+
+.dropdown-divider {
+    margin: 0.5rem 0;
+    border-color: #e9ecef;
+}
+
+/* Miglioramenti per i bottoni delle azioni */
+.btn-group .btn,
+.d-flex .btn {
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+.btn-group .btn:hover,
+.d-flex .btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Responsive per dropdown */
+@media (max-width: 768px) {
+    .dropdown-menu {
+        min-width: 180px;
+        max-width: 200px;
+    }
+    
+    .dropdown-item {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.8rem;
+    }
+    
+    .dropdown-header {
+        font-size: 0.7rem;
+        padding: 0.4rem 0.8rem 0.2rem;
     }
 }

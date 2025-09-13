@@ -24,26 +24,28 @@
     gap: 1.5rem;
 }
 
-.product-card {
-    background-color: rgba(255, 253, 245, 0.1);
-    border: 2px solid #D42027;
-    border-radius: 12px;
+/* Stili specifici per il catalogo - NON per il carosello */
+.catalog-container .product-card {
+    background: white;
+    border: 2px solid transparent !important;
+    border-radius: 15px;
     padding: 1rem;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
-    backdrop-filter: blur(2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
-.product-card:hover {
-    transform: translateY(-5px) rotate(-1deg);
-    box-shadow: 0 0 15px #FDB714;
+.catalog-container .product-card:hover {
+    border-color: #007bff !important;
+    transform: translateY(-5px);
+    box-shadow: 0 12px 35px rgba(0, 123, 255, 0.2);
 }
 
-.product-card img {
+.catalog-container .product-card img {
     width: 100%;
     height: 250px;
     object-fit: contain; /* Mostra tutta l'immagine */
     background-color: #f8f9fa; /* Sfondo neutro per le parti vuote */
-    border-radius: 8px;
+    border-radius: 15px 15px 0 0;
     transition: transform 0.3s ease;
 }
 

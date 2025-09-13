@@ -2,6 +2,11 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+
+<!-- ID utente per gestione wishlist per-utente -->
+<c:if test="${not empty sessionScope.utente}">
+    <meta name="user-id" content="${sessionScope.utente.id}">
+</c:if>
 <jsp:include page="header.jsp" />
 
 <main class="container-fluid mt-4" role="main">
@@ -134,7 +139,7 @@
                             <div class="row">
                                 <c:forEach var="product" items="${products}">
                                     <div class="col-xl-3 col-lg-4 col-md-6 mb-4">
-                                        <div class="product-card">
+                                        <div class="product-card btn-danger active">
                                             <div class="product-image">
                                                 <img src="${pageContext.request.contextPath}/styles/images/prodotti/${product.imageUrl}" class="img-fluid" alt="${product.name}">
                                                 <div class="product-overlay">
@@ -142,7 +147,7 @@
                                                         <button class="btn btn-sm btn-primary" onclick="addToCart(${product.id})">
                                                             <i class="fas fa-shopping-cart"></i> Aggiungi
                                                         </button>
-                                                        <c:if test="${not empty sessionScope.utente and not sessionScope.isAdmin}">
+                                                        <c:if test="${not empty sessionScope.utente}">
                                                             <button class="btn btn-sm btn-outline-primary" onclick="addToWishlist(${product.id})">
                                                                 <i class="fas fa-heart"></i>
                                                             </button>

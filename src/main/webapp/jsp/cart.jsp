@@ -51,32 +51,25 @@
                     </div>
                 </form>
 
-                <div class="row mt-4">
-                    <div class="col-md-6">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title">Riepilogo</h5>
-                                <p class="card-text">
-                                    <strong>Totale articoli:</strong> ${cart.items.size()}<br>
-                                    <strong>Totale ordine:</strong> € <fmt:formatNumber value="${cart.total}" type="currency" currencySymbol="€" />
-                                </p>
-                            </div>
-                        </div>
+                <div class="treasure-summary">
+                    <div class="treasure-summary-content">
+                        <h5 class="treasure-summary-title">Riepilogo Tesoro</h5>
+                        <p class="treasure-summary-text">
+                            <strong>Totale articoli:</strong> ${cart.items.size()}<br>
+                            <strong>Totale ordine:</strong> € <fmt:formatNumber value="${cart.total}" type="currency" currencySymbol="€" />
+                        </p>
                     </div>
-                    <div class="col-md-6 text-end">
-                        <form action="${pageContext.request.contextPath}/CheckoutServlet" method="post">
-                            <input type="hidden" name="csrfToken" value="${sessionScope.csrfToken}" />
-                            <button type="submit" class="btn btn-primary btn-lg" <c:if test="${cart.items.size() == 0}">disabled</c:if>>
-                                <i class="fas fa-shopping-cart me-2"></i>Procedi al Checkout
-                            </button>
-                        </form>
+                    <div class="treasure-checkout">
+                        <a href="${pageContext.request.contextPath}/CheckoutServlet" class="treasure-checkout-btn" <c:if test="${cart.items.size() == 0}">style="pointer-events: none; opacity: 0.5;"</c:if>>
+                            <i class="fas fa-shipping-fast"></i> Procedi al Checkout
+                        </a>
                     </div>
                 </div>
             </c:when>
             <c:otherwise>
-                <div class="alert alert-info text-center" role="alert">
-                    <i class="fas fa-shopping-cart fa-3x mb-3 text-muted"></i>
-                    <h4>Il tuo carrello è vuoto</h4>
+                <div class="alert alert-info text-center" role="alert" style="position: relative; z-index: 2;">
+                    <i class="fas fa-shopping-cart fa-3x mb-3" style="color: #FFD700;"></i>
+                    <h4>Il tuo tesoro è vuoto</h4>
                     <p class="mb-3">Non hai ancora aggiunto nessun prodotto al carrello.</p>
                     <a href="${pageContext.request.contextPath}/catalog" class="btn btn-primary">
                         <i class="fas fa-search me-2"></i>Esplora i prodotti

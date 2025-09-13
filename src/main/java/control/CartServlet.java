@@ -8,10 +8,14 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import dao.ProductDAO;
+import dao.CartDAO;
+import dao.CartItemDAO;
 import model.CartItem;
 import model.Cart;
 import model.Product;
+import model.User;
 import java.util.logging.Logger;
+import java.util.List;
 
 //@WebServlet("/CartServlet")
 public class CartServlet extends HttpServlet {
@@ -21,30 +25,48 @@ public class CartServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
         HttpSession session = request.getSession();
+        User utente = (User) session.getAttribute("utente");
         
-        @SuppressWarnings("unchecked")
-        Map<Integer, CartItem> carrello = (Map<Integer, CartItem>) session.getAttribute("carrello");
+        Map<Integer, CartItem> carrello = new HashMap<>();
         
-        if (carrello == null) {
-            carrello = new HashMap<>();
-            session.setAttribute("carrello", carrello);
-        }
-        
-        // Crea un oggetto Cart per la JSP
-        Cart cart = new Cart();
-        cart.setItems(new ArrayList<>(carrello.values()));
-        
-        // Calcola il totale
-        double total = 0.0;
-        for (CartItem item : carrello.values()) {
-            if (item.getProduct() != null) {
-                total += item.getProduct().getPrice().doubleValue() * item.getQuantity();
+        try {
+            if (utente != null) {
+                // Utente registrato: carica carrello dal database
+                carrello = loadCartFromDatabase(utente.getId());
+            } else {
+                // Utente guest: carica carrello dalla sessione
+                @SuppressWarnings("unchecked")
+                Map<Integer, CartItem> sessionCart = (Map<Integer, CartItem>) session.getAttribute("carrello");
+                if (sessionCart != null) {
+                    carrello = sessionCart;
+                }
             }
+            
+            // Crea un oggetto Cart per la JSP
+            Cart cart = new Cart();
+            cart.setItems(new ArrayList<>(carrello.values()));
+            
+            // Calcola il totale
+            double total = 0.0;
+            for (CartItem item : carrello.values()) {
+                if (item.getProduct() != null) {
+                    total += item.getProduct().getPrice().doubleValue() * item.getQuantity();
+                }
+            }
+            cart.setTotal(total);
+            
+            request.setAttribute("cart", cart);
+            request.setAttribute("carrello", carrello);
+            
+        } catch (Exception e) {
+            logger.severe("Errore nel caricamento del carrello: " + e.getMessage());
+            // Fallback: usa carrello vuoto
+            Cart cart = new Cart();
+            cart.setItems(new ArrayList<>());
+            cart.setTotal(0.0);
+            request.setAttribute("cart", cart);
+            request.setAttribute("carrello", new HashMap<>());
         }
-        cart.setTotal(total);
-        
-        request.setAttribute("cart", cart);
-        request.setAttribute("carrello", carrello);
         
         request.getRequestDispatcher("/jsp/cart.jsp").forward(request, response);
     }
@@ -103,7 +125,15 @@ public class CartServlet extends HttpServlet {
                     throw new Exception("Azione non valida: " + action);
             }
             
-            session.setAttribute("carrello", carrello);
+            // Salva il carrello
+            User utente = (User) session.getAttribute("utente");
+            if (utente != null) {
+                // Utente registrato: salva nel database
+                saveCartToDatabase(utente.getId(), carrello);
+            } else {
+                // Utente guest: salva in sessione
+                session.setAttribute("carrello", carrello);
+            }
             
             // AJAX response
             if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
@@ -244,6 +274,61 @@ public class CartServlet extends HttpServlet {
         
         int prodottoId = Integer.parseInt(productIdStr);
         carrello.remove(prodottoId);
+    }
+    
+    /**
+     * Carica il carrello dal database per un utente registrato
+     */
+    private Map<Integer, CartItem> loadCartFromDatabase(int userId) throws Exception {
+        Map<Integer, CartItem> carrello = new HashMap<>();
+        
+        CartDAO cartDAO = new CartDAO();
+        CartItemDAO cartItemDAO = new CartItemDAO();
+        ProductDAO productDAO = new ProductDAO();
+        
+        // Crea carrello se non esiste
+        cartDAO.createIfNotExists(userId);
+        
+        // Trova il carrello dell'utente
+        Cart cart = cartDAO.findByUserId(userId);
+        if (cart != null) {
+            // Carica gli elementi del carrello
+            List<CartItem> items = cartItemDAO.findByCartId(cart.getId());
+            for (CartItem item : items) {
+                // Carica i dettagli del prodotto
+                Product product = productDAO.findByProductId(item.getProductId());
+                if (product != null && product.isActive()) {
+                    item.setProduct(product);
+                    carrello.put(item.getProductId(), item);
+                }
+            }
+        }
+        
+        return carrello;
+    }
+    
+    /**
+     * Salva il carrello nel database per un utente registrato
+     */
+    private void saveCartToDatabase(int userId, Map<Integer, CartItem> carrello) throws Exception {
+        CartDAO cartDAO = new CartDAO();
+        CartItemDAO cartItemDAO = new CartItemDAO();
+        
+        // Crea carrello se non esiste
+        cartDAO.createIfNotExists(userId);
+        
+        // Trova il carrello dell'utente
+        Cart cart = cartDAO.findByUserId(userId);
+        if (cart != null) {
+            // Svuota il carrello esistente
+            cartDAO.clear(cart.getId());
+            
+            // Aggiungi i nuovi elementi
+            for (CartItem item : carrello.values()) {
+                item.setCartId(cart.getId());
+                cartItemDAO.add(item);
+            }
+        }
     }
     
     /**

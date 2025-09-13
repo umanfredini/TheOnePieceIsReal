@@ -1,22 +1,25 @@
 /**
- * Background Music Player Styles - TheOnePieceIsReal
- * Stili per il player musicale di sottofondo
+ * Music Player Styles - TheOnePieceIsReal
+ * Stili per il player musicale completo con controlli
  */
 
-/* Container del player musicale - Statico nel footer */
+/* Container del player musicale - DISABILITATO PLAYER FISSO */
+.music-player {
+    display: none !important; /* Disabilita il player in posizione fissa */
+}
+
+/* Stili per il player musicale nel footer */
 .background-music-player {
-    position: relative;
     background: linear-gradient(135deg, #8B4513, #A0522D);
     border: 2px solid #DAA520;
     border-radius: 15px;
     padding: 15px;
-    margin: 20px auto 0 auto;
-    max-width: 400px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
     backdrop-filter: blur(10px);
     transition: all 0.3s ease;
-    /* Rimuove animazioni di entrata */
-    animation: none;
+    min-width: 300px;
+    max-width: 400px;
+    margin: 0 auto;
 }
 
 .background-music-player:hover {
@@ -25,102 +28,130 @@
 }
 
 /* Controlli del player */
-.music-controls {
+.music-controls,
+.background-music-player .music-controls {
     display: flex;
     align-items: center;
-    gap: 10px;
-}
-
-.music-info {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-width: 120px;
-}
-
-.music-title {
-    color: #FFD700;
-    font-size: 12px;
-    font-weight: bold;
-    text-align: center;
-    margin: 0;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
-}
-
-.music-status {
-    color: #FFF;
-    font-size: 10px;
-    margin: 2px 0 0 0;
-    opacity: 0.8;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 10px;
 }
 
 /* Pulsanti di controllo */
-.music-btn {
+.control-btn,
+.background-music-player .music-btn {
     background: linear-gradient(135deg, #DAA520, #FFD700);
     border: none;
     border-radius: 50%;
-    width: 35px;
-    height: 35px;
+    width: 40px;
+    height: 40px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     transition: all 0.3s ease;
     color: #8B4513;
-    font-size: 14px;
+    font-size: 16px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
 }
 
-.music-btn:hover {
+.control-btn:hover,
+.background-music-player .music-btn:hover {
     background: linear-gradient(135deg, #FFD700, #FFF);
     transform: scale(1.1);
     box-shadow: 0 3px 8px rgba(0, 0, 0, 0.4);
 }
 
-.music-btn:active {
+.control-btn:active {
     transform: scale(0.95);
 }
 
-.music-btn.disabled {
+.control-btn.play-btn {
+    width: 50px;
+    height: 50px;
+    font-size: 18px;
+}
+
+.control-btn.disabled {
     opacity: 0.5;
     cursor: not-allowed;
     transform: none;
 }
 
 /* Controllo volume */
-.volume-control {
+.volume-control,
+.background-music-player .volume-control {
     display: flex;
     align-items: center;
-    gap: 5px;
+    justify-content: center;
+    gap: 10px;
 }
 
-.volume-slider {
-    width: 60px;
+.volume-slider,
+.background-music-player .volume-slider {
+    width: 80px;
     height: 4px;
     background: rgba(255, 255, 255, 0.3);
     border-radius: 2px;
     outline: none;
     cursor: pointer;
+    -webkit-appearance: none;
 }
 
 .volume-slider::-webkit-slider-thumb {
     appearance: none;
-    width: 12px;
-    height: 12px;
+    width: 14px;
+    height: 14px;
     background: #FFD700;
     border-radius: 50%;
     cursor: pointer;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    transition: all 0.2s ease;
+}
+
+.volume-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.4);
 }
 
 .volume-slider::-moz-range-thumb {
-    width: 12px;
-    height: 12px;
+    width: 14px;
+    height: 14px;
     background: #FFD700;
     border-radius: 50%;
     cursor: pointer;
     border: none;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    transition: all 0.2s ease;
+}
+
+.volume-slider::-moz-range-thumb:hover {
+    transform: scale(1.2);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.4);
+}
+
+/* Toast notifications per controlli da tastiera */
+.music-toast {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: linear-gradient(135deg, #8B4513, #A0522D);
+    color: #FFD700;
+    padding: 12px 20px;
+    border-radius: 8px;
+    border: 2px solid #DAA520;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    font-size: 14px;
+    font-weight: bold;
+    z-index: 1001;
+    opacity: 0;
+    transform: translateX(100%);
+    transition: all 0.3s ease;
+}
+
+.music-toast.show {
+    opacity: 1;
+    transform: translateX(0);
 }
 
 /* Indicatore di riproduzione */
@@ -146,62 +177,70 @@
 
 /* Responsive */
 @media (max-width: 768px) {
-    .background-music-player {
-        margin: 15px auto;
+    .music-player {
+        bottom: 10px;
+        right: 10px;
+        min-width: 280px;
         padding: 12px;
-        max-width: 350px;
     }
     
-    .music-info {
-        min-width: 100px;
+    .control-btn {
+        width: 35px;
+        height: 35px;
+        font-size: 14px;
     }
     
-    .music-title {
-        font-size: 11px;
-    }
-    
-    .music-btn {
-        width: 30px;
-        height: 30px;
-        font-size: 12px;
+    .control-btn.play-btn {
+        width: 45px;
+        height: 45px;
+        font-size: 16px;
     }
     
     .volume-slider {
-        width: 50px;
+        width: 70px;
+    }
+    
+    .music-toast {
+        top: 10px;
+        right: 10px;
+        font-size: 12px;
+        padding: 10px 15px;
     }
 }
 
 @media (max-width: 480px) {
-    .background-music-player {
-        margin: 10px auto;
+    .music-player {
+        bottom: 5px;
+        right: 5px;
+        min-width: 250px;
         padding: 10px;
-        max-width: 300px;
     }
     
     .music-controls {
-        gap: 5px;
+        gap: 10px;
     }
     
-    .music-info {
-        min-width: 80px;
+    .control-btn {
+        width: 32px;
+        height: 32px;
+        font-size: 12px;
     }
     
-    .music-title {
-        font-size: 10px;
-    }
-    
-    .music-status {
-        font-size: 9px;
-    }
-    
-    .music-btn {
-        width: 28px;
-        height: 28px;
-        font-size: 11px;
+    .control-btn.play-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 14px;
     }
     
     .volume-slider {
-        width: 40px;
+        width: 60px;
+    }
+    
+    .music-toast {
+        top: 5px;
+        right: 5px;
+        font-size: 11px;
+        padding: 8px 12px;
     }
 }
 
@@ -209,21 +248,66 @@
 
 /* Tema scuro */
 @media (prefers-color-scheme: dark) {
-    .background-music-player {
+    .music-player {
         background: linear-gradient(135deg, #2C1810, #3D2317);
         border-color: #B8860B;
     }
     
-    .music-title {
-        color: #B8860B;
-    }
-    
-    .music-btn {
+    .control-btn {
         background: linear-gradient(135deg, #B8860B, #DAA520);
         color: #2C1810;
     }
     
-    .music-btn:hover {
+    .control-btn:hover {
         background: linear-gradient(135deg, #DAA520, #FFD700);
     }
+    
+    .music-toast {
+        background: linear-gradient(135deg, #2C1810, #3D2317);
+        border-color: #B8860B;
+        color: #B8860B;
+    }
+}
+
+/* ===== STILI SPECIFICI PER IL PLAYER NEL FOOTER ===== */
+.background-music-player .music-info {
+    text-align: center;
+    flex: 1;
+    color: white;
+}
+
+.background-music-player .music-title {
+    font-size: 14px;
+    font-weight: bold;
+    margin: 0 0 5px 0;
+    color: #FFD700;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.background-music-player .music-status {
+    font-size: 12px;
+    margin: 0;
+    color: rgba(255, 255, 255, 0.8);
+    font-style: italic;
+}
+
+.background-music-player .music-indicator {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #32CD32, #228B22);
+    box-shadow: 0 0 10px rgba(50, 205, 50, 0.6);
+    animation: pulse 2s infinite;
+}
+
+.background-music-player .music-indicator.paused {
+    background: linear-gradient(135deg, #FF6B6B, #E74C3C);
+    box-shadow: 0 0 10px rgba(255, 107, 107, 0.6);
+    animation: none;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.1); opacity: 0.7; }
+    100% { transform: scale(1); opacity: 1; }
 }

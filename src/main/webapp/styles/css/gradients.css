@@ -1,370 +1,279 @@
-/* ===== GRADIENTI AVANZATI ONE PIECE ===== */
+/* ===== GRADIENTI ONE PIECE ===== */
 
-/* === GRADIENTI HEADER === */
-.header-gradient {
-  background: var(--gradient-sunny);
-  background-size: 400% 400%;
-  animation: gradient-shift 8s ease infinite;
+/* Variabili CSS per i gradienti */
+:root {
+    /* Gradienti base */
+    --gradient-luffy: linear-gradient(135deg, #ff6b6b, #ff8e8e);
+    --gradient-zoro: linear-gradient(135deg, #4ecdc4, #44a08d);
+    --gradient-nami: linear-gradient(135deg, #ffd93d, #ff6b6b);
+    --gradient-sanji: linear-gradient(135deg, #667eea, #764ba2);
+    --gradient-chopper: linear-gradient(135deg, #f093fb, #f5576c);
+    --gradient-robin: linear-gradient(135deg, #4facfe, #00f2fe);
+    --gradient-franky: linear-gradient(135deg, #43e97b, #38f9d7);
+    --gradient-brook: linear-gradient(135deg, #fa709a, #fee140);
+    --gradient-jinbei: linear-gradient(135deg, #a8edea, #fed6e3);
+    
+    /* Gradienti tematici */
+    --gradient-ocean: linear-gradient(135deg, #667eea, #764ba2);
+    --gradient-sunset: linear-gradient(135deg, #ff9a9e, #fecfef);
+    --gradient-thunder: linear-gradient(135deg, #ffecd2, #fcb69f);
+    --gradient-ice: linear-gradient(135deg, #a8edea, #fed6e3);
+    --gradient-fire: linear-gradient(135deg, #ff9a9e, #fad0c4);
+    --gradient-earth: linear-gradient(135deg, #ffecd2, #fcb69f);
+    --gradient-wind: linear-gradient(135deg, #a8edea, #fed6e3);
+    --gradient-light: linear-gradient(135deg, #ffecd2, #fcb69f);
+    
+    /* Gradienti animati */
+    --gradient-animated: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+    --gradient-animated-2: linear-gradient(-45deg, #667eea, #764ba2, #f093fb, #f5576c);
+    --gradient-animated-3: linear-gradient(-45deg, #4facfe, #00f2fe, #43e97b, #38f9d7);
+    
+    /* Ombre e effetti */
+    --shadow-color: rgba(0, 0, 0, 0.1);
+    --shadow-glow: 0 0 20px rgba(255, 193, 7, 0.3);
+    --transition-medium: all 0.3s ease;
 }
 
-.header-gradient-mugiwara {
-  background: linear-gradient(135deg, 
-    var(--straw-hat-red) 0%, 
-    var(--straw-hat-yellow) 25%, 
-    var(--straw-hat-blue) 50%, 
-    var(--straw-hat-green) 75%, 
-    var(--straw-hat-orange) 100%);
-  background-size: 400% 400%;
-  animation: gradient-shift 10s ease infinite;
-}
+/* Gradienti carosello rimossi */
 
-/* === GRADIENTI SIDEBAR === */
-.sidebar-gradient {
-  background: var(--gradient-forest);
-  position: relative;
-}
-
-.sidebar-gradient::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: var(--gradient-ocean);
-  opacity: 0.1;
-  z-index: -1;
-}
-
-/* === GRADIENTI CAROSELLO === */
-.carousel-gradient {
-  background: var(--gradient-animated-2);
-  background-size: 400% 400%;
-  animation: gradient-shift 6s ease infinite;
-}
-
-.carousel-item-gradient {
-  background: var(--gradient-sunset);
-  position: relative;
-  overflow: hidden;
-}
-
-.carousel-item-gradient::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: var(--gradient-fire);
-  opacity: 0.3;
-  animation: gradient-pulse 3s ease-in-out infinite;
-}
-
-/* === GRADIENTI PRODOTTI === */
 .product-card-gradient {
-  background: var(--gradient-light);
-  transition: var(--transition-medium);
+    background: var(--gradient-light);
+    transition: var(--transition-medium);
 }
 
 .product-card-gradient:hover {
-  background: var(--gradient-animated-3);
-  background-size: 400% 400%;
-  animation: gradient-shift 4s ease infinite;
-  transform: translateY(-5px);
-  box-shadow: var(--shadow-glow);
+    background: var(--gradient-animated-3);
+    background-size: 400% 400%;
+    animation: gradient-shift 4s ease infinite;
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-glow);
 }
 
 .product-image-gradient {
-  background: var(--gradient-ice);
-  position: relative;
+    background: var(--gradient-ice);
+    position: relative;
 }
 
 .product-image-gradient::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: var(--gradient-thunder);
-  opacity: 0.2;
-  transition: var(--transition-medium);
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--gradient-thunder);
+    opacity: 0.2;
+    transition: var(--transition-medium);
 }
 
 .product-card-gradient:hover .product-image-gradient::before {
-  opacity: 0.4;
+    opacity: 0.4;
 }
 
-/* === GRADIENTI BOTTONI === */
+/* === BOTTONI GRADIENTE === */
 .btn-gradient-primary {
-  background: var(--gradient-luffy);
-  border: none;
-  color: var(--white);
-  transition: var(--transition-medium);
+    background: var(--gradient-luffy);
+    border: none;
+    color: var(--white);
+    transition: var(--transition-medium);
 }
 
 .btn-gradient-primary:hover {
-  background: var(--gradient-animated);
-  background-size: 400% 400%;
-  animation: gradient-shift 2s ease infinite;
-  transform: scale(1.05);
-  box-shadow: var(--shadow-glow);
-}
-
-.btn-gradient-secondary {
-  background: var(--gradient-zoro);
-  border: none;
-  color: var(--white);
-  transition: var(--transition-medium);
-}
-
-.btn-gradient-secondary:hover {
-  background: var(--gradient-animated-2);
-  background-size: 400% 400%;
-  animation: gradient-shift 2s ease infinite;
-  transform: scale(1.05);
-  box-shadow: var(--shadow-glow);
+    background: var(--gradient-animated);
+    background-size: 400% 400%;
+    animation: gradient-shift 2s ease infinite;
+    transform: scale(1.05);
+    box-shadow: var(--shadow-glow);
 }
 
 .btn-gradient-success {
-  background: var(--gradient-nami);
-  border: none;
-  color: var(--white);
-  transition: var(--transition-medium);
+    background: var(--gradient-nami);
+    border: none;
+    color: var(--white);
+    transition: var(--transition-medium);
 }
 
 .btn-gradient-success:hover {
-  background: var(--gradient-animated-3);
-  background-size: 400% 400%;
-  animation: gradient-shift 2s ease infinite;
-  transform: scale(1.05);
-  box-shadow: var(--shadow-glow);
+    background: var(--gradient-animated-3);
+    background-size: 400% 400%;
+    animation: gradient-shift 2s ease infinite;
+    transform: scale(1.05);
+    box-shadow: var(--shadow-glow);
 }
 
-/* === GRADIENTI FORM === */
-.form-gradient {
-  background: var(--gradient-earth);
-  border-radius: var(--border-radius-large);
-  padding: var(--spacing-lg);
-  box-shadow: var(--shadow-medium);
-}
-
-.input-gradient {
-  background: var(--gradient-wind);
-  border: 2px solid transparent;
-  border-radius: var(--border-radius-medium);
-  transition: var(--transition-medium);
-}
-
-.input-gradient:focus {
-  background: var(--gradient-light);
-  border-color: var(--straw-hat-red);
-  box-shadow: var(--shadow-colored);
-  outline: none;
-}
-
-/* === GRADIENTI NAVIGAZIONE === */
-.nav-gradient {
-  background: var(--gradient-dark);
-  position: relative;
-}
-
-.nav-gradient::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: var(--gradient-ocean);
-  opacity: 0.1;
-  z-index: -1;
-}
-
-.nav-item-gradient {
-  background: var(--gradient-animated);
-  background-size: 200% 200%;
-  border-radius: var(--border-radius-medium);
-  transition: var(--transition-medium);
-}
-
-.nav-item-gradient:hover {
-  animation: gradient-shift 1s ease infinite;
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-glow);
-}
-
-/* === GRADIENTI FOOTER === */
-.footer-gradient {
-  background: var(--gradient-sunset);
-  position: relative;
-}
-
-.footer-gradient::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: var(--gradient-fire);
-  opacity: 0.2;
-  z-index: -1;
-}
-
-/* === GRADIENTI MODAL === */
-.modal-gradient {
-  background: var(--gradient-forest);
-  border-radius: var(--border-radius-large);
-  box-shadow: var(--shadow-heavy);
-}
-
-.modal-header-gradient {
-  background: var(--gradient-ocean);
-  border-radius: var(--border-radius-large) var(--border-radius-large) 0 0;
-}
-
-.modal-body-gradient {
-  background: var(--gradient-light);
-}
-
-.modal-footer-gradient {
-  background: var(--gradient-earth);
-  border-radius: 0 0 var(--border-radius-large) var(--border-radius-large);
-}
-
-/* === GRADIENTI ALERT === */
-.alert-gradient-success {
-  background: var(--gradient-nami);
-  border: none;
-  color: var(--white);
-  border-radius: var(--border-radius-medium);
-}
-
-.alert-gradient-warning {
-  background: var(--gradient-usopp);
-  border: none;
-  color: var(--white);
-  border-radius: var(--border-radius-medium);
-}
-
-.alert-gradient-danger {
-  background: var(--gradient-luffy);
-  border: none;
-  color: var(--white);
-  border-radius: var(--border-radius-medium);
-}
-
-.alert-gradient-info {
-  background: var(--gradient-zoro);
-  border: none;
-  color: var(--white);
-  border-radius: var(--border-radius-medium);
-}
-
-/* === GRADIENTI BADGE === */
-.badge-gradient-straw-hat {
-  background: var(--gradient-luffy);
-  color: var(--white);
-  border-radius: var(--border-radius-round);
-}
-
-.badge-gradient-emperor {
-  background: var(--gradient-zoro);
-  color: var(--white);
-  border-radius: var(--border-radius-round);
-}
-
-.badge-gradient-other {
-  background: var(--gradient-nami);
-  color: var(--white);
-  border-radius: var(--border-radius-round);
-}
-
-/* === GRADIENTI PROGRESS === */
-.progress-gradient {
-  background: var(--gradient-earth);
-  border-radius: var(--border-radius-round);
-  overflow: hidden;
-}
-
-.progress-bar-gradient {
-  background: var(--gradient-animated);
-  background-size: 400% 400%;
-  animation: gradient-shift 3s ease infinite;
-}
-
-/* === GRADIENTI LOADING === */
-.loading-gradient {
-  background: var(--gradient-animated);
-  background-size: 400% 400%;
-  animation: gradient-shift 1s ease infinite;
-  border-radius: var(--border-radius-round);
-}
-
-/* === GRADIENTI SPECIALI === */
+/* === GRADIENTI TESTO === */
 .gradient-text {
-  background: var(--gradient-animated);
-  background-size: 400% 400%;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  animation: gradient-shift 3s ease infinite;
+    background: var(--gradient-luffy);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: bold;
 }
 
-.gradient-border {
-  border: 2px solid transparent;
-  background: linear-gradient(var(--white), var(--white)) padding-box,
-              var(--gradient-animated) border-box;
-  background-size: 400% 400%;
-  animation: gradient-shift 4s ease infinite;
+.gradient-text-ocean {
+    background: var(--gradient-ocean);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.gradient-text-sunset {
+    background: var(--gradient-sunset);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* === GRADIENTI SFONDO === */
+.bg-gradient-luffy {
+    background: var(--gradient-luffy);
+}
+
+.bg-gradient-zoro {
+    background: var(--gradient-zoro);
+}
+
+.bg-gradient-nami {
+    background: var(--gradient-nami);
+}
+
+.bg-gradient-sanji {
+    background: var(--gradient-sanji);
+}
+
+.bg-gradient-chopper {
+    background: var(--gradient-chopper);
+}
+
+.bg-gradient-robin {
+    background: var(--gradient-robin);
+}
+
+.bg-gradient-franky {
+    background: var(--gradient-franky);
+}
+
+.bg-gradient-brook {
+    background: var(--gradient-brook);
+}
+
+.bg-gradient-jinbei {
+    background: var(--gradient-jinbei);
+}
+
+/* === GRADIENTI ANIMATI === */
+.animate-gradient-shift {
+    background: var(--gradient-animated);
+    background-size: 400% 400%;
+    animation: gradient-shift 3s ease infinite;
+}
+
+.animate-gradient-pulse {
+    background: var(--gradient-animated-2);
+    background-size: 400% 400%;
+    animation: gradient-pulse 2s ease infinite;
+}
+
+.animate-gradient-rotate {
+    background: var(--gradient-animated-3);
+    background-size: 400% 400%;
+    animation: gradient-rotate 4s linear infinite;
+}
+
+/* === GRADIENTI HOVER === */
+.hover-gradient-luffy:hover {
+    background: var(--gradient-luffy);
+    transition: var(--transition-medium);
+}
+
+.hover-gradient-zoro:hover {
+    background: var(--gradient-zoro);
+    transition: var(--transition-medium);
+}
+
+.hover-gradient-nami:hover {
+    background: var(--gradient-nami);
+    transition: var(--transition-medium);
+}
+
+.hover-gradient-sanji:hover {
+    background: var(--gradient-sanji);
+    transition: var(--transition-medium);
+}
+
+.hover-gradient-chopper:hover {
+    background: var(--gradient-chopper);
+    transition: var(--transition-medium);
+}
+
+.hover-gradient-robin:hover {
+    background: var(--gradient-robin);
+    transition: var(--transition-medium);
+}
+
+.hover-gradient-franky:hover {
+    background: var(--gradient-franky);
+    transition: var(--transition-medium);
+}
+
+.hover-gradient-brook:hover {
+    background: var(--gradient-brook);
+    transition: var(--transition-medium);
+}
+
+.hover-gradient-jinbei:hover {
+    background: var(--gradient-jinbei);
+    transition: var(--transition-medium);
+}
+
+/* === GRADIENTI BORDO === */
+.border-gradient-luffy {
+    border: 2px solid transparent;
+    background: linear-gradient(white, white) padding-box,
+                var(--gradient-luffy) border-box;
+}
+
+.border-gradient-zoro {
+    border: 2px solid transparent;
+    background: linear-gradient(white, white) padding-box,
+                var(--gradient-zoro) border-box;
+}
+
+.border-gradient-nami {
+    border: 2px solid transparent;
+    background: linear-gradient(white, white) padding-box,
+                var(--gradient-nami) border-box;
+}
+
+.border-gradient-sanji {
+    border: 2px solid transparent;
+    background: linear-gradient(white, white) padding-box,
+                var(--gradient-sanji) border-box;
 }
 
 /* === GRADIENTI RESPONSIVE === */
 @media (max-width: 768px) {
-  .header-gradient,
-  .carousel-gradient,
-  .product-card-gradient {
-    background-size: 200% 200%;
-    animation-duration: 4s;
-  }
-  
-  .btn-gradient-primary,
-  .btn-gradient-secondary,
-  .btn-gradient-success {
-    background-size: 200% 200%;
-    animation-duration: 1.5s;
-  }
+    /* Carosello rimosso */
+    
+    .product-card-gradient:hover {
+        animation-duration: 6s;
+    }
+    
+    .btn-gradient-primary:hover,
+    .btn-gradient-success:hover {
+        animation-duration: 3s;
+    }
 }
 
-/* === GRADIENTI ANIMAZIONI AVANZATE === */
-@keyframes gradient-wave {
-  0%, 100% { transform: translateX(0) translateY(0); }
-  25% { transform: translateX(10px) translateY(-10px); }
-  50% { transform: translateX(0) translateY(-20px); }
-  75% { transform: translateX(-10px) translateY(-10px); }
+@media (max-width: 480px) {
+    /* Carosello rimosso */
+    
+    .product-card-gradient:hover {
+        animation-duration: 8s;
+    }
+    
+    .btn-gradient-primary:hover,
+    .btn-gradient-success:hover {
+        animation-duration: 4s;
+    }
 }
-
-.gradient-wave {
-  animation: gradient-wave 3s ease-in-out infinite;
-}
-
-@keyframes gradient-spin {
-  0% { transform: rotate(0deg) scale(1); }
-  50% { transform: rotate(180deg) scale(1.1); }
-  100% { transform: rotate(360deg) scale(1); }
-}
-
-.gradient-spin {
-  animation: gradient-spin 4s linear infinite;
-}
-
-@keyframes gradient-bounce {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-20px); }
-}
-
-.gradient-bounce {
-  animation: gradient-bounce 2s ease-in-out infinite;
-} 

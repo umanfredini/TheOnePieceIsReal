@@ -10,7 +10,6 @@
 @import url("layout.css");
 @import url("gradients.css");
 @import url("animations.css");
-@import url("carousel.css");
 @import url("typography.css");
 @import url("buttons.css");
 @import url("forms.css");
@@ -22,8 +21,10 @@
 @import url("light.css");
 @import url("dark.css");
 @import url("category.css");
-@import url("database-error.css");
 @import url("responsive.css");
+@import url("carousel.css"); /* Importato alla fine per massima priorità */
+@import url("background-music.css"); /* Stili per il music player */
+
 
 /* Main Page Background */
 body {

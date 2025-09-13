@@ -27,25 +27,7 @@ function applyProductFilters() {
     });
 }
 
-/**
- * Inizializza l'effetto hover per le "Vivre Card"
- * Applica trasformazioni CSS per un effetto visivo dinamico
- */
-function initVivreCardHover() {
-    document.querySelectorAll('.vivre-card').forEach(card => { // Utilizzo di una arrow function per la concisione
-        card.addEventListener('mouseenter', () => { // Listener per l'ingresso del mouse
-            card.querySelector('.card-details').style.opacity = '1';
-            card.style.transform = 'scale(1.05) rotate(3deg)';
-            card.style.zIndex = '10'; // Porta la card in primo piano
-        });
-        
-        card.addEventListener('mouseleave', () => { // Listener per l'uscita del mouse
-            card.querySelector('.card-details').style.opacity = '0';
-            card.style.transform = 'scale(1) rotate(0)';
-            card.style.zIndex = '1'; // Riporta la card al suo livello originale
-        });
-    });
-}
+// Funzione rimossa: initVivreCardHover() - non più necessaria dopo l'uniformazione delle product card
 
 // Inizializzazione: aggiunge event listeners al caricamento del DOM
 document.addEventListener('DOMContentLoaded', () => {

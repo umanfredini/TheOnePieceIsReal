@@ -9,5 +9,5 @@
         username="root"
         password="Umberto50!"
         driverClassName="com.mysql.cj.jdbc.Driver"
-        url="jdbc:mysql://localhost:3306/onepiece?useSSL=false&amp;serverTimezone=UTC"/>
+        url="jdbc:mysql://localhost:3306/onepiece?allowPublicKeyRetrieval=true&amp;useSSL=false"/>
 </Context>

@@ -10,8 +10,12 @@ import model.OrderItem;
 import model.User;
 import dao.OrderDAO;
 import dao.OrderItemDAO;
+import dao.CartDAO;
+import dao.CartItemDAO;
+import dao.ProductDAO;
 import java.util.logging.Logger;
 import java.util.ArrayList;
+import java.util.List;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -47,7 +51,13 @@ public class CheckoutServlet extends HttpServlet {
 
         @SuppressWarnings("unchecked")
         Map<Integer, CartItem> carrello = (Map<Integer, CartItem>) session.getAttribute("carrello");
+        logger.info("CheckoutServlet - Carrello in sessione: " + (carrello != null ? "Presente" : "Assente"));
+        if (carrello != null) {
+            logger.info("CheckoutServlet - Numero elementi nel carrello: " + carrello.size());
+        }
+        
         if (carrello == null || carrello.isEmpty()) {
+            logger.warning("CheckoutServlet - Carrello vuoto, redirect al carrello");
             response.sendRedirect(request.getContextPath() + "/CartServlet");
             return;
         }
@@ -93,8 +103,19 @@ public class CheckoutServlet extends HttpServlet {
         }
 
         try {
-            @SuppressWarnings("unchecked")
-            Map<Integer, CartItem> carrello = (Map<Integer, CartItem>) session.getAttribute("carrello");
+            Map<Integer, CartItem> carrello = new HashMap<>();
+            
+            if (utente != null) {
+                // Utente registrato: carica carrello dal database
+                carrello = loadCartFromDatabase(utente.getId());
+            } else {
+                // Utente guest: carica carrello dalla sessione
+                @SuppressWarnings("unchecked")
+                Map<Integer, CartItem> sessionCart = (Map<Integer, CartItem>) session.getAttribute("carrello");
+                if (sessionCart != null) {
+                    carrello = sessionCart;
+                }
+            }
 
             if (carrello == null || carrello.isEmpty()) {
                 response.sendRedirect(request.getContextPath() + "/CartServlet");
@@ -203,9 +224,8 @@ public class CheckoutServlet extends HttpServlet {
             	    orderItemDAO.add(orderItem);
             	}
 
-
-                carrello.clear();
-                session.setAttribute("carrello", carrello);
+                // Svuota il carrello dopo l'ordine
+                clearCartAfterOrder(utente, session);
                 
                 // Passa l'ordine e l'informazione se è un ospite alla pagina di conferma
                 request.setAttribute("order", ordine);
@@ -225,6 +245,54 @@ public class CheckoutServlet extends HttpServlet {
 
 
 
+
+    /**
+     * Carica il carrello dal database per un utente registrato
+     */
+    private Map<Integer, CartItem> loadCartFromDatabase(int userId) throws Exception {
+        Map<Integer, CartItem> carrello = new HashMap<>();
+        
+        CartDAO cartDAO = new CartDAO();
+        CartItemDAO cartItemDAO = new CartItemDAO();
+        ProductDAO productDAO = new ProductDAO();
+        
+        // Crea carrello se non esiste
+        cartDAO.createIfNotExists(userId);
+        
+        // Trova il carrello dell'utente
+        Cart cart = cartDAO.findByUserId(userId);
+        if (cart != null) {
+            // Carica gli elementi del carrello
+            List<CartItem> items = cartItemDAO.findByCartId(cart.getId());
+            for (CartItem item : items) {
+                // Carica i dettagli del prodotto
+                Product product = productDAO.findByProductId(item.getProductId());
+                if (product != null && product.isActive()) {
+                    item.setProduct(product);
+                    carrello.put(item.getProductId(), item);
+                }
+            }
+        }
+        
+        return carrello;
+    }
+    
+    /**
+     * Svuota il carrello dopo l'ordine
+     */
+    private void clearCartAfterOrder(User utente, HttpSession session) throws Exception {
+        if (utente != null) {
+            // Utente registrato: svuota carrello nel database
+            CartDAO cartDAO = new CartDAO();
+            Cart cart = cartDAO.findByUserId(utente.getId());
+            if (cart != null) {
+                cartDAO.clear(cart.getId());
+            }
+        } else {
+            // Utente guest: svuota carrello in sessione
+            session.removeAttribute("carrello");
+        }
+    }
 
     private boolean isValidToken(HttpServletRequest request, HttpSession session) {
         String sessionToken = (String) session.getAttribute("csrfToken");

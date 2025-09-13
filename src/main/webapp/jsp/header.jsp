@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/css/admin-responsive.css?v=${System.currentTimeMillis()}">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/css/checkout.css?v=${System.currentTimeMillis()}">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/css/background-music.css?v=${System.currentTimeMillis()}">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/css/wishlist-buttons.css?v=${System.currentTimeMillis()}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -20,6 +21,7 @@
     <script src="${pageContext.request.contextPath}/scripts/toast.js" type="module" defer></script>
     <script src="${pageContext.request.contextPath}/scripts/image-handler.js" defer></script>
     <script src="${pageContext.request.contextPath}/scripts/background-music.js" defer></script>
+    <script src="${pageContext.request.contextPath}/scripts/wishlist-manager.js" defer></script>
 </head>
 <body>
 <!-- Header principale One Piece -->
