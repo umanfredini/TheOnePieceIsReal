@@ -53,10 +53,11 @@
 <script>
 function copyTrackingId() {
     const trackingId = document.getElementById('trackingId').textContent;
-    navigator.clipboard.writeText(trackingId).then(function() {
-        // Mostra feedback all'utente
-        const button = event.target.closest('button');
-        const originalText = button.innerHTML;
+    const button = event.target.closest('button');
+    const originalText = button.innerHTML;
+    
+    // Funzione per mostrare feedback di successo
+    function showSuccess() {
         button.innerHTML = '<i class="fas fa-check"></i> Copiato!';
         button.classList.remove('btn-outline-primary');
         button.classList.add('btn-success');
@@ -66,10 +67,63 @@ function copyTrackingId() {
             button.classList.remove('btn-success');
             button.classList.add('btn-outline-primary');
         }, 2000);
-    }).catch(function(err) {
-        console.error('Errore durante la copia: ', err);
-        alert('Errore durante la copia del tracking ID');
-    });
+    }
+    
+    // Funzione per mostrare errore
+    function showError() {
+        button.innerHTML = '<i class="fas fa-times"></i> Errore!';
+        button.classList.remove('btn-outline-primary');
+        button.classList.add('btn-danger');
+        
+        setTimeout(function() {
+            button.innerHTML = originalText;
+            button.classList.remove('btn-danger');
+            button.classList.add('btn-outline-primary');
+        }, 2000);
+    }
+    
+    // Metodo 1: API Clipboard moderna (se supportata e sicura)
+    if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(trackingId).then(function() {
+            showSuccess();
+        }).catch(function(err) {
+            console.error('Errore API Clipboard: ', err);
+            // Fallback al metodo alternativo
+            fallbackCopy(trackingId);
+        });
+    } else {
+        // Metodo 2: Fallback per browser più vecchi o HTTP
+        fallbackCopy(trackingId);
+    }
+    
+    // Metodo alternativo usando textarea temporanea
+    function fallbackCopy(text) {
+        try {
+            // Crea un elemento textarea temporaneo
+            const textArea = document.createElement('textarea');
+            textArea.value = text;
+            textArea.style.position = 'fixed';
+            textArea.style.left = '-999999px';
+            textArea.style.top = '-999999px';
+            document.body.appendChild(textArea);
+            
+            // Seleziona e copia il testo
+            textArea.focus();
+            textArea.select();
+            
+            const successful = document.execCommand('copy');
+            document.body.removeChild(textArea);
+            
+            if (successful) {
+                showSuccess();
+            } else {
+                showError();
+            }
+        } catch (err) {
+            console.error('Errore fallback copy: ', err);
+            showError();
+        }
+    }
 }
 </script>
 

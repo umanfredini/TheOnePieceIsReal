@@ -350,6 +350,7 @@
                                     <strong>Ordine trovato!</strong> Ecco i dettagli del tuo tesoro.
                                 </div>
                                 
+                                
                                 <!-- Informazioni ordine -->
                                 <div class="order-info">
                                     <h3 class="mb-3">
@@ -367,14 +368,23 @@
                                                     <fmt:formatDate value="${order.orderDate}" pattern="dd/MM/yyyy HH:mm"/>
                                                 </span>
                                             </div>
-                                        </div>
-                                        <div class="col-md-6">
                                             <div class="detail-row">
-                                                <span class="detail-label">Totale:</span>
+                                                <span class="detail-label">Totale Ordine:</span>
                                                 <span class="detail-value">
-                                                    <fmt:formatNumber value="${order.totalAmount}" type="currency" currencySymbol="€"/>
+                                                    <strong style="color: #28a745; font-size: 1.1em;">
+                                                        <c:choose>
+                                                            <c:when test="${not empty order.totalPrice and order.totalPrice > 0}">
+                                                                <fmt:formatNumber value="${order.totalPrice}" type="currency" currencySymbol="€"/>
+                                                            </c:when>
+                                                            <c:otherwise>
+                                                                <span style="color: #dc3545;">€ 0,00 (Totale non disponibile)</span>
+                                                            </c:otherwise>
+                                                        </c:choose>
+                                                    </strong>
                                                 </span>
                                             </div>
+                                        </div>
+                                        <div class="col-md-6">
                                             <div class="detail-row">
                                                 <span class="detail-label">Indirizzo Spedizione:</span>
                                                 <span class="detail-value">${order.shippingAddress}</span>
@@ -388,7 +398,7 @@
                                     <h4 class="mb-3">
                                         <i class="fas fa-route me-2"></i>Stato della Spedizione
                                     </h4>
-                                    <div class="progress-bar-custom" style="--progress: ${progressPercentage}%"></div>
+                                    <div class="progress-bar-custom" style="width: ${progressPercentage}%"></div>
                                     
                                     <div class="status-steps">
                                         <div class="status-step ${order.status == 'pending' ? 'active' : (order.status == 'processing' || order.status == 'shipped' || order.status == 'delivered' ? 'completed' : '')}">
@@ -421,36 +431,69 @@
                                     </div>
                                 </div>
                                 
-                                <!-- Stato attuale -->
+                                <!-- Stato attuale migliorato -->
                                 <div class="order-details">
                                     <h5 class="mb-3">
-                                        <i class="fas fa-info-circle me-2"></i>Stato Attuale
+                                        <i class="fas fa-info-circle me-2"></i>Stato Attuale della Spedizione
                                     </h5>
-                                    <div class="detail-row">
-                                        <span class="detail-label">Status:</span>
-                                        <span class="detail-value">
-                                            <c:choose>
-                                                <c:when test="${order.status == 'pending'}">
-                                                    <span class="badge bg-warning">In Elaborazione</span>
-                                                </c:when>
-                                                <c:when test="${order.status == 'processing'}">
-                                                    <span class="badge bg-info">In Preparazione</span>
-                                                </c:when>
-                                                <c:when test="${order.status == 'shipped'}">
-                                                    <span class="badge bg-primary">Spedito</span>
-                                                </c:when>
-                                                <c:when test="${order.status == 'delivered'}">
-                                                    <span class="badge bg-success">Consegnato</span>
-                                                </c:when>
-                                                <c:when test="${order.status == 'cancelled'}">
-                                                    <span class="badge bg-danger">Annullato</span>
-                                                </c:when>
-                                            </c:choose>
-                                        </span>
+                                    
+                                    <!-- Card dello stato principale -->
+                                    <div class="alert alert-info border-0 mb-3" style="background: linear-gradient(135deg, #e3f2fd, #bbdefb);">
+                                        <div class="d-flex align-items-center">
+                                            <div class="me-3">
+                                                <c:choose>
+                                                    <c:when test="${order.status == 'pending'}">
+                                                        <i class="fas fa-clock fa-2x text-warning"></i>
+                                                    </c:when>
+                                                    <c:when test="${order.status == 'processing'}">
+                                                        <i class="fas fa-cogs fa-2x text-info"></i>
+                                                    </c:when>
+                                                    <c:when test="${order.status == 'shipped'}">
+                                                        <i class="fas fa-shipping-fast fa-2x text-primary"></i>
+                                                    </c:when>
+                                                    <c:when test="${order.status == 'delivered'}">
+                                                        <i class="fas fa-check-circle fa-2x text-success"></i>
+                                                    </c:when>
+                                                    <c:when test="${order.status == 'cancelled'}">
+                                                        <i class="fas fa-times-circle fa-2x text-danger"></i>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <i class="fas fa-question-circle fa-2x text-secondary"></i>
+                                                    </c:otherwise>
+                                                </c:choose>
+                                            </div>
+                                            <div>
+                                                <h6 class="mb-1 fw-bold">
+                                                    <c:choose>
+                                                        <c:when test="${order.status == 'pending'}">Ordine in Elaborazione</c:when>
+                                                        <c:when test="${order.status == 'processing'}">Ordine in Preparazione</c:when>
+                                                        <c:when test="${order.status == 'shipped'}">Ordine Spedito</c:when>
+                                                        <c:when test="${order.status == 'delivered'}">Ordine Consegnato</c:when>
+                                                        <c:when test="${order.status == 'cancelled'}">Ordine Annullato</c:when>
+                                                        <c:otherwise>Stato Sconosciuto</c:otherwise>
+                                                    </c:choose>
+                                                </h6>
+                                                <p class="mb-0 text-muted">${shippingStatus}</p>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="detail-row">
-                                        <span class="detail-label">Descrizione:</span>
-                                        <span class="detail-value">${shippingStatus}</span>
+                                    
+                                    <!-- Dettagli aggiuntivi -->
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="detail-row">
+                                                <span class="detail-label">Progresso:</span>
+                                                <span class="detail-value">${progressPercentage}% completato</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="detail-row">
+                                                <span class="detail-label">Ultimo Aggiornamento:</span>
+                                                <span class="detail-value">
+                                                    <fmt:formatDate value="${order.orderDate}" pattern="dd/MM/yyyy HH:mm"/>
+                                                </span>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -486,15 +529,20 @@
 document.addEventListener('DOMContentLoaded', function() {
     const progressBar = document.querySelector('.progress-bar-custom');
     if (progressBar) {
-        const progress = progressBar.style.getPropertyValue('--progress') || '0%';
-        progressBar.style.setProperty('--progress', progress);
-        
-        // Anima la barra di progresso
-        setTimeout(() => {
-            progressBar.style.width = progress;
-        }, 500);
+        // Ottieni la percentuale dalla larghezza attuale
+        const currentWidth = progressBar.style.width;
+        if (currentWidth) {
+            // Reset per l'animazione
+            progressBar.style.width = '0%';
+            
+            // Anima la barra di progresso
+            setTimeout(() => {
+                progressBar.style.width = currentWidth;
+            }, 500);
+        }
     }
 });
+
 </script>
 
 <jsp:include page="footer.jsp" />

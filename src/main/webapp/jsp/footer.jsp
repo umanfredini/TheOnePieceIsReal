@@ -1,4 +1,4 @@
-<!-- Footer -->
+nte <!-- Footer -->
 <footer class="main-footer">
     <div class="footer-content">
         <div class="footer-section">
@@ -18,50 +18,82 @@
             </a>
         </div>
     </div>
-    
-    <!-- Background Music Player - Dentro il footer -->
-    <div class="footer-music-section">
-        <jsp:include page="music-player.jsp" />
-    </div>
 </footer>
 
 <style>
-/* Stile per il link tracking nel footer */
+/* Stile per il link tracking nel footer - BOTTONE GRADEVOLE CON BARCA */
 .tracking-link {
     display: inline-block;
-    margin-top: 10px;
-    padding: 8px 16px;
+    margin-top: 15px;
+    padding: 15px 25px;
     background: linear-gradient(135deg, #ffd700, #ffed4e);
-    color: #8B4513;
+    color: #000000;
     text-decoration: none;
-    border-radius: 20px;
-    font-weight: bold;
+    border-radius: 25px;
+    font-weight: 700;
+    font-size: 1.1rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
     transition: all 0.3s ease;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 6px 20px rgba(255, 215, 0, 0.5);
+    border: 3px solid #000000;
+    position: relative;
+    overflow: hidden;
+    animation: subtle-glow 2s ease-in-out infinite;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.4);
+    font-family: 'Arial', sans-serif;
+    min-width: 220px;
+    text-align: center;
+}
+
+.tracking-link::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.6s;
+}
+
+.tracking-link:hover::before {
+    left: 100%;
 }
 
 .tracking-link:hover {
-    background: linear-gradient(135deg, #ffed4e, #fff);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-    color: #8B4513;
+    background: linear-gradient(135deg, #ffff00, #ffd700);
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 8px 25px rgba(255, 215, 0, 0.7);
+    color: #000000;
     text-decoration: none;
+    border-color: #ffff00;
 }
 
-/* Sezione musicale del footer */
-.footer-music-section {
-    margin-top: 20px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
+.tracking-link:active {
+    transform: translateY(-1px) scale(1.01);
 }
 
-/* Override del player musicale per il footer */
-.footer-music-section .background-music-player {
-    margin: 0;
-    max-width: 400px;
+.tracking-link i {
+    margin-right: 8px;
+    font-size: 1.2rem;
+    filter: drop-shadow(1px 1px 2px rgba(0, 0, 0, 0.4));
+    color: #000000;
 }
+
+@keyframes subtle-glow {
+    0%, 100% {
+        box-shadow: 0 6px 20px rgba(255, 215, 0, 0.5);
+        transform: scale(1);
+        border-color: #000000;
+    }
+    50% {
+        box-shadow: 0 8px 25px rgba(255, 215, 0, 0.7);
+        transform: scale(1.01);
+        border-color: #ffff00;
+    }
+}
+
 </style>
 
 <!-- Script per menu mobile -->
@@ -114,6 +146,5 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
-</main>
 </body>
 </html>

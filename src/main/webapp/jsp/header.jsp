@@ -6,7 +6,9 @@
     <meta charset="UTF-8">
     <title>The One Piece Is Real</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/css/main.css?v=${System.currentTimeMillis()}">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/css/main.css?v=20241201">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/css/layout.css?v=20241201">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/css/search-forms.css?v=20241201">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/css/image-fixes.css?v=${System.currentTimeMillis()}">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/css/image-error.css?v=${System.currentTimeMillis()}">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/css/mobile-menu-fixes.css?v=${System.currentTimeMillis()}">
@@ -70,7 +72,7 @@
                                             <i class="fas fa-users me-2"></i>Gestione Utenti
                                         </a></li>
                                         <li><hr class="dropdown-divider"></li>
-                                        <li><a class="dropdown-item" href="${pageContext.request.contextPath}/catalog">
+                                        <li><a class="dropdown-item" href="${pageContext.request.contextPath}/jsp/logout.jsp">
                                             <i class="fas fa-store me-2"></i>Vai al Negozio
                                         </a></li>
                                     </ul>
@@ -83,10 +85,20 @@
                         <li><a href="${pageContext.request.contextPath}/jsp/logout.jsp"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
                     </c:otherwise>
                 </c:choose>
-                <li><a href="${pageContext.request.contextPath}/catalog"><i class="fas fa-th-large"></i> Catalogo</a></li>
-                <li><a href="${pageContext.request.contextPath}/CartServlet"><i class="fas fa-shopping-cart"></i> Carrello</a></li>
-                <li><a href="${pageContext.request.contextPath}/WishlistServlet"><i class="fas fa-heart"></i> Wishlist</a></li>
-                <li><a href="${pageContext.request.contextPath}/"><i class="fas fa-home"></i> Home</a></li>
+                
+                <!-- Menu normale - nascosto per admin nelle pagine admin -->
+                <!-- Debug: URI = ${request.requestURI}, Path = ${request.servletPath} -->
+                <c:choose>
+                    <c:when test="${sessionScope.isAdmin and (request.requestURI.contains('Admin') or request.requestURI.contains('Dashboard') or request.requestURI.contains('admin') or request.servletPath.contains('Admin') or request.servletPath.contains('Dashboard') or request.servletPath.contains('admin'))}">
+                        <!-- Nascosto per admin nelle pagine admin -->
+                    </c:when>
+                    <c:otherwise>
+                        <li><a href="${pageContext.request.contextPath}/catalog"><i class="fas fa-th-large"></i> Catalogo</a></li>
+                        <li><a href="${pageContext.request.contextPath}/CartServlet"><i class="fas fa-shopping-cart"></i> Carrello</a></li>
+                        <li><a href="${pageContext.request.contextPath}/WishlistServlet"><i class="fas fa-heart"></i> Wishlist</a></li>
+                        <li><a href="${pageContext.request.contextPath}/"><i class="fas fa-home"></i> Home</a></li>
+                    </c:otherwise>
+                </c:choose>
             </ul>
         </nav>
     </div>
@@ -133,12 +145,20 @@
                         </a>
                     </c:otherwise>
                 </c:choose>
-                <a href="${pageContext.request.contextPath}/jsp/logout.jsp" class="mobile-menu-item">
-                    <i class="fas fa-sign-out-alt"></i>
-                    <span>Logout</span>
-                </a>
-            </c:otherwise>
-        </c:choose>
+        <a href="${pageContext.request.contextPath}/jsp/logout.jsp" class="mobile-menu-item">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Logout</span>
+        </a>
+    </c:otherwise>
+</c:choose>
+
+<!-- Menu normale mobile - nascosto per admin nelle pagine admin -->
+<!-- Debug: URI = ${request.requestURI}, Path = ${request.servletPath} -->
+<c:choose>
+    <c:when test="${sessionScope.isAdmin and (request.requestURI.contains('Admin') or request.requestURI.contains('Dashboard') or request.requestURI.contains('admin') or request.servletPath.contains('Admin') or request.servletPath.contains('Dashboard') or request.servletPath.contains('admin'))}">
+        <!-- Nascosto per admin nelle pagine admin -->
+    </c:when>
+    <c:otherwise>
         <a href="${pageContext.request.contextPath}/catalog" class="mobile-menu-item">
             <i class="fas fa-th-large"></i>
             <span>Catalogo</span>
@@ -155,10 +175,10 @@
             <i class="fas fa-home"></i>
             <span>Home</span>
         </a>
+    </c:otherwise>
+</c:choose>
     </div>
 </nav>
 
 <!-- Includi messaggi flash -->
 <jsp:include page="flash-message.jsp" />
-
-<main class="container-fluid" role="main">

@@ -107,6 +107,21 @@ public class CartServlet extends HttpServlet {
         }
         
         try {
+        logger.info("Azione ricevuta: " + action);
+        logger.info("Parametri ricevuti: productId=" + request.getParameter("productId") + 
+                   ", prodottoId=" + request.getParameter("prodottoId") + 
+                   ", quantita=" + request.getParameter("quantita") +
+                   ", quantity=" + request.getParameter("quantity"));
+        
+        // Debug parametri solo per update
+        if ("update".equals(action)) {
+            logger.info("=== DEBUG PARAMETRI UPDATE ===");
+            request.getParameterMap().forEach((key, values) -> {
+                logger.info("Parametro: " + key + " = " + String.join(", ", values));
+            });
+            logger.info("=== FINE DEBUG PARAMETRI ===");
+        }
+            
             switch (action) {
                 case "add":
                     int cartId = session.getAttribute("cartId") != null ? (int) session.getAttribute("cartId") : 1;
@@ -114,6 +129,7 @@ public class CartServlet extends HttpServlet {
                     break;
                 case "update":
                     updateCart(request, carrello);
+                    logger.info("Carrello aggiornato, dimensione: " + carrello.size());
                     break;
                 case "remove":
                     removeFromCart(request, carrello);
@@ -138,8 +154,45 @@ public class CartServlet extends HttpServlet {
             // AJAX response
             if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
                 response.setContentType("application/json");
-                String jsonResponse = "{\"success\": true, \"cartSize\": " + carrello.size() + "}";
-                response.getWriter().write(jsonResponse);
+                
+                // Calcola prima il totale del carrello
+                double cartTotal = 0.0;
+                for (CartItem item : carrello.values()) {
+                    cartTotal += item.getProduct().getPrice().doubleValue() * item.getQuantity();
+                }
+                int itemsCount = carrello.size();
+                
+                StringBuilder jsonResponse = new StringBuilder();
+                jsonResponse.append("{");
+                jsonResponse.append("\"success\": true,");
+                jsonResponse.append("\"cartTotal\": ").append(cartTotal).append(",");
+                jsonResponse.append("\"itemsCount\": ").append(itemsCount).append(",");
+                jsonResponse.append("\"cartSize\": ").append(carrello.size());
+                
+                // Se è un'azione di update, aggiungi anche il totale dell'item specifico
+                if ("update".equals(action)) {
+                    String productIdStr = request.getParameter("productId");
+                    if (productIdStr == null) {
+                        productIdStr = request.getParameter("prodottoId");
+                    }
+                    if (productIdStr != null) {
+                        try {
+                            int prodottoId = Integer.parseInt(productIdStr);
+                            CartItem item = carrello.get(prodottoId);
+                            if (item != null) {
+                                double itemTotal = item.getProduct().getPrice().doubleValue() * item.getQuantity();
+                                jsonResponse.append(",\"itemTotal\": ").append(itemTotal);
+                            }
+                        } catch (NumberFormatException e) {
+                            logger.warning("Errore nel parsing dell'ID prodotto: " + productIdStr);
+                        }
+                    }
+                }
+                
+                jsonResponse.append("}");
+                String finalResponse = jsonResponse.toString();
+                logger.info("Risposta JSON inviata: " + finalResponse);
+                response.getWriter().write(finalResponse);
             } else {
                 response.sendRedirect("CartServlet");
             }
@@ -248,20 +301,36 @@ public class CartServlet extends HttpServlet {
             productIdStr = request.getParameter("prodottoId");
         }
         
-        String quantityStr = request.getParameter("quantity");
+        String quantityStr = request.getParameter("quantita");
         if (quantityStr == null) {
-            quantityStr = request.getParameter("quantita");
+            quantityStr = request.getParameter("quantity");
+        }
+        
+        logger.info("updateCart - productId: " + productIdStr + ", quantita: " + quantityStr);
+        
+        // Validazione parametri
+        if (productIdStr == null || productIdStr.trim().isEmpty()) {
+            throw new IllegalArgumentException("productId non può essere vuoto");
+        }
+        if (quantityStr == null || quantityStr.trim().isEmpty()) {
+            throw new IllegalArgumentException("quantita non può essere vuota");
         }
         
         int prodottoId = Integer.parseInt(productIdStr);
         int quantita = Integer.parseInt(quantityStr);
         
+        logger.info("updateCart - prodottoId: " + prodottoId + ", quantita: " + quantita);
+        
         if (quantita <= 0) {
             carrello.remove(prodottoId);
+            logger.info("Prodotto rimosso dal carrello: " + prodottoId);
         } else {
             CartItem item = carrello.get(prodottoId);
             if (item != null) {
+                logger.info("Quantità aggiornata da " + item.getQuantity() + " a " + quantita);
                 item.setQuantity(quantita);
+            } else {
+                logger.warning("Item non trovato nel carrello per prodottoId: " + prodottoId);
             }
         }
     }

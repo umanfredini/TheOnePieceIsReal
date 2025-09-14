@@ -308,6 +308,67 @@ button.cart-btn i {
     border-color: transparent !important;
 }
 
+/* ===== FORZA ICONA CESTINO NEI BOTTONI DI RIMOZIONE CARRELLO ===== */
+
+/* Forza sempre l'icona del cestino nei bottoni di rimozione del carrello */
+.treasure-remove-btn i,
+.treasure-remove-btn i.fa-heart,
+.treasure-remove-btn i[class*="fa-"] {
+    color: #ffffff !important;
+    display: inline-block !important;
+}
+
+/* Se per qualche motivo ha l'icona del cuore, sostituisci con cestino */
+.treasure-remove-btn i.fa-heart::before {
+    content: "\f2ed" !important; /* Unicode per fa-trash */
+    font-family: "Font Awesome 5 Free" !important;
+    font-weight: 900 !important;
+}
+
+/* Forza sempre l'icona del cestino - massima specificità */
+.treasure-item .treasure-remove-btn i,
+.treasure-items .treasure-remove-btn i,
+button.treasure-remove-btn i {
+    color: #ffffff !important;
+    display: inline-block !important;
+}
+
+/* Assicura che l'icona del cestino sia sempre visibile */
+.treasure-remove-btn i.fa-trash {
+    display: inline-block !important;
+    color: #ffffff !important;
+}
+
+/* Forza l'icona del cestino su TUTTI i bottoni di rimozione */
+.treasure-remove-btn i[class*="fa-"] {
+    color: #ffffff !important;
+    display: inline-block !important;
+}
+
+/* Se l'icona è nascosta, forzala a essere visibile */
+.treasure-remove-btn i[style*="display: none"] {
+    display: inline-block !important;
+}
+
+/* Forza sempre l'icona del cestino - override completo */
+.treasure-remove-btn i::before {
+    content: "\f2ed" !important; /* fa-trash */
+    font-family: "Font Awesome 5 Free" !important;
+    font-weight: 900 !important;
+    color: #ffffff !important;
+}
+
+/* Previeni che i bottoni di rimozione ereditino stili wishlist */
+.treasure-remove-btn.active {
+    background: linear-gradient(135deg, #DC143C, #B22222) !important;
+    border-color: #ffffff !important;
+    transform: none !important;
+}
+
+.treasure-remove-btn.active i {
+    color: #ffffff !important;
+}
+
 /* Hover delle product card - solo blu */
 .product-card:hover,
 .products-grid .product-card:hover,

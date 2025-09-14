@@ -124,21 +124,21 @@
 <div class="main-container">
     <!-- Sidebar di ricerca -->
     <aside class="search-sidebar">
-        <h3>🔍 Ricerca Prodotti</h3>
-        <form class="search-form" action="${pageContext.request.contextPath}/catalog" method="get">
+        <h3>Ricerca Prodotti</h3>
+        <form class="search-form" action="${pageContext.request.contextPath}/catalog" method="get" id="productSearchForm">
             <!-- Ricerca per tipologia -->
             <div class="form-group">
                 <label for="category">Tipologia Prodotto</label>
-                <select id="category" name="category" class="form-select">
+                <select id="category" name="category" class="form-select" required>
                     <option value="">Tutte le categorie</option>
-                    <option value="Figure">Figure</option>
-                    <option value="Abbigliamento">Abbigliamento</option>
-                    <option value="Cosplay">Cosplay</option>
-                    <option value="Poster">Poster</option>
-                    <option value="Quadro">Quadro</option>
-                    <option value="Pelouche">Pelouche</option>
-                    <option value="Navi">Navi</option>
-                    <option value="Gadget">Gadget</option>
+                    <option value="Figure">🧸 Figure</option>
+                    <option value="Abbigliamento">👕 Abbigliamento</option>
+                    <option value="Cosplay">🎭 Cosplay</option>
+                    <option value="Poster">🖼️ Poster</option>
+                    <option value="Quadro">🎨 Quadro</option>
+                    <option value="Pelouche">🧸 Pelouche</option>
+                    <option value="Navi">🚢 Navi</option>
+                    <option value="Gadget">⚡ Gadget</option>
                 </select>
             </div>
 
@@ -150,41 +150,47 @@
                     
                     <!-- Cappello di Paglia -->
                     <optgroup label="🍃 Cappello di Paglia">
-                        <option value="Luffy">Luffy</option>
-                        <option value="Zoro">Zoro</option>
-                        <option value="Nami">Nami</option>
-                        <option value="Usopp">Usopp</option>
-                        <option value="Sanji">Sanji</option>
-                        <option value="Chopper">Chopper</option>
-                        <option value="Robin">Robin</option>
-                        <option value="Franky">Franky</option>
-                        <option value="Brook">Brook</option>
-                        <option value="Jinbei">Jinbei</option>
+                        <option value="Luffy">🦸 Monkey D. Luffy</option>
+                        <option value="Zoro">⚔️ Roronoa Zoro</option>
+                        <option value="Nami">🧭 Nami</option>
+                        <option value="Usopp">🏹 Usopp</option>
+                        <option value="Sanji">👨‍🍳 Vinsmoke Sanji</option>
+                        <option value="Chopper">🦌 Tony Tony Chopper</option>
+                        <option value="Robin">📚 Nico Robin</option>
+                        <option value="Franky">🤖 Franky</option>
+                        <option value="Brook">💀 Brook</option>
+                        <option value="Jinbei">🐟 Jinbei</option>
                     </optgroup>
                     
                     <!-- Imperatori -->
                     <optgroup label="👑 Imperatori">
-                        <option value="Shanks">Shanks</option>
-                        <option value="Kaido">Kaido</option>
-                        <option value="Barbabianca">Barbabianca</option>
-                        <option value="Barbanera">Barbanera</option>
+                        <option value="Shanks">🍺 Shanks il Rosso</option>
+                        <option value="Kaido">🐉 Kaido delle Cento Bestie</option>
+                        <option value="Barbabianca">⚡ Barbabianca</option>
+                        <option value="Barbanera">🌑 Marshall D. Teach</option>
                     </optgroup>
                     
                     <!-- Altri -->
                     <optgroup label="⚔️ Altri">
-                        <option value="Law">Law</option>
-                        <option value="Kidd">Kidd</option>
-                        <option value="Ace">Ace</option>
-                        <option value="Sabo">Sabo</option>
-                        <option value="Roger">Roger</option>
+                        <option value="Law">🏥 Trafalgar D. Water Law</option>
+                        <option value="Kidd">🧲 Eustass Kid</option>
+                        <option value="Ace">🔥 Portgas D. Ace</option>
+                        <option value="Sabo">💨 Sabo</option>
+                        <option value="Roger">👑 Gol D. Roger</option>
                     </optgroup>
                 </select>
             </div>
 
-            <button type="submit" class="search-btn">
+            <button type="submit" class="search-btn" id="searchButton">
                 <i class="fas fa-search"></i> Cerca
             </button>
         </form>
+        
+        <!-- Indicatore di ricerca -->
+        <div class="search-status" id="searchStatus" style="display: none;">
+            <i class="fas fa-spinner fa-spin"></i>
+            <span>Ricerca in corso...</span>
+        </div>
     </aside>
 
     <!-- Contenuto principale -->
@@ -261,17 +267,12 @@
         <div class="footer-section">
             <h4>🚢 Spedizioni</h4>
             <p>Consegna in tutta Italia</p>
-            <p>Spedizione gratuita sopra €50</p>
             <a href="${pageContext.request.contextPath}/TrackingServlet" class="tracking-link">
                 <i class="fas fa-ship"></i> Traccia Ordine
             </a>
         </div>
     </div>
     
-    <!-- Background Music Player - Dentro il footer -->
-    <div class="footer-music-section">
-        <jsp:include page="jsp/music-player.jsp" />
-    </div>
 </footer>
 
 <!-- Stili per il carosello funzionale -->
@@ -500,7 +501,7 @@
         }
         
         // Configurazione per il file wishlist-manager.js
-        var isUserAdmin = ${sessionScope.isAdmin != null ? sessionScope.isAdmin : false};
+        var isUserAdmin = <c:choose><c:when test="${sessionScope.isAdmin != null}">true</c:when><c:otherwise>false</c:otherwise></c:choose>;
         
         // DEBUG: Test bottoni wishlist
         console.log('=== DEBUG BOTTONI WISHLIST ===');
@@ -589,45 +590,235 @@
             }
         }, 1000);
     });
+    
+    // Miglioramenti per la ricerca prodotti
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchForm = document.getElementById('productSearchForm');
+        const searchButton = document.getElementById('searchButton');
+        const searchStatus = document.getElementById('searchStatus');
+        const categorySelect = document.getElementById('category');
+        const characterSelect = document.getElementById('character');
+        
+        // Animazione del bottone di ricerca
+        if (searchForm) {
+            searchForm.addEventListener('submit', function(e) {
+                // Mostra indicatore di caricamento
+                searchButton.classList.add('loading');
+                searchStatus.style.display = 'flex';
+                
+                // Simula un piccolo delay per l'effetto visivo
+                setTimeout(() => {
+                    // Il form si invierà normalmente
+                }, 300);
+            });
+        }
+        
+        // Effetti hover per i select
+        const formSelects = document.querySelectorAll('.form-select');
+        formSelects.forEach(select => {
+            select.addEventListener('focus', function() {
+                this.parentElement.classList.add('focused');
+            });
+            
+            select.addEventListener('blur', function() {
+                this.parentElement.classList.remove('focused');
+            });
+            
+            // Animazione quando cambia valore
+            select.addEventListener('change', function() {
+                if (this.value) {
+                    this.style.borderColor = '#28a745';
+                    this.style.boxShadow = '0 0 0 3px rgba(40, 167, 69, 0.1)';
+                    
+                    // Reset dopo 2 secondi
+                    setTimeout(() => {
+                        this.style.borderColor = '';
+                        this.style.boxShadow = '';
+                    }, 2000);
+                }
+            });
+        });
+        
+        // Validazione real-time
+        if (categorySelect && characterSelect) {
+            function validateForm() {
+                const hasCategory = categorySelect.value !== '';
+                const hasCharacter = characterSelect.value !== '';
+                
+                if (hasCategory || hasCharacter) {
+                    searchButton.style.background = 'linear-gradient(135deg, #28a745, #20c997)';
+                    searchButton.style.boxShadow = '0 4px 15px rgba(40, 167, 69, 0.3)';
+                } else {
+                    searchButton.style.background = 'linear-gradient(135deg, #ff6b6b, #ff8e8e)';
+                    searchButton.style.boxShadow = '0 4px 15px rgba(255, 107, 107, 0.3)';
+                }
+            }
+            
+            categorySelect.addEventListener('change', validateForm);
+            characterSelect.addEventListener('change', validateForm);
+        }
+        
+        // Effetti di typing per i select
+        formSelects.forEach(select => {
+            select.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    this.blur();
+                    searchForm.submit();
+                }
+            });
+        });
+    });
 </script>
 
-<!-- Stili per il footer -->
+<!-- Stili aggiuntivi per la ricerca -->
 <style>
-/* Stile per il link tracking nel footer */
+.search-status {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    padding: 0.75rem;
+    background: rgba(255, 215, 0, 0.1);
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    border-radius: 8px;
+    color: #ff6b6b;
+    font-weight: 600;
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+.form-group.focused label::before {
+    animation: bounce 0.6s ease;
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% { transform: translateY(-50%) scale(1); }
+    40% { transform: translateY(-50%) scale(1.2); }
+    60% { transform: translateY(-50%) scale(1.1); }
+}
+
+/* Effetti per i personaggi famosi - COLORI LEGGIBILI */
+.character-menu .form-select option[value="Luffy"] {
+    background: #ffffff !important;
+    color: #1a1a2e !important;
+    font-weight: bold;
+    border: 1px solid #ffd700;
+}
+
+.character-menu .form-select option[value="Shanks"] {
+    background: #ffffff !important;
+    color: #dc3545 !important;
+    font-weight: bold;
+    border: 1px solid #dc3545;
+}
+
+.character-menu .form-select option[value="Kaido"] {
+    background: #ffffff !important;
+    color: #6f42c1 !important;
+    font-weight: bold;
+    border: 1px solid #6f42c1;
+}
+
+/* Assicura che tutti i personaggi siano leggibili */
+.character-menu .form-select option {
+    background: #ffffff !important;
+    color: #1a1a2e !important;
+    padding: 8px 12px;
+    font-weight: 500;
+}
+
+.character-menu .form-select optgroup {
+    background: #f8f9fa !important;
+    color: #ff6b6b !important;
+    font-weight: bold;
+    padding: 10px;
+}
+
+/* Hover effects per i personaggi */
+.character-menu .form-select option:hover {
+    background: #e9ecef !important;
+    color: #1a1a2e !important;
+}
+</style>
+
+<!-- Stili per il pulsante Traccia Ordine in homepage -->
+<style>
+/* Stile per il link tracking nel footer - BOTTONE GRADEVOLE CON BARCA */
 .tracking-link {
     display: inline-block;
-    margin-top: 10px;
-    padding: 8px 16px;
+    margin-top: 15px;
+    padding: 15px 25px;
     background: linear-gradient(135deg, #ffd700, #ffed4e);
-    color: #8B4513;
+    color: #000000;
     text-decoration: none;
-    border-radius: 20px;
-    font-weight: bold;
+    border-radius: 25px;
+    font-weight: 700;
+    font-size: 1.1rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
     transition: all 0.3s ease;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 6px 20px rgba(255, 215, 0, 0.5);
+    border: 3px solid #000000;
+    position: relative;
+    overflow: hidden;
+    animation: subtle-glow 2s ease-in-out infinite;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.4);
+    font-family: 'Arial', sans-serif;
+    min-width: 220px;
+    text-align: center;
+}
+
+.tracking-link::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.6s;
+}
+
+.tracking-link:hover::before {
+    left: 100%;
 }
 
 .tracking-link:hover {
-    background: linear-gradient(135deg, #ffed4e, #fff);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-    color: #8B4513;
+    background: linear-gradient(135deg, #ffff00, #ffd700);
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 8px 25px rgba(255, 215, 0, 0.7);
+    color: #000000;
     text-decoration: none;
+    border-color: #ffff00;
 }
 
-/* Sezione musicale del footer */
-.footer-music-section {
-    margin-top: 20px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
+.tracking-link:active {
+    transform: translateY(-1px) scale(1.01);
 }
 
-/* Override del player musicale per il footer */
-.footer-music-section .background-music-player {
-    margin: 0;
-    max-width: 400px;
+.tracking-link i {
+    margin-right: 8px;
+    font-size: 1.2rem;
+    filter: drop-shadow(1px 1px 2px rgba(0, 0, 0, 0.4));
+    color: #000000;
+}
+
+@keyframes subtle-glow {
+    0%, 100% {
+        box-shadow: 0 6px 20px rgba(255, 215, 0, 0.5);
+        transform: scale(1);
+        border-color: #000000;
+    }
+    50% {
+        box-shadow: 0 8px 25px rgba(255, 215, 0, 0.7);
+        transform: scale(1.01);
+        border-color: #ffff00;
+    }
 }
 </style>
 

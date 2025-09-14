@@ -7,6 +7,7 @@ import model.CartItem;
 import model.Cart;
 import model.Order;
 import model.OrderItem;
+import model.Product;
 import model.User;
 import dao.OrderDAO;
 import dao.OrderItemDAO;
@@ -16,11 +17,12 @@ import dao.ProductDAO;
 import java.util.logging.Logger;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import java.util.Map;
 
 // @WebServlet("/CheckoutServlet")
 public class CheckoutServlet extends HttpServlet {

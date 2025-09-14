@@ -18,10 +18,11 @@
     text-shadow: 2px 2px #1A1A1A;
 }
 
-.product-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 1.5rem;
+.catalog-container .product-grid {
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 1.5rem !important;
+    max-width: 100% !important;
 }
 
 /* Stili specifici per il catalogo - NON per il carosello */
@@ -56,14 +57,78 @@
     text-align: center;
 }
 
-@media (max-width: 768px) {
+/* Responsive Design per il Catalogo */
+
+/* Desktop Large (1200px+) - 4 colonne */
+@media (min-width: 1200px) {
+    .catalog-container .product-grid {
+        grid-template-columns: repeat(4, 1fr) !important;
+        gap: 2rem !important;
+    }
+    
+    .catalog-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+}
+
+/* Desktop (992px-1199px) - 3 colonne */
+@media (max-width: 1199px) and (min-width: 992px) {
+    .catalog-container .product-grid {
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: 1.75rem !important;
+    }
+}
+
+/* Tablet (768px-991px) - 2 colonne */
+@media (max-width: 991px) and (min-width: 768px) {
+    .catalog-container .product-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 1.5rem !important;
+    }
+    
+    .catalog-container {
+        padding: 1.5rem;
+    }
+}
+
+/* Mobile Large (576px-767px) - 2 colonne compatte */
+@media (max-width: 767px) and (min-width: 576px) {
     .catalog-container {
         padding: 1rem;
     }
+    
     .catalog-title {
         font-size: 2rem;
     }
-    .product-card img {
+    
+    .catalog-container .product-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 1rem !important;
+    }
+    
+    .catalog-container .product-card img {
         height: 200px;
+    }
+}
+
+/* Mobile Small (fino a 575px) - 1 colonna */
+@media (max-width: 575px) {
+    .catalog-container {
+        padding: 1rem;
+    }
+    
+    .catalog-title {
+        font-size: 1.8rem;
+    }
+    
+    .catalog-container .product-grid {
+        grid-template-columns: 1fr !important;
+        gap: 1rem !important;
+    }
+    
+    .catalog-container .product-card img {
+        height: 180px;
     }
 }
