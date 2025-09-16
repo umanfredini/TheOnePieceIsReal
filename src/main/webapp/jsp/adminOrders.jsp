@@ -3,6 +3,13 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <jsp:include page="header.jsp" />
 
+<script>
+// Aggiungi classe admin-page al body per stili specifici
+document.addEventListener('DOMContentLoaded', function() {
+    document.body.classList.add('admin-page');
+});
+</script>
+
 <main class="container mt-5" role="main">
     <jsp:include page="adminBreadcrumb.jsp">
         <jsp:param name="page" value="orders" />

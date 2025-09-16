@@ -18,7 +18,7 @@ public class AdminUserServlet extends HttpServlet {
         HttpSession session = request.getSession(false);
 
         if (!isAdminLoggedIn(session)) {
-            response.sendRedirect("LoginServlet");
+            response.sendRedirect(request.getContextPath() + "/LoginServlet");
             return;
         }
 

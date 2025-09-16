@@ -5,9 +5,11 @@
         type="javax.sql.DataSource"
         maxTotal="20"
         maxIdle="10"
-        maxWaitMillis="-1"
+        maxWaitMillis="5000"
+        minIdle="2"
+        initialSize="2"
         username="root"
         password="Umberto50!"
         driverClassName="com.mysql.cj.jdbc.Driver"
-        url="jdbc:mysql://localhost:3306/onepiece?allowPublicKeyRetrieval=true&amp;useSSL=false"/>
+        url="jdbc:mysql://localhost:3306/onepiece?allowPublicKeyRetrieval=true&amp;useSSL=false&amp;autoReconnect=true&amp;maxReconnects=3&amp;connectTimeout=5000&amp;socketTimeout=10000&amp;serverTimezone=UTC"/>
 </Context>

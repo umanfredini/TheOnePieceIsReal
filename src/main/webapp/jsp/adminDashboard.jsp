@@ -3,6 +3,13 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <jsp:include page="header.jsp" />
 
+<script>
+// Aggiungi classe admin-page al body per stili specifici
+document.addEventListener('DOMContentLoaded', function() {
+    document.body.classList.add('admin-page');
+});
+</script>
+
 <main class="container mt-5" role="main">
     <jsp:include page="adminBreadcrumb.jsp">
         <jsp:param name="page" value="dashboard" />
@@ -11,7 +18,7 @@
     <h1 class="mb-4 text-center">Dashboard Amministratore</h1>
 
     <!-- Statistiche generali -->
-    <section class="row text-center mb-5" role="region" aria-label="Statistiche generali">
+    <section class="row text-center mb-5 dashboard-stats" role="region" aria-label="Statistiche generali">
         <div class="col-md-3 mb-3">
             <div class="card shadow-sm border-primary">
                 <div class="card-body">
@@ -58,7 +65,7 @@
     <section class="row mb-5" role="region" aria-label="Prodotti più venduti">
         <div class="col-12">
             <h3 class="mb-3">Prodotti Più Venduti</h3>
-            <div class="table-responsive">
+            <div class="table-responsive dashboard-table">
                 <table class="table table-striped">
                     <thead class="table-dark">
                         <tr>
@@ -92,7 +99,7 @@
     <section class="row" role="region" aria-label="Ordini recenti">
         <div class="col-12">
             <h3 class="mb-3">Ordini Recenti</h3>
-            <div class="table-responsive">
+            <div class="table-responsive dashboard-table">
                 <table class="table table-striped">
                     <thead class="table-dark">
                         <tr>
@@ -141,7 +148,7 @@
     <section class="row mt-5" role="region" aria-label="Link rapidi">
         <div class="col-12">
             <h3 class="mb-3">Gestione Rapida</h3>
-            <div class="row">
+            <div class="row quick-actions">
                 <div class="col-md-3 mb-3">
                     <a href="${pageContext.request.contextPath}/AdminProductServlet" class="btn btn-primary btn-lg w-100">
                         <i class="fas fa-box"></i><br>Gestione Prodotti
@@ -158,8 +165,8 @@
                     </a>
                 </div>
                 <div class="col-md-3 mb-3">
-                    <a href="${pageContext.request.contextPath}/catalog" class="btn btn-warning btn-lg w-100">
-                        <i class="fas fa-store"></i><br>Vai al Negozio
+                    <a href="${pageContext.request.contextPath}/jsp/logout.jsp" class="btn btn-warning btn-lg w-100">
+                        <i class="fas fa-store"></i><br>Torna al Negozio
                     </a>
                 </div>
             </div>

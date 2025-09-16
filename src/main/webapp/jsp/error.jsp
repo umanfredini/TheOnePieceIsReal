@@ -99,7 +99,7 @@
                     <a href="javascript:history.back()" class="btn btn-outline-secondary me-2">
                         <i class="fas fa-arrow-left"></i> Torna indietro
                     </a>
-                    <a href="http://www.theonepieceisreal.com:8081/TheOnePieceIsReal/" class="btn btn-primary">
+                    <a href="${pageContext.request.contextPath}/" class="btn btn-primary">
                         <i class="fas fa-home"></i> Torna alla Home
                     </a>
                 </div>

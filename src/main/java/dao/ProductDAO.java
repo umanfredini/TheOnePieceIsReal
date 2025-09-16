@@ -809,12 +809,19 @@ public class ProductDAO {
              ResultSet rs = stmt.executeQuery()) {
             
             if (rs.next()) {
-                return rs.getInt(1);
+                int count = rs.getInt(1);
+                logger.info("✅ ProductDAO.countAll() - Conteggio prodotti: " + count);
+                return count;
             }
         } catch (SQLException e) {
-            logger.severe("Errore nel conteggio prodotti: " + e.getMessage());
-            logger.severe("Errore nel metodo: " + e.getMessage());
+            logger.severe("❌ Errore nel conteggio prodotti: " + e.getMessage());
+            logger.severe("❌ Errore nel metodo: " + e.getMessage());
+            e.printStackTrace();
+        } catch (Exception e) {
+            logger.severe("❌ Errore generico nel conteggio prodotti: " + e.getMessage());
+            e.printStackTrace();
         }
+        logger.warning("⚠️ ProductDAO.countAll() - Ritorno 0 per errore");
         return 0;
     }
     
@@ -829,11 +836,12 @@ public class ProductDAO {
             SELECT p.id, p.name, p.price, p.image_url, p.category,
                    COALESCE(SUM(oi.quantity), 0) as total_sold
             FROM products p
-            LEFT JOIN order_items oi ON p.id = oi.product_id
-            LEFT JOIN orders o ON oi.order_id = o.id
+            INNER JOIN order_items oi ON p.id = oi.product_id
+            INNER JOIN orders o ON oi.order_id = o.id
             WHERE p.deleted_at IS NULL AND p.active = TRUE
-            AND (o.status IS NULL OR o.status != 'cancelled')
+            AND o.status IS NOT NULL AND o.status != 'cancelled'
             GROUP BY p.id, p.name, p.price, p.image_url, p.category
+            HAVING total_sold > 0
             ORDER BY total_sold DESC
             LIMIT ?
         """;
@@ -864,38 +872,9 @@ public class ProductDAO {
             logger.warning("Errore nella query prodotti più venduti con ordini: " + e.getMessage());
         }
         
-        // Fallback: restituisce i prodotti più recenti se la query con ordini fallisce
-        String fallbackSql = """
-            SELECT id, name, price, image_url, category, 0 as total_sold
-            FROM products 
-            WHERE deleted_at IS NULL AND active = TRUE
-            ORDER BY id DESC
-            LIMIT ?
-        """;
-        
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(fallbackSql)) {
-            
-            stmt.setInt(1, limit);
-            ResultSet rs = stmt.executeQuery();
-            
-            while (rs.next()) {
-                Map<String, Object> product = new HashMap<>();
-                product.put("id", rs.getInt("id"));
-                product.put("name", rs.getString("name"));
-                product.put("price", rs.getDouble("price"));
-                product.put("imageUrl", rs.getString("image_url"));
-                product.put("category", rs.getString("category"));
-                product.put("totalSold", 0); // Nessun dato di vendita disponibile
-                topProducts.add(product);
-            }
-            
-        } catch (SQLException e) {
-            logger.severe("Errore anche nel fallback prodotti più venduti: " + e.getMessage());
-            logger.severe("Errore nel metodo: " + e.getMessage());
-        }
-        
-        return topProducts;
+        // Fallback: se non ci sono prodotti venduti, restituisce lista vuota
+        logger.info("Nessun prodotto venduto trovato, restituisco lista vuota");
+        return new ArrayList<>();
     }
     
     /**

@@ -1,4 +1,4 @@
-nte <!-- Footer -->
+<!-- Footer -->
 <footer class="main-footer">
     <div class="footer-content">
         <div class="footer-section">
@@ -6,13 +6,13 @@ nte <!-- Footer -->
             <p>Il tuo negozio ufficiale di merchandising One Piece</p>
         </div>
         <div class="footer-section">
+            <h4>Spedizioni</h4>
+            <p>Consegna in tutta Italia</p>
+        </div>
+        <div class="footer-section">
             <h4>Contatti</h4>
             <p>Email: info@onepieceisreal.it</p>
             <p>Tel: +39 123 456 7890</p>
-        </div>
-        <div class="footer-section">
-            <h4>Spedizioni</h4>
-            <p>Consegna in tutta Italia</p>            
             <a href="${pageContext.request.contextPath}/TrackingServlet" class="tracking-link">
                 <i class="fas fa-ship"></i> Traccia Ordine
             </a>
@@ -44,6 +44,8 @@ nte <!-- Footer -->
     font-family: 'Arial', sans-serif;
     min-width: 220px;
     text-align: center;
+    width: 100%;
+    max-width: 300px;
 }
 
 .tracking-link::before {
@@ -97,54 +99,6 @@ nte <!-- Footer -->
 </style>
 
 <!-- Script per menu mobile -->
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const mobileMenuToggle = document.getElementById('mobileMenuToggle');
-    const mobileMenu = document.getElementById('mobileMenu');
-    
-    if (mobileMenuToggle && mobileMenu) {
-        mobileMenuToggle.addEventListener('click', function() {
-            mobileMenuToggle.classList.toggle('active');
-            mobileMenu.classList.toggle('active');
-            
-            // Prevenire scroll del body quando il menu è aperto
-            if (mobileMenu.classList.contains('active')) {
-                document.body.classList.add('menu-open');
-            } else {
-                document.body.classList.remove('menu-open');
-            }
-        });
-        
-        // Chiudi menu quando si clicca su un link
-        const mobileMenuItems = mobileMenu.querySelectorAll('.mobile-menu-item');
-        mobileMenuItems.forEach(item => {
-            item.addEventListener('click', function() {
-                mobileMenuToggle.classList.remove('active');
-                mobileMenu.classList.remove('active');
-                document.body.classList.remove('menu-open');
-            });
-        });
-        
-        // Chiudi menu quando si clicca fuori
-        mobileMenu.addEventListener('click', function(e) {
-            if (e.target === mobileMenu) {
-                mobileMenuToggle.classList.remove('active');
-                mobileMenu.classList.remove('active');
-                document.body.classList.remove('menu-open');
-            }
-        });
-        
-        // Chiudi menu con tasto ESC
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape' && mobileMenu.classList.contains('active')) {
-                mobileMenuToggle.classList.remove('active');
-                mobileMenu.classList.remove('active');
-                document.body.classList.remove('menu-open');
-            }
-        });
-    }
-});
-</script>
 
 </body>
 </html>

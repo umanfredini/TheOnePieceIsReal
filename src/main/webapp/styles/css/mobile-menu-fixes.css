@@ -1,22 +1,38 @@
 /* ===== CORREZIONI MENU MOBILE ===== */
 
+/* ===== TRANSIZIONI SPECIFICHE ===== */
+.mobile-menu-toggle, .mobile-menu, .mobile-menu-content, .mobile-menu-item,
+.hamburger-line, .header-title h1, .header-title .subtitle {
+    transition: all 0.3s ease;
+}
+
 /* ===== 1. HAMBURGER MENU MIGLIORATO ===== */
 .mobile-menu-toggle {
     display: none;
     flex-direction: column;
     justify-content: space-around;
-    width: 35px;
-    height: 35px;
-    background: rgba(0, 0, 0, 0.8);
-    border: 2px solid rgba(255, 255, 255, 0.3);
+    width: 40px;
+    height: 40px;
+    background: rgba(0, 0, 0, 0.9);
+    border: 2px solid #ffd700;
     border-radius: 8px;
     cursor: pointer;
-    padding: 5px;
-    z-index: 1002;
+    padding: 6px;
+    z-index: 9999;
     position: fixed;
-    top: 20px;
-    right: 20px;
-    transition: all 0.3s ease;
+    top: 0.5rem;
+    right: 0.5rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Forza visibilità su mobile */
+@media (max-width: 768px) {
+    .mobile-menu-toggle {
+        display: flex !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
 }
 
 .mobile-menu-toggle:hover {
@@ -56,7 +72,7 @@
     width: 100%;
     height: 100vh;
     background: linear-gradient(135deg, rgba(0, 0, 0, 0.95), rgba(26, 26, 46, 0.95));
-    z-index: 1001;
+    z-index: 9998;
     opacity: 0;
     visibility: hidden;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -144,29 +160,20 @@
     text-align: center;
 }
 
-/* ===== 3. RESPONSIVE BREAKPOINTS ===== */
+/* ===== 3. RESPONSIVE BREAKPOINTS CON SCALING GRADUALE ===== */
 
-/* Tablet e schermi medi */
-@media (max-width: 992px) {
-    .main-nav {
-        display: none;
+/* Breakpoint molto grandi - inizio scaling */
+@media (max-width: 1400px) {
+    .header-title h1 {
+        font-size: 2.1rem;
     }
     
-    .mobile-menu-toggle {
-        display: flex;
-        z-index: 1002 !important; /* Forza z-index per homepage */
+    .header-title .subtitle {
+        font-size: 0.95rem;
     }
-    
-    .mobile-menu {
-        display: block;
-        z-index: 1001 !important; /* Forza z-index per homepage */
-    }
-    
-    .header-content {
-        justify-content: space-between;
-        align-items: center;
-    }
-    
+}
+
+@media (max-width: 1200px) {
     .header-title h1 {
         font-size: 2rem;
     }
@@ -174,15 +181,51 @@
     .header-title .subtitle {
         font-size: 0.9rem;
     }
+}
+
+/* Tablet e schermi medi - menu hamburger solo quando necessario */
+@media (max-width: 768px) {
+    /* Nascondi il menu principale */
+    .main-nav {
+        display: none !important;
+    }
     
-    /* Assicura che il menu hamburger sia sempre visibile nella homepage */
+    /* Forza visibilità del menu hamburger */
+    .mobile-menu-toggle {
+        display: flex !important;
+        z-index: 9999 !important;
+        position: fixed !important;
+        top: 0.5rem !important;
+        right: 0.5rem !important;
+        pointer-events: auto !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+    
+    .mobile-menu {
+        display: block !important;
+        z-index: 9998 !important;
+    }
+    
+    /* Header content gestito da responsive.css */
+    
+    .header-title h1 {
+        font-size: 1.8rem;
+        margin-bottom: 0.25rem;
+    }
+    
+    .header-title .subtitle {
+        font-size: 0.8rem;
+    }
+    
+    /* Assicura che il menu hamburger sia sempre visibile */
     .main-container {
         position: relative;
         z-index: 1;
     }
 }
 
-/* Mobile grande */
+/* Mobile grande - aggiustamenti per schermi 768px */
 @media (max-width: 768px) {
     .mobile-menu-toggle {
         width: 32px;
@@ -205,14 +248,6 @@
     .mobile-menu-item i {
         font-size: 1.3rem;
         width: 25px;
-    }
-    
-    .header-title h1 {
-        font-size: 1.8rem;
-    }
-    
-    .header-title .subtitle {
-        font-size: 0.8rem;
     }
 }
 

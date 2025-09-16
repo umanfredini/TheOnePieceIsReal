@@ -93,8 +93,8 @@
     box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.2);
 }
 
-/* Select personalizzati */
-.form-select {
+/* Select personalizzati - ESCLUDI filtri catalogo */
+.search-sidebar .form-select {
     width: 100%;
     padding: 1rem 1.25rem;
     border: 2px solid #e9ecef;
@@ -114,14 +114,14 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
-.form-select:focus {
+.search-sidebar .form-select:focus {
     outline: none;
     border-color: #ffd700;
     box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.1);
     transform: translateY(-2px);
 }
 
-.form-select:hover {
+.search-sidebar .form-select:hover {
     border-color: #ff6b6b;
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
@@ -271,7 +271,7 @@
     }
 }
 
-/* Responsive Design */
+/* Responsive Design - Mantieni design semplice come a 768px */
 @media (max-width: 768px) {
     .search-sidebar {
         position: static;

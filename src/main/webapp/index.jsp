@@ -32,12 +32,7 @@
 <!-- Token CSRF per le operazioni AJAX -->
 <input type="hidden" name="csrfToken" value="${sessionScope.csrfToken}" />
 
-<!-- Menu hamburger per mobile -->
-<button class="mobile-menu-toggle" id="mobileMenuToggle">
-    <span class="hamburger-line"></span>
-    <span class="hamburger-line"></span>
-    <span class="hamburger-line"></span>
-</button>
+<!-- Menu hamburger rimosso - usa quello di header.jsp -->
 
 <script>
     // Funzioni semplificate per i prodotti
@@ -51,74 +46,9 @@
         console.log('Aggiungi al carrello prodotto:', productId);
     }
     
-    // Script per menu mobile
-    document.addEventListener('DOMContentLoaded', function() {
-        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
-        const mobileMenu = document.getElementById('mobileMenu');
-        
-        if (mobileMenuToggle && mobileMenu) {
-            mobileMenuToggle.addEventListener('click', function() {
-                mobileMenuToggle.classList.toggle('active');
-                mobileMenu.classList.toggle('active');
-            });
-            
-            // Chiudi menu quando si clicca su un link
-            const mobileMenuItems = mobileMenu.querySelectorAll('.mobile-menu-item');
-            mobileMenuItems.forEach(item => {
-                item.addEventListener('click', function() {
-                    mobileMenuToggle.classList.remove('active');
-                    mobileMenu.classList.remove('active');
-                });
-            });
-        }
-    });
 </script>
 
-<!-- Menu mobile -->
-<nav class="mobile-menu" id="mobileMenu">
-    <div class="mobile-menu-content">
-        <c:choose>
-            <c:when test="${empty sessionScope.utente}">
-                <a href="${pageContext.request.contextPath}/jsp/login.jsp" class="mobile-menu-item">
-                    <i class="fas fa-user"></i>
-                    <span>Login</span>
-                </a>
-            </c:when>
-            <c:otherwise>
-                <c:choose>
-                    <c:when test="${sessionScope.isAdmin}">
-                        <a href="${pageContext.request.contextPath}/DashboardServlet" class="mobile-menu-item">
-                            <i class="fas fa-tachometer-alt"></i>
-                            <span>Dashboard</span>
-                        </a>
-                    </c:when>
-                    <c:otherwise>
-                        <a href="${pageContext.request.contextPath}/ProfileServlet" class="mobile-menu-item">
-                            <i class="fas fa-user"></i>
-                            <span>Profilo</span>
-                        </a>
-                    </c:otherwise>
-                </c:choose>
-            </c:otherwise>
-        </c:choose>
-        <a href="${pageContext.request.contextPath}/catalog" class="mobile-menu-item">
-            <i class="fas fa-th-large"></i>
-            <span>Catalogo</span>
-        </a>
-        <a href="${pageContext.request.contextPath}/CartServlet" class="mobile-menu-item">
-            <i class="fas fa-shopping-cart"></i>
-            <span>Carrello</span>
-        </a>
-        <a href="${pageContext.request.contextPath}/WishlistServlet" class="mobile-menu-item">
-            <i class="fas fa-heart"></i>
-            <span>Wishlist</span>
-        </a>
-        <a href="${pageContext.request.contextPath}/" class="mobile-menu-item">
-            <i class="fas fa-home"></i>
-            <span>Home</span>
-        </a>
-    </div>
-</nav>
+<!-- Menu mobile rimosso - usa quello di header.jsp -->
 
 <!-- Layout principale -->
 <div class="main-container">
@@ -199,7 +129,8 @@
         <section class="featured-products">
             <h2 class="gradient-text">🌟 Prodotti in Evidenza</h2>
             
-            <div class="products-grid">
+            <div class="products-grid-container">
+                <div class="products-grid" id="debug-products-grid">
                 <!-- Controllo se ci sono prodotti -->
                 <c:choose>
                     <c:when test="${not empty featuredProducts}">
@@ -208,8 +139,10 @@
                             <div class="product-card" data-product-id="${product.id}" data-category="${product.category}">
                                 <!-- Click sul prodotto per andare al dettaglio -->
                                 <div class="product-click-area" onclick="goToProductDetail('${product.id}')">
-                                    <img src="${pageContext.request.contextPath}/styles/images/prodotti/${product.imageUrl}" 
-                                         alt="${product.name}" class="product-image">
+                                    <div class="product-image-container">
+                                        <img src="${pageContext.request.contextPath}/styles/images/prodotti/${product.imageUrl}" 
+                                             alt="${product.name}" class="product-image">
+                                    </div>
                                     
                                     <div class="product-info">
                                         <h3 class="product-name">${product.name}</h3>
@@ -247,6 +180,7 @@
                         </div>
                     </c:otherwise>
                 </c:choose>
+                </div>
             </div>
         </section>
     </main>
@@ -356,6 +290,24 @@
     window.addEventListener('load', function() {
         console.log('=== WINDOW LOADED ===');
         console.log('Tutti i bottoni nella pagina:', document.querySelectorAll('button').length);
+        
+        // DEBUG: Analisi CSS applicato alla griglia prodotti
+        console.log('=== DEBUG CSS GRIGLIA PRODOTTI ===');
+        const productsGrid = document.getElementById('debug-products-grid');
+        if (productsGrid) {
+            const computedStyle = window.getComputedStyle(productsGrid);
+            console.log('Elemento trovato:', productsGrid);
+            console.log('Display:', computedStyle.display);
+            console.log('Grid-template-columns:', computedStyle.gridTemplateColumns);
+            console.log('Gap:', computedStyle.gap);
+            console.log('Border:', computedStyle.border);
+            console.log('Background:', computedStyle.background);
+            console.log('Max-width:', computedStyle.maxWidth);
+            console.log('Padding:', computedStyle.padding);
+            console.log('Margin:', computedStyle.margin);
+        } else {
+            console.log('ERRORE: Elemento products-grid non trovato!');
+        }
     });
     
     // Cattura errori JavaScript
@@ -479,26 +431,6 @@
         }, 3000);
     }
     
-    // Script per menu mobile
-    document.addEventListener('DOMContentLoaded', function() {
-        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
-        const mobileMenu = document.getElementById('mobileMenu');
-        
-        if (mobileMenuToggle && mobileMenu) {
-            mobileMenuToggle.addEventListener('click', function() {
-                mobileMenuToggle.classList.toggle('active');
-                mobileMenu.classList.toggle('active');
-            });
-            
-            // Chiudi menu quando si clicca su un link
-            const mobileMenuItems = mobileMenu.querySelectorAll('.mobile-menu-item');
-            mobileMenuItems.forEach(item => {
-                item.addEventListener('click', function() {
-                    mobileMenuToggle.classList.remove('active');
-                    mobileMenu.classList.remove('active');
-                });
-            });
-        }
         
         // Configurazione per il file wishlist-manager.js
         var isUserAdmin = <c:choose><c:when test="${sessionScope.isAdmin != null}">true</c:when><c:otherwise>false</c:otherwise></c:choose>;

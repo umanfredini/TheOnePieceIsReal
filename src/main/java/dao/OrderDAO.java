@@ -189,8 +189,14 @@ public class OrderDAO {
     	try (PreparedStatement stmt = connection.prepareStatement(sql);
     			ResultSet rs = stmt.executeQuery()) {
     			if (rs.next()) {
-    				return rs.getInt(1);
+    				int count = rs.getInt(1);
+    				System.out.println("✅ OrderDAO.countAll() - Conteggio ordini: " + count);
+    				return count;
     			}
+    	} catch (SQLException e) {
+    		System.err.println("❌ Errore nel conteggio ordini: " + e.getMessage());
+    		e.printStackTrace();
+    		throw e;
     	}
 		return 0;
 	}
@@ -200,21 +206,30 @@ public class OrderDAO {
         try (PreparedStatement stmt = connection.prepareStatement(sql);
              ResultSet rs = stmt.executeQuery()) {
             if (rs.next()) {
-                return rs.getDouble(1);
+                double revenue = rs.getDouble(1);
+                System.out.println("✅ OrderDAO.getTotalRevenue() - Ricavi totali: " + revenue);
+                return revenue;
             }
         } catch (SQLException e) {
+            System.err.println("❌ Errore nel calcolo revenue (primo tentativo): " + e.getMessage());
+            e.printStackTrace();
+            
             // Fallback: prova a contare solo gli ordini completati
             String fallbackSql = "SELECT COALESCE(SUM(total_price), 0) FROM orders";
             try (PreparedStatement stmt = connection.prepareStatement(fallbackSql);
                  ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    return rs.getDouble(1);
+                    double revenue = rs.getDouble(1);
+                    System.out.println("✅ OrderDAO.getTotalRevenue() - Ricavi totali (fallback): " + revenue);
+                    return revenue;
                 }
             } catch (SQLException e2) {
                 // Se anche il fallback fallisce, restituisci 0
-                System.err.println("Errore nel calcolo revenue: " + e2.getMessage());
+                System.err.println("❌ Errore nel calcolo revenue (fallback): " + e2.getMessage());
+                e2.printStackTrace();
             }
         }
+        System.out.println("⚠️ OrderDAO.getTotalRevenue() - Ritorno 0.0 per errore");
         return 0.0;
     }
 
@@ -229,7 +244,7 @@ public class OrderDAO {
     		}
     	}
     	return orders;
-    	}
+    }
     
     /**
      * Trova un ordine per tracking number

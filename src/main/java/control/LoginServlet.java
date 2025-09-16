@@ -52,7 +52,7 @@ public class LoginServlet extends HttpServlet {
 
                 if (utente.isAdmin()) {
                     session.setAttribute("isAdmin", true);
-                    request.getRequestDispatcher("/jsp/adminDashboard.jsp").forward(request, response);
+                    response.sendRedirect(request.getContextPath() + "/DashboardServlet");
                 } else {
                     request.getRequestDispatcher("/jsp/profile.jsp").forward(request, response);
                 }

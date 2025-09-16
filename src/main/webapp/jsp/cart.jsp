@@ -5,6 +5,29 @@
 <script src="${pageContext.request.contextPath}/scripts/cart.js" defer></script>
 <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/css/treasure-chest.css">
 
+<style>
+/* Override solo per l'header - palette One Piece */
+.treasure-chest-header {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+.treasure-chest-header h1 {
+    font-family: 'Pirata One', 'Bangers', cursive !important;
+    color: #f1c40f !important;
+    text-shadow: 3px 3px 0px #2c3e50, 6px 6px 10px rgba(0, 0, 0, 0.3) !important;
+    letter-spacing: 2px !important;
+    font-size: 2.5rem !important;
+}
+
+.treasure-chest-header p {
+    color: #2c3e50 !important;
+    font-weight: 500 !important;
+    font-size: 1.1rem !important;
+}
+</style>
+
 <main class="container mt-5" role="main">
     <div class="treasure-chest-header">
         <h1 class="mb-4 text-center gradient-text">🏴‍☠️ Il tuo Tesoro</h1>

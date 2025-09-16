@@ -1,24 +1,26 @@
 /* Treasure Chest Design - The One Piece Is Real */
 
 .treasure-chest-header {
-    background: linear-gradient(135deg, #8B4513, #A0522D);
+    background: transparent;
     padding: 2rem;
     border-radius: 15px;
     margin-bottom: 2rem;
-    border: 3px solid #DAA520;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
     text-align: center;
 }
 
 .treasure-chest-header h1 {
-    color: #FFD700;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    font-family: 'Pirata One', 'Bangers', cursive;
+    color: #f1c40f;
+    text-shadow: 3px 3px 0px #2c3e50, 6px 6px 10px rgba(0, 0, 0, 0.3);
+    letter-spacing: 2px;
     margin-bottom: 0.5rem;
+    font-size: 2.5rem;
 }
 
 .treasure-chest-header p {
-    color: #FFF;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+    color: #2c3e50;
+    font-weight: 500;
+    font-size: 1.1rem;
 }
 
 .treasure-chest-container {

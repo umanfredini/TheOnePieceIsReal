@@ -1,5 +1,12 @@
 /* ===== LAYOUT PRINCIPALE ===== */
 
+/* ===== TRANSIZIONI SPECIFICHE ===== */
+.main-header, .header-content, .header-title h1, .main-nav,
+.main-container, .search-sidebar, .main-content,
+.product-card, .footer-content {
+    transition: all 0.3s ease;
+}
+
 /* Header principale */
 .main-header {
     background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
@@ -10,47 +17,115 @@
     z-index: 1000;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
     border-bottom: 3px solid #ffd700;
+    transition: all 0.3s ease;
+    width: 100%;
+    box-sizing: border-box;
+    overflow-x: hidden;
 }
 
 .header-content {
     max-width: 1200px;
     margin: 0 auto;
     display: flex;
+    flex-direction: row;
     justify-content: space-between;
     align-items: center;
     padding: 1rem 2rem;
     position: relative;
+    min-height: 80px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Desktop - Layout orizzontale */
+@media (min-width: 1025px) {
+    .header-content {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        text-align: left;
+    }
+    
+    .header-brand {
+        flex: 0 0 auto;
+        width: auto;
+        justify-content: flex-start;
+        margin-bottom: 0;
+    }
+    
+    .main-nav {
+        flex: 1;
+        justify-content: center;
+        width: auto;
+    }
+}
+
+/* Scaling dinamico del menu per schermi desktop */
+@media (min-width: 1025px) {
+    .main-nav a {
+        padding: clamp(0.3rem, 1.2vw, 0.75rem) clamp(0.4rem, 1.5vw, 1rem);
+        font-size: clamp(0.75rem, 1vw, 1rem);
+    }
+    
+    .main-nav ul {
+        gap: clamp(0.4rem, 1.2vw, 1.5rem);
+    }
+    
+    .main-nav a i {
+        font-size: clamp(0.8rem, 1.1vw, 1.1rem);
+    }
+    
+}
+
+/* Assicura che il layout funzioni su schermi molto grandi */
+@media (min-width: 1400px) {
+    .header-content {
+        max-width: 1400px;
+    }
+    
+    .main-container {
+        max-width: 1400px;
+    }
+    
+    /* Grid prodotti - gestita da carousel.css */
 }
 
 .header-brand {
     display: flex;
     align-items: center;
-    flex: 1;
+    flex: 0 0 auto;
 }
 
 .header-title h1 {
     font-family: 'Pirata One', cursive;
-    font-size: 2.5rem;
+    font-size: 2.2rem;
     margin: 0;
     background: linear-gradient(135deg, #ffd700, #ffed4e, #ffffff);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    font-weight: bold;
+    letter-spacing: 1px;
 }
 
 .subtitle {
-    font-size: 0.9rem;
+    font-size: 1rem;
     color: #b8c5d1;
-    margin-top: 0.25rem;
+    margin-top: 0.5rem;
     font-style: italic;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
 }
 
 /* Navigazione principale */
 .main-nav {
     display: flex;
     align-items: center;
+    flex: 1;
+    justify-content: center;
 }
+
+/* Menu hamburger - gestito da mobile-menu-fixes.css */
 
 .main-nav ul {
     display: flex;
@@ -59,6 +134,9 @@
     padding: 0;
     gap: 1.5rem;
 }
+
+
+/* Menu admin responsive - copiato dal menu normale */
 
 .main-nav li {
     position: relative;
@@ -76,7 +154,9 @@
     font-weight: 500;
     position: relative;
     overflow: hidden;
+    white-space: nowrap;
 }
+
 
 .main-nav a::before {
     content: '';
@@ -103,137 +183,12 @@
     font-size: 1.1rem;
 }
 
-/* Menu hamburger mobile */
-.mobile-menu-toggle {
-    display: none;
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 0.5rem;
-    flex-direction: column;
-    gap: 4px;
-}
+/* Menu mobile - gestito da mobile-menu-fixes.css */
 
-.hamburger-line {
-    width: 25px;
-    height: 3px;
-    background: #ffd700;
-    border-radius: 2px;
-    transition: all 0.3s ease;
-}
+/* Menu mobile content e items - gestito da mobile-menu-fixes.css */
 
-.mobile-menu-toggle.active .hamburger-line:nth-child(1) {
-    transform: rotate(45deg) translate(6px, 6px);
-}
+/* Menu mobile items - gestito da mobile-menu-fixes.css */
 
-.mobile-menu-toggle.active .hamburger-line:nth-child(2) {
-    opacity: 0;
-}
-
-.mobile-menu-toggle.active .hamburger-line:nth-child(3) {
-    transform: rotate(-45deg) translate(6px, -6px);
-}
-
-/* Menu mobile */
-.mobile-menu {
-    position: fixed;
-    top: 0;
-    right: -100%;
-    width: 300px;
-    height: 100vh;
-    background: linear-gradient(135deg, #1a1a2e, #16213e);
-    z-index: 9999;
-    transition: right 0.3s ease;
-    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.3);
-    border-left: 3px solid #ffd700;
-}
-
-.mobile-menu.active {
-    right: 0;
-}
-
-.mobile-menu-content {
-    padding: 2rem 1rem;
-    height: 100%;
-    overflow-y: auto;
-}
-
-.mobile-menu-item {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    padding: 1rem;
-    color: white;
-    text-decoration: none;
-    border-radius: 8px;
-    margin-bottom: 0.5rem;
-    transition: all 0.3s ease;
-    border: 1px solid transparent;
-}
-
-.mobile-menu-item:hover {
-    background: rgba(255, 215, 0, 0.1);
-    border-color: rgba(255, 215, 0, 0.3);
-    color: #ffd700;
-}
-
-.mobile-menu-item i {
-    font-size: 1.2rem;
-    width: 20px;
-}
-
-/* Dropdown menu */
-.dropdown {
-    position: relative;
-}
-
-.dropdown-menu {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    background: linear-gradient(135deg, #16213e, #0f3460);
-    border: 1px solid #ffd700;
-    border-radius: 8px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-    min-width: 200px;
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(-10px);
-    transition: all 0.3s ease;
-    z-index: 1001;
-}
-
-.dropdown:hover .dropdown-menu {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0);
-}
-
-.dropdown-item {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.75rem 1rem;
-    color: white;
-    text-decoration: none;
-    transition: all 0.3s ease;
-    border-bottom: 1px solid rgba(255, 215, 0, 0.1);
-}
-
-.dropdown-item:last-child {
-    border-bottom: none;
-}
-
-.dropdown-item:hover {
-    background: rgba(255, 215, 0, 0.1);
-    color: #ffd700;
-    padding-left: 1.5rem;
-}
-
-.dropdown-divider {
-    border-top: 1px solid rgba(255, 215, 0, 0.2);
-    margin: 0.5rem 0;
-}
 
 /* Footer principale */
 .main-footer {
@@ -260,9 +215,11 @@
     margin: 0 auto;
     padding: 0 2rem;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-template-columns: 1fr 1fr 1fr;
     gap: 2rem;
     margin-bottom: 1rem;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .footer-section h4 {
@@ -298,7 +255,10 @@
     display: grid;
     grid-template-columns: 280px 1fr;
     gap: 2rem;
-    min-height: calc(100vh - 200px);
+    min-height: auto;
+    width: 100%;
+    box-sizing: border-box;
+    overflow-x: hidden;
 }
 
 /* Sidebar di ricerca */
@@ -311,6 +271,9 @@
     border: 2px solid #e9ecef;
     position: sticky;
     top: 120px;
+    width: 100%;
+    max-width: 280px;
+    box-sizing: border-box;
 }
 
 .search-sidebar h3 {
@@ -335,25 +298,7 @@
     border: 1px solid rgba(255, 215, 0, 0.2);
 }
 
-/* Sezione prodotti in evidenza */
-.featured-products {
-    margin-bottom: 3rem;
-}
-
-.featured-products h2 {
-    text-align: center;
-    margin-bottom: 2rem;
-    font-size: 2rem;
-    font-family: 'Pirata One', cursive;
-}
-
-/* Grid prodotti */
-.products-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 2rem;
-    margin-top: 2rem;
-}
+/* Sezione prodotti in evidenza - gestita da carousel.css */
 
 /* Card prodotto */
 .product-card {
@@ -364,6 +309,8 @@
     transition: all 0.3s ease;
     border: 2px solid transparent;
     position: relative;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .product-card:hover {
@@ -471,45 +418,277 @@
     box-shadow: 0 5px 15px rgba(255, 107, 107, 0.3);
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
+/* ===== RESPONSIVE DESIGN CON SCALING GRADUALE ===== */
+/* Breakpoint molto grandi - inizio scaling */
+@media (max-width: 1400px) {
     .header-content {
-        padding: 1rem;
+        max-width: 95%;
+        padding: 1.2rem 1.8rem;
+    }
+    
+    .header-title h1 {
+        font-size: 2.1rem;
+    }
+    
+    .main-nav a {
+        padding: 0.7rem 0.9rem;
+        font-size: 0.95rem;
+    }
+    
+    
+    .main-container {
+        max-width: 95%;
+        padding: 1.8rem;
+        gap: 1.8rem;
+    }
+    
+    /* Grid prodotti - gestita da carousel.css */
+}
+
+@media (max-width: 1200px) {
+    .header-content {
+        padding: 1.1rem 1.6rem;
+    }
+    
+    .header-title h1 {
+        font-size: 1.9rem;
+    }
+    
+    .main-nav a {
+        padding: 0.6rem 0.8rem;
+        font-size: 0.9rem;
+    }
+    
+    .main-nav ul {
+        gap: 1rem;
+    }
+    
+    /* Menu admin - riduci dimensioni per evitare overflow */
+    body.admin-page .main-nav a {
+        padding: 0.3rem 0.4rem;
+        font-size: 0.75rem;
+    }
+    
+    body.admin-page .main-nav ul {
+        gap: 0.4rem;
+    }
+    
+    body.admin-page .main-nav a i {
+        font-size: 0.8rem;
+    }
+    
+    
+    /* Layout header per menu admin - solo per pagine admin */
+    body.admin-page .header-content {
+        gap: 1rem;
+    }
+    
+    .main-container {
+        padding: 1.6rem;
+        gap: 1.6rem;
+    }
+    
+    /* Grid prodotti - gestita da carousel.css */
+}
+
+@media (max-width: 1000px) {
+    .header-content {
+        padding: 1rem 1.4rem;
     }
     
     .header-title h1 {
         font-size: 1.8rem;
     }
     
-    .main-nav {
-        display: none;
+    .main-nav a {
+        padding: 0.5rem 0.7rem;
+        font-size: 0.85rem;
     }
     
-    .mobile-menu-toggle {
-        display: flex;
+    .main-nav ul {
+        gap: 0.8rem;
     }
+    
+    
+    /* Layout header per menu admin - solo per pagine admin */
+    body.admin-page .header-content {
+        gap: 1rem;
+    }
+    
+    .main-container {
+        padding: 1.4rem;
+        gap: 1.4rem;
+    }
+    
+    /* Grid prodotti - gestita da carousel.css */
+}
+
+/* Breakpoint intermedio per scaling più graduale */
+@media (max-width: 900px) {
+    .header-title h1 {
+        font-size: 1.7rem;
+    }
+    
+    .main-nav a {
+        padding: 0.45rem 0.6rem;
+        font-size: 0.8rem;
+    }
+    
+    .main-nav ul {
+        gap: 0.6rem;
+    }
+    
+    /* Menu admin - riduci ulteriormente per evitare overflow */
+    body.admin-page .main-nav a {
+        padding: 0.2rem 0.3rem;
+        font-size: 0.65rem;
+    }
+    
+    body.admin-page .main-nav ul {
+        gap: 0.25rem;
+    }
+    
+    body.admin-page .main-nav a i {
+        font-size: 0.7rem;
+    }
+    
+    
+    /* Layout header per menu admin - solo per pagine admin */
+    body.admin-page .header-content {
+        gap: 1rem;
+    }
+    
+    /* Grid prodotti - gestita da carousel.css */
+}
+
+/* Breakpoint tablet per layout intermedio */
+@media (max-width: 1024px) {
+    .header-content {
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        gap: 1rem;
+    }
+    
+    .header-brand {
+        width: 100%;
+        justify-content: center;
+        margin-bottom: 0;
+    }
+    
+    .main-nav {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    /* Menu admin - riduci dimensioni per evitare overflow */
+    body.admin-page .main-nav a {
+        padding: 0.25rem 0.35rem;
+        font-size: 0.7rem;
+    }
+    
+    body.admin-page .main-nav ul {
+        gap: 0.3rem;
+    }
+    
+    body.admin-page .main-nav a i {
+        font-size: 0.75rem;
+    }
+    
+    
+    .main-container {
+        grid-template-columns: 250px 1fr;
+        gap: 1.5rem;
+        padding: 1.5rem;
+    }
+    
+    .search-sidebar {
+        padding: 1.2rem;
+    }
+    
+    /* Grid prodotti - gestita da carousel.css */
+}
+
+/* Breakpoint rimosso - gestito da @media (max-width: 900px) */
+
+/* Breakpoint intermedio per tablet piccoli */
+@media (max-width: 700px) {
+    /* Grid prodotti - gestita da carousel.css */
+}
+
+/* Breakpoint per schermi medi */
+@media (max-width: 800px) {
+    .main-container {
+        padding: 1.5rem;
+        gap: 1.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .header-content {
+        padding: 1rem;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        position: relative;
+    }
+    
+    .header-brand {
+        flex: 1;
+        justify-content: center;
+        margin-bottom: 0;
+    }
+    
+    .header-title h1 {
+        font-size: 1.8rem;
+        margin-bottom: 0.25rem;
+    }
+    
+    /* Nascondi il menu principale (normale e admin) */
+    .main-nav {
+        display: none !important;
+    }
+    
+    
+    
+    /* Menu hamburger - gestito da mobile-menu-fixes.css */
     
     .main-container {
         grid-template-columns: 1fr;
         padding: 1rem;
         gap: 1rem;
+        margin-top: 60px; /* Spazio per il menu hamburger */
     }
     
     .search-sidebar {
         position: static;
         order: -1;
+        margin-bottom: 1rem;
+        width: 100%;
+        max-width: none;
     }
     
-    .products-grid {
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 1.5rem;
-    }
+    /* Grid prodotti - gestita da carousel.css */
     
     .footer-content {
         grid-template-columns: 1fr;
         gap: 1.5rem;
         padding: 0 1rem;
     }
+    
+    .tracking-link {
+        width: 100%;
+        max-width: none;
+        margin: 1rem auto 0;
+        display: block;
+    }
+}
+
+/* Breakpoint per schermi piccoli - layout a colonna singola */
+@media (max-width: 600px) {
+    /* Grid prodotti - gestita da carousel.css */
 }
 
 @media (max-width: 480px) {
@@ -530,8 +709,15 @@
         padding: 1rem;
     }
     
-    .products-grid {
-        grid-template-columns: 1fr;
+    .search-sidebar {
+        width: 100%;
+        max-width: none;
+    }
+    
+    /* Grid prodotti - gestita da carousel.css */
+    
+    .product-card {
+        max-width: 100%;
     }
     
     .product-image {

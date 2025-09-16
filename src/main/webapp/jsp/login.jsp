@@ -8,16 +8,76 @@
 <script src="${pageContext.request.contextPath}/scripts/validation.js"></script>
 
 <style>
+/* Stili One Piece per login */
+
+h1 {
+    font-family: 'Pirata One', 'Bangers', cursive;
+    color: #f1c40f;
+    text-shadow: 3px 3px 0px #2c3e50;
+    letter-spacing: 2px;
+}
+
+.card {
+    background: rgba(255, 255, 255, 0.95);
+    border: 3px solid #f1c40f;
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+}
+
+.form-label {
+    font-family: 'Bangers', cursive;
+    color: #2c3e50;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.form-control {
+    border: 2px solid #bdc3c7;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: #3498db;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    border: none;
+    border-radius: 12px;
+    font-family: 'Bangers', cursive;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: 0 6px 12px rgba(231, 76, 60, 0.3);
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #c0392b, #a93226);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(231, 76, 60, 0.4);
+}
+
+.alert-danger {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    color: white;
+    border: none;
+    border-radius: 12px;
+}
+
 .error-message {
-    color: #dc3545;
+    color: #e74c3c;
     font-size: 0.875rem;
     margin-top: 0.25rem;
     display: none;
 }
 
 .form-control.is-invalid {
-    border-color: #dc3545;
-    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+    border-color: #e74c3c;
+    box-shadow: 0 0 0 0.2rem rgba(231, 76, 60, 0.25);
 }
 </style>
 

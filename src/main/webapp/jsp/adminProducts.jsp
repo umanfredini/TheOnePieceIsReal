@@ -3,11 +3,35 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <jsp:include page="header.jsp" />
 
+<script>
+// Aggiungi classe admin-page al body per stili specifici
+document.addEventListener('DOMContentLoaded', function() {
+    document.body.classList.add('admin-page');
+});
+</script>
+
 <!-- Debug CSRF Token -->
 <script>
+console.log('=== DEBUG CSRF TOKEN JSP ===');
+console.log('JavaScript caricato correttamente');
 console.log('CSRF Token disponibile:', '${sessionScope.csrfToken}');
 console.log('CSRF Token è vuoto?', '${sessionScope.csrfToken}' === '');
 console.log('CSRF Token è null?', '${sessionScope.csrfToken}' === 'null');
+console.log('CSRF Token length:', '${sessionScope.csrfToken}'.length);
+console.log('Session scope completo:', '${sessionScope}');
+
+// Verifica se il token è presente nei form
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM Content Loaded - verifico input CSRF');
+    const csrfInputs = document.querySelectorAll('input[name="csrfToken"]');
+    console.log('Numero di input CSRF trovati:', csrfInputs.length);
+    csrfInputs.forEach((input, index) => {
+        console.log('CSRF Input ' + index + ':', input.value);
+        console.log('CSRF Input ' + index + ' type:', input.type);
+        console.log('CSRF Input ' + index + ' name:', input.name);
+    });
+    console.log('=== FINE DEBUG CSRF TOKEN JSP ===');
+});
 </script>
 
 <main class="container mt-5" role="main">
@@ -406,6 +430,11 @@ document.getElementById('addProductForm').addEventListener('submit', function(e)
 
 // Validazione form modifica prodotto
 document.getElementById('editProductForm').addEventListener('submit', function(e) {
+    // Debug: verifica se il token CSRF è presente nel form
+    const csrfInput = this.querySelector('input[name="csrfToken"]');
+    console.log('CSRF Token nel form edit:', csrfInput ? csrfInput.value : 'NON TROVATO');
+    console.log('Form data:', new FormData(this));
+    
     let isValid = true;
     
     // Validazione nome

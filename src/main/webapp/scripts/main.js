@@ -1,9 +1,12 @@
 // WebContent/scripts/main.js
 
+console.log('🚀 MAIN.JS CARICATO!');
+
 /**
  * Inizializza gli event listeners globali
  */
 document.addEventListener('DOMContentLoaded', () => {
+    console.log('📄 DOM CONTENT LOADED - Inizializzazione...');
     // Gestione logout
     const logoutBtn = document.getElementById('logout-btn');
     if(logoutBtn) {
@@ -14,7 +17,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // initMusicPlayer(); // Rimosso sistema musicale complesso
     
     // Inizializza menu mobile
+    console.log('🔄 Inizializzando menu mobile...');
     initMobileMenu();
+    console.log('✅ Menu mobile inizializzazione completata');
     
     // Inizializza funzionalità mobile
     initMobileFeatures();
@@ -65,50 +70,74 @@ export function hideError(inputElement) {
  * Inizializza il menu mobile
  */
 function initMobileMenu() {
+    console.log('🔧 Inizializzazione menu mobile...');
     const mobileMenuToggle = document.getElementById('mobileMenuToggle');
     const mobileMenu = document.getElementById('mobileMenu');
     
+    console.log('📱 Elementi trovati:', {
+        toggle: mobileMenuToggle,
+        menu: mobileMenu,
+        toggleExists: !!mobileMenuToggle,
+        menuExists: !!mobileMenu
+    });
+    
     if (mobileMenuToggle && mobileMenu) {
-        // Gestione click sul toggle
-        mobileMenuToggle.addEventListener('click', () => {
-            toggleMobileMenu(mobileMenuToggle, mobileMenu);
+        console.log('✅ Menu mobile inizializzato correttamente');
+        
+        // Gestione click sul toggle - versione semplificata
+        mobileMenuToggle.addEventListener('click', (e) => {
+            console.log('🖱️ Click su menu hamburger!', e);
+            
+            // Toggle semplice come nel test
+            if (mobileMenu.classList.contains('active')) {
+                mobileMenu.classList.remove('active');
+                mobileMenuToggle.classList.remove('active');
+                document.body.classList.remove('menu-open');
+                console.log('📤 Menu chiuso');
+            } else {
+                mobileMenu.classList.add('active');
+                mobileMenuToggle.classList.add('active');
+                document.body.classList.add('menu-open');
+                console.log('📥 Menu aperto');
+            }
         });
         
         // Chiudi menu quando si clicca su un link
         const mobileMenuItems = mobileMenu.querySelectorAll('.mobile-menu-item');
         mobileMenuItems.forEach(item => {
             item.addEventListener('click', () => {
-                closeMobileMenu(mobileMenuToggle, mobileMenu);
+                mobileMenu.classList.remove('active');
+                mobileMenuToggle.classList.remove('active');
+                document.body.classList.remove('menu-open');
+                console.log('📤 Menu chiuso per click su link');
             });
-        });
-        
-        // Chiudi menu quando si clicca fuori
-        mobileMenu.addEventListener('click', (e) => {
-            if (e.target === mobileMenu) {
-                closeMobileMenu(mobileMenuToggle, mobileMenu);
-            }
         });
         
         // Chiudi menu con tasto ESC
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape' && mobileMenu.classList.contains('active')) {
-                closeMobileMenu(mobileMenuToggle, mobileMenu);
+                mobileMenu.classList.remove('active');
+                mobileMenuToggle.classList.remove('active');
+                document.body.classList.remove('menu-open');
+                console.log('📤 Menu chiuso con ESC');
             }
         });
         
         // Gestione resize della finestra
         window.addEventListener('resize', () => {
-            if (window.innerWidth > 992 && mobileMenu.classList.contains('active')) {
-                closeMobileMenu(mobileMenuToggle, mobileMenu);
+            if (window.innerWidth > 768 && mobileMenu.classList.contains('active')) {
+                mobileMenu.classList.remove('active');
+                mobileMenuToggle.classList.remove('active');
+                document.body.classList.remove('menu-open');
+                console.log('📤 Menu chiuso per resize');
             }
         });
         
-        // Prevenzione scroll quando menu è aperto
-        mobileMenu.addEventListener('touchmove', (e) => {
-            if (mobileMenu.classList.contains('active')) {
-                e.preventDefault();
-            }
-        }, { passive: false });
+    } else {
+        console.log('❌ Elementi menu mobile non trovati');
+        console.log('🔍 Ricerca elementi...');
+        console.log('Toggle ID:', document.getElementById('mobileMenuToggle'));
+        console.log('Menu ID:', document.getElementById('mobileMenu'));
     }
 }
 
@@ -117,10 +146,13 @@ function initMobileMenu() {
  */
 function toggleMobileMenu(toggle, menu) {
     const isActive = menu.classList.contains('active');
+    console.log('🔄 Toggle menu - Stato attuale:', isActive ? 'APERTO' : 'CHIUSO');
     
     if (isActive) {
+        console.log('📤 Chiudendo menu...');
         closeMobileMenu(toggle, menu);
     } else {
+        console.log('📥 Aprendo menu...');
         openMobileMenu(toggle, menu);
     }
 }
@@ -129,9 +161,35 @@ function toggleMobileMenu(toggle, menu) {
  * Apre il menu mobile
  */
 function openMobileMenu(toggle, menu) {
+    console.log('🚀 Aprendo menu mobile...');
+    console.log('📋 Elementi prima dell\'apertura:', {
+        toggle: toggle,
+        menu: menu,
+        toggleClasses: toggle.className,
+        menuClasses: menu.className
+    });
+    
     toggle.classList.add('active');
     menu.classList.add('active');
     document.body.classList.add('menu-open');
+    
+    console.log('✅ Classi aggiunte:', {
+        toggleClasses: toggle.className,
+        menuClasses: menu.className,
+        bodyClasses: document.body.className
+    });
+    
+    // Debug CSS dopo l'apertura
+    setTimeout(() => {
+        const menuStyle = window.getComputedStyle(menu);
+        console.log('🎨 CSS del menu dopo apertura:', {
+            display: menuStyle.display,
+            visibility: menuStyle.visibility,
+            opacity: menuStyle.opacity,
+            transform: menuStyle.transform,
+            zIndex: menuStyle.zIndex
+        });
+    }, 100);
     
     // Focus sul primo elemento del menu per accessibilità
     const firstItem = menu.querySelector('.mobile-menu-item');
@@ -183,7 +241,7 @@ function announceToScreenReader(message) {
  * Controlla se il dispositivo è mobile
  */
 function isMobileDevice() {
-    return window.innerWidth <= 992 || 
+    return window.innerWidth <= 768 || 
            /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 }
 

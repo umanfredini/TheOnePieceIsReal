@@ -24,7 +24,7 @@ public class OrderHistoryServlet extends HttpServlet {
         Integer userId = utente != null ? utente.getId() : null;
 
         if (userId == null) {
-            response.sendRedirect("LoginServlet");
+            response.sendRedirect(request.getContextPath() + "/LoginServlet");
             return;
         }
         

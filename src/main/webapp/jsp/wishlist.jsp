@@ -100,12 +100,26 @@
 }
 
 .collection-header {
-    background: linear-gradient(135deg, #8B4513, #A0522D);
+    background: transparent;
     padding: 2rem;
     border-radius: 15px;
     margin-bottom: 2rem;
-    border: 3px solid #DAA520;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    text-align: center;
+}
+
+.collection-header h1 {
+    font-family: 'Pirata One', 'Bangers', cursive;
+    color: #f1c40f;
+    text-shadow: 3px 3px 0px #2c3e50, 6px 6px 10px rgba(0, 0, 0, 0.3);
+    letter-spacing: 2px;
+    margin-bottom: 0.5rem;
+    font-size: 2.5rem;
+}
+
+.collection-header p {
+    color: #2c3e50;
+    font-weight: 500;
+    font-size: 1.1rem;
 }
 
 .empty-collection {
@@ -167,7 +181,7 @@ function toggleWishlistInPage(productId) {
 }
 
 function goToProductDetail(productId) {
-    window.location.href = window.location.origin + '/TheOnePieceIsReal/ProductServlet?action=detail&id=' + productId;
+    window.location.href = '${pageContext.request.contextPath}/ProductServlet?action=detail&id=' + productId;
 }
 
 function addToCart(productId) {

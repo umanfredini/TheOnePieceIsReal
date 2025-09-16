@@ -183,7 +183,9 @@
     margin-bottom: 0.5rem;
 }
 
-.form-control, .form-select {
+/* Stili specifici per la pagina Grand Line Route - ESCLUDI filtri catalogo */
+.grand-line-route .form-control, 
+.grand-line-route .form-select {
     border: 2px solid #DAA520;
     border-radius: 8px;
     background: rgba(255, 255, 255, 0.9);
@@ -192,7 +194,8 @@
     transition: all 0.3s ease;
 }
 
-.form-control:focus, .form-select:focus {
+.grand-line-route .form-control:focus, 
+.grand-line-route .form-select:focus {
     border-color: #FFD700;
     box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
     background: rgba(255, 255, 255, 1);

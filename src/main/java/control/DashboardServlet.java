@@ -25,45 +25,115 @@ public class DashboardServlet extends HttpServlet {
         HttpSession session = request.getSession(false);
 
         if (!isAdminLoggedIn(session)) {
-            response.sendRedirect("LoginServlet");
+            response.sendRedirect(request.getContextPath() + "/LoginServlet");
             return;
         }
 
-        // Test connessione database
-        if (!testDatabaseConnection()) {
-            logger.severe("Impossibile connettersi al database");
-            request.setAttribute("errorMessage", "Errore di connessione al database. Verificare che il database sia attivo.");
-            request.getRequestDispatcher("/jsp/error.jsp").forward(request, response);
-            return;
+        // Test connessione database con retry
+        int retryCount = 0;
+        int maxRetries = 3;
+        boolean connectionOk = false;
+        
+        while (retryCount < maxRetries && !connectionOk) {
+            try {
+                DBConnection.getConnection().close();
+                logger.info("Connessione al database verificata (tentativo " + (retryCount + 1) + ")");
+                connectionOk = true;
+            } catch (SQLException e) {
+                retryCount++;
+                logger.warning("Tentativo " + retryCount + " fallito: " + e.getMessage());
+                
+                if (retryCount >= maxRetries) {
+                    logger.severe("Errore di connessione al database dopo " + maxRetries + " tentativi: " + e.getMessage());
+                    request.setAttribute("errorMessage", "Errore di connessione al database. Riprovare tra qualche istante.");
+                    request.getRequestDispatcher("/jsp/error.jsp").forward(request, response);
+                    return;
+                }
+                
+                // Attesa prima del retry
+                try {
+                    Thread.sleep(1000 * retryCount);
+                } catch (InterruptedException ie) {
+                    Thread.currentThread().interrupt();
+                    break;
+                }
+            }
         }
 
         try {
             // Inizializza i DAO con gestione errori
             ProductDAO prodottoDAO = new ProductDAO();
-            OrderDAO ordineDAO;
-            UserDAO utenteDAO;
             
-            ordineDAO = new OrderDAO();
-            utenteDAO = new UserDAO();
-
             // Recupera i dati con gestione errori
-            int totaleProdotti = prodottoDAO.countAll();
-            
+            int totaleProdotti = 0;
             int totaleOrdini = 0;
             int totaleUtenti = 0;
             double ricaviTotali = 0.0;
             List<Order> ordiniRecenti = new java.util.ArrayList<>();
+            List<Map<String, Object>> prodottiTopSelling = new java.util.ArrayList<>();
             
+            // Recupera il conteggio dei prodotti
             try {
-                totaleOrdini = ordineDAO.countAll();
-                totaleUtenti = utenteDAO.countAll();
-                ricaviTotali = ordineDAO.getTotalRevenue();
-                ordiniRecenti = ordineDAO.getRecentOrders(10);
+                totaleProdotti = prodottoDAO.countAll();
+                logger.info("✅ Conteggio prodotti recuperato: " + totaleProdotti);
             } catch (Exception e) {
-                logger.warning("Errore nel recupero dati dashboard: " + e.getMessage());
+                logger.severe("❌ Errore nel conteggio prodotti: " + e.getMessage());
+                e.printStackTrace();
             }
             
-            List<Map<String, Object>> prodottiTopSelling = prodottoDAO.getTopSellingProducts(5);
+            // Recupera il conteggio degli ordini
+            try {
+                OrderDAO ordineDAO = new OrderDAO();
+                totaleOrdini = ordineDAO.countAll();
+                logger.info("✅ Conteggio ordini recuperato: " + totaleOrdini);
+            } catch (Exception e) {
+                logger.severe("❌ Errore nel conteggio ordini: " + e.getMessage());
+                e.printStackTrace();
+            }
+            
+            // Recupera il conteggio degli utenti
+            try {
+                UserDAO utenteDAO = new UserDAO();
+                totaleUtenti = utenteDAO.countAll();
+                logger.info("✅ Conteggio utenti recuperato: " + totaleUtenti);
+            } catch (Exception e) {
+                logger.severe("❌ Errore nel conteggio utenti: " + e.getMessage());
+                e.printStackTrace();
+            }
+            
+            // Recupera i ricavi totali
+            try {
+                OrderDAO ordineDAO = new OrderDAO();
+                ricaviTotali = ordineDAO.getTotalRevenue();
+                logger.info("✅ Ricavi totali recuperati: " + ricaviTotali);
+            } catch (Exception e) {
+                logger.severe("❌ Errore nel recupero ricavi: " + e.getMessage());
+                e.printStackTrace();
+            }
+            
+            // Recupera gli ordini recenti
+            try {
+                OrderDAO ordineDAO = new OrderDAO();
+                ordiniRecenti = ordineDAO.getRecentOrders(10);
+                logger.info("✅ Ordini recenti recuperati: " + ordiniRecenti.size());
+            } catch (Exception e) {
+                logger.severe("❌ Errore nel recupero ordini recenti: " + e.getMessage());
+                e.printStackTrace();
+            }
+            
+            // Recupera i prodotti più venduti
+            try {
+                prodottiTopSelling = prodottoDAO.getTopSellingProducts(5);
+                logger.info("✅ Prodotti più venduti recuperati: " + prodottiTopSelling.size());
+            } catch (Exception e) {
+                logger.severe("❌ Errore nel recupero prodotti più venduti: " + e.getMessage());
+                e.printStackTrace();
+            }
+            
+            logger.info("📊 Riepilogo finale dashboard - Prodotti: " + totaleProdotti + 
+                       ", Ordini: " + totaleOrdini + 
+                       ", Utenti: " + totaleUtenti + 
+                       ", Ricavi: " + ricaviTotali);
 
             request.setAttribute("productCount", totaleProdotti);
             request.setAttribute("orderCount", totaleOrdini);
@@ -106,21 +176,4 @@ public class DashboardServlet extends HttpServlet {
         }
     }
     
-    /**
-     * Testa la connessione al database
-     * @return true se la connessione è riuscita, false altrimenti
-     */
-    private boolean testDatabaseConnection() {
-        try {
-            DBConnection.getConnection().close();
-            logger.info("Connessione al database riuscita");
-            return true;
-        } catch (SQLException e) {
-            logger.severe("Errore nella connessione al database: " + e.getMessage());
-            return false;
-        } catch (Exception e) {
-            logger.severe("Errore generico nella connessione al database: " + e.getMessage());
-            return false;
-        }
-    }
 }

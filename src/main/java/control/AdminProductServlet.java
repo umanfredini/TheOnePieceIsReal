@@ -19,9 +19,23 @@ public class AdminProductServlet extends HttpServlet {
         HttpSession session = request.getSession(false);
 
         if (!isAdminLoggedIn(session)) {
-            response.sendRedirect("LoginServlet");
+            response.sendRedirect(request.getContextPath() + "/LoginServlet");
             return;
         }
+
+        // Assicurati che il token CSRF sia presente nella sessione
+        String existingToken = (String) session.getAttribute("csrfToken");
+        logger.info("=== DEBUG TOKEN CSRF doGet ===");
+        logger.info("Token CSRF esistente: " + existingToken);
+        
+        if (existingToken == null) {
+            String csrfToken = java.util.UUID.randomUUID().toString();
+            session.setAttribute("csrfToken", csrfToken);
+            logger.info("Token CSRF generato nel doGet: " + csrfToken);
+        } else {
+            logger.info("Token CSRF già presente: " + existingToken);
+        }
+        logger.info("=== FINE DEBUG TOKEN CSRF doGet ===");
 
         String action = request.getParameter("action");
 
@@ -41,7 +55,15 @@ public class AdminProductServlet extends HttpServlet {
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        logger.info("=== AdminProductServlet doPost INIZIO ===");
         HttpSession session = request.getSession(false);
+        
+        logger.info("Session: " + (session != null ? "presente" : "null"));
+        if (session != null) {
+            logger.info("Session ID: " + session.getId());
+            logger.info("isAdmin: " + session.getAttribute("isAdmin"));
+            logger.info("isLoggedIn: " + session.getAttribute("isLoggedIn"));
+        }
 
         if (!isValidToken(request, session)) {
             // Se è una richiesta AJAX, restituisci JSON
@@ -66,12 +88,30 @@ public class AdminProductServlet extends HttpServlet {
                 response.getWriter().write("{\"success\": false, \"error\": \"Sessione non valida\"}");
                 return;
             }
-            response.sendRedirect("LoginServlet");
+            response.sendRedirect(request.getContextPath() + "/LoginServlet");
             return;
         }
 
         String action = request.getParameter("action");
         logger.info("AdminProductServlet doPost - Action: " + action);
+        logger.info("Parametri ricevuti:");
+        logger.info("- productId: " + request.getParameter("productId"));
+        logger.info("- name: " + request.getParameter("name"));
+        logger.info("- price: " + request.getParameter("price"));
+        logger.info("- stockQuantity: " + request.getParameter("stockQuantity"));
+        logger.info("- category: " + request.getParameter("category"));
+        logger.info("- description: " + request.getParameter("description"));
+        logger.info("- csrfToken: " + request.getParameter("csrfToken"));
+        
+        // Debug: mostra tutti i parametri
+        logger.info("=== TUTTI I PARAMETRI RICEVUTI ===");
+        java.util.Enumeration<String> paramNames = request.getParameterNames();
+        while (paramNames.hasMoreElements()) {
+            String paramName = paramNames.nextElement();
+            String paramValue = request.getParameter(paramName);
+            logger.info("Parametro: " + paramName + " = " + paramValue);
+        }
+        logger.info("=== FINE PARAMETRI ===");
         
         try {
             ProductDAO prodottoDAO = new ProductDAO();
@@ -173,12 +213,27 @@ public class AdminProductServlet extends HttpServlet {
         String sessionToken = (String) session.getAttribute("csrfToken");
         String requestToken = request.getParameter("csrfToken");
         
-        logger.info("Validazione CSRF Token - SessionToken: " + sessionToken + 
-                   ", RequestToken: " + requestToken + 
-                   ", Session: " + (session != null ? "presente" : "null"));
+        logger.info("=== DEBUG CSRF TOKEN ===");
+        logger.info("Session ID: " + (session != null ? session.getId() : "null"));
+        logger.info("Session Token: " + sessionToken);
+        logger.info("Request Token: " + requestToken);
+        logger.info("Session is new: " + (session != null ? session.isNew() : "null"));
+        logger.info("Session creation time: " + (session != null ? new java.util.Date(session.getCreationTime()) : "null"));
+        logger.info("Session last accessed: " + (session != null ? new java.util.Date(session.getLastAccessedTime()) : "null"));
+        logger.info("Session max inactive interval: " + (session != null ? session.getMaxInactiveInterval() : "null"));
+        
+        // Se non c'è token nella sessione, proviamo a generarlo
+        if (sessionToken == null && session != null) {
+            logger.warning("Token CSRF mancante nella sessione, generazione nuovo token");
+            String newToken = java.util.UUID.randomUUID().toString();
+            session.setAttribute("csrfToken", newToken);
+            sessionToken = newToken;
+            logger.info("Nuovo token generato: " + newToken);
+        }
         
         boolean isValid = sessionToken != null && sessionToken.equals(requestToken);
         logger.info("Token CSRF valido: " + isValid);
+        logger.info("=== FINE DEBUG CSRF TOKEN ===");
         
         return isValid;
     }

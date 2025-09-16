@@ -170,8 +170,14 @@ public class UserDAO {
         try (Statement stmt = connection.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             if (rs.next()) {
-                return rs.getInt(1);
+                int count = rs.getInt(1);
+                System.out.println("✅ UserDAO.countAll() - Conteggio utenti: " + count);
+                return count;
             }
+        } catch (SQLException e) {
+            System.err.println("❌ Errore nel conteggio utenti: " + e.getMessage());
+            e.printStackTrace();
+            throw e;
         }
         return 0;
     }

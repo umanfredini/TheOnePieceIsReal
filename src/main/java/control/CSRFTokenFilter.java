@@ -13,13 +13,41 @@ public class CSRFTokenFilter implements Filter {
         
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
+        String requestURI = httpRequest.getRequestURI();
+        
+        // Salta il filtro per file statici e per il logout
+        if (requestURI.contains("/styles/") || 
+            requestURI.contains("/scripts/") || 
+            requestURI.contains("/images/") ||
+            requestURI.contains(".css") || 
+            requestURI.contains(".js") || 
+            requestURI.contains(".jpg") || 
+            requestURI.contains(".png") || 
+            requestURI.contains(".gif") ||
+            requestURI.contains(".ico") ||
+            requestURI.contains("/LogoutServlet") ||
+            requestURI.contains("/jsp/logout.jsp")) {
+            chain.doFilter(request, response);
+            return;
+        }
+        
         HttpSession session = httpRequest.getSession(true); // Crea sessione se non esiste
+        
+        // Debug logging solo per richieste non-statiche
+        System.out.println("=== CSRFTokenFilter DEBUG ===");
+        System.out.println("Request URI: " + requestURI);
+        System.out.println("Session ID: " + session.getId());
+        System.out.println("Session is new: " + session.isNew());
+        System.out.println("Existing CSRF Token: " + session.getAttribute("csrfToken"));
         
         // Genera token CSRF se non esiste
         if (session.getAttribute("csrfToken") == null) {
             String csrfToken = UUID.randomUUID().toString();
             session.setAttribute("csrfToken", csrfToken);
+            System.out.println("Nuovo CSRF Token generato: " + csrfToken);
         }
+        
+        System.out.println("=== FINE CSRFTokenFilter DEBUG ===");
         
         chain.doFilter(request, response);
     }

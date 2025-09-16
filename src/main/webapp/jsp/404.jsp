@@ -11,7 +11,7 @@
         <div class="text-md-start text-center">
             <p class="lead fw-bold">Sembra che tu abbia preso una rotta sbagliata nella Grand Line...</p>
             <p>La pagina che cerchi non esiste o è stata spostata.</p>
-            <a href="http://www.theonepieceisreal.com:8081/TheOnePieceIsReal/" class="btn btn-primary mt-3">Torna alla Home</a>
+            <a href="${pageContext.request.contextPath}/" class="btn btn-primary mt-3">Torna alla Home</a>
         </div>
     </div>
 </main>

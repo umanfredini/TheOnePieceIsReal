@@ -158,6 +158,7 @@
     display: block;
     margin-bottom: 15px;
 }
+
 </style>
 
 <main class="container mt-5" role="main">
@@ -670,5 +671,6 @@ function showToast(message, type) {
     }, 3000);
 }
 </script>
+
 
 <jsp:include page="footer.jsp" />

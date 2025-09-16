@@ -1,10 +1,98 @@
 
 /* responsive.css - Media queries generali per tutta l'applicazione */
 
+/* ===== CSS GLOBALE PER EVITARE OVERFLOW ===== */
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    width: 100%;
+    overflow-x: hidden;
+}
+
+/* ===== TRANSIZIONI SPECIFICHE ===== */
+.container, .row, .col-lg-3, .col-lg-4, .col-lg-6, .col-lg-9,
+.grid-3, .grid-4, .navbar-nav, .form-row, .btn, .table-responsive,
+.card, .modal-dialog, .breadcrumb, .alert, .pagination {
+    transition: all 0.3s ease;
+}
+
+/* ===== SCALING GRADUALE PER TUTTI GLI ELEMENTI ===== */
+
+/* Desktop - Layout orizzontale */
+@media (min-width: 1025px) {
+  .header-content {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    text-align: left;
+  }
+  
+  .header-brand {
+    flex: 0 0 auto;
+    width: auto;
+    justify-content: flex-start;
+    margin-bottom: 0;
+  }
+  
+  .main-nav {
+    flex: 1;
+    justify-content: center;
+    width: auto;
+  }
+}
+
+/* Scaling dinamico del menu per schermi desktop */
+@media (min-width: 1025px) {
+  .main-nav a {
+    padding: clamp(0.3rem, 1.2vw, 0.75rem) clamp(0.4rem, 1.5vw, 1rem);
+    font-size: clamp(0.75rem, 1vw, 1rem);
+  }
+  
+  .main-nav ul {
+    gap: clamp(0.4rem, 1.2vw, 1.5rem);
+  }
+  
+  .main-nav a i {
+    font-size: clamp(0.8rem, 1.1vw, 1.1rem);
+  }
+  
+}
+
+/* Breakpoint molto grandi - inizio scaling */
+@media (max-width: 1400px) {
+  .container {
+    max-width: 95%;
+    padding: 0 1.5rem;
+  }
+  
+  .row {
+    margin-left: -12px;
+    margin-right: -12px;
+  }
+  
+  .col-lg-3, .col-lg-4, .col-lg-6, .col-lg-9 {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+  
+  /* Scaling graduale header */
+  .header-title h1 {
+    font-size: 2.1rem;
+  }
+  
+  .main-nav a {
+    padding: 0.7rem 0.9rem;
+    font-size: 0.95rem;
+  }
+}
+
 /* Tablet - Large screens */
 @media (max-width: 1200px) {
   .container {
     max-width: 960px;
+    padding: 0 1.2rem;
   }
   
   .row {
@@ -16,6 +104,22 @@
     padding-left: 15px;
     padding-right: 15px;
   }
+  
+  /* Scaling graduale header */
+  .header-title h1 {
+    font-size: 1.9rem;
+  }
+  
+  .main-nav a {
+    padding: 0.6rem 0.8rem;
+    font-size: 0.9rem;
+  }
+  
+  .main-nav ul {
+    gap: 1rem;
+  }
+  
+  
 }
 
 /* Tablet - Medium screens */
@@ -29,7 +133,43 @@
     grid-template-columns: repeat(2, 1fr);
   }
   
-  /* Navbar responsive */
+  /* Header tablet - titolo centrato, menu sotto */
+  .header-content {
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    gap: 1rem;
+  }
+  
+  .header-brand {
+    width: 100%;
+    justify-content: center;
+    margin-bottom: 0;
+  }
+  
+  .main-nav {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  
+  /* Scaling graduale header */
+  .header-title h1 {
+    font-size: 1.8rem;
+  }
+  
+  .main-nav a {
+    padding: 0.5rem 0.7rem;
+    font-size: 0.85rem;
+  }
+  
+  .main-nav ul {
+    gap: 0.8rem;
+  }
+  
+  
+  /* Navbar responsive - solo per navbar Bootstrap, non per main-nav */
   .navbar-nav {
     flex-direction: column;
     width: 100%;
@@ -51,6 +191,24 @@
   }
 }
 
+/* Breakpoint intermedio per scaling più graduale */
+@media (max-width: 900px) {
+  
+  .header-title h1 {
+    font-size: 1.7rem;
+  }
+  
+  .main-nav a {
+    padding: 0.45rem 0.6rem;
+    font-size: 0.8rem;
+  }
+  
+  .main-nav ul {
+    gap: 0.6rem;
+  }
+  
+}
+
 /* Mobile - Small screens */
 @media (max-width: 768px) {
   .container {
@@ -58,16 +216,30 @@
     padding: 0 0.75rem;
   }
 
-  /* Header e Footer */
-  header, footer {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
+  /* Header responsive - FORZA per tutte le pagine */
+  .main-header {
+    min-height: 80px;
   }
   
-  header .navbar-brand {
-    margin-bottom: 1rem;
+  .header-content {
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 0.5rem 1rem;
   }
+  
+  .header-brand {
+    flex: 1;
+    justify-content: center;
+  }
+  
+  /* Nascondi menu principale e mostra hamburger */
+  .main-nav {
+    display: none !important;
+  }
+  
+  /* Menu mobile - gestito da mobile-menu-fixes.css */
   
   /* Layout generale */
   .grid-3, .grid-4 {
@@ -98,6 +270,8 @@
   .form-control, .form-select {
     font-size: 16px; /* Previene zoom su iOS */
   }
+  
+  
   
   /* Tabelle */
   .table-responsive {
