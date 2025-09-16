@@ -39,7 +39,11 @@ public class CartServlet extends HttpServlet {
                 Map<Integer, CartItem> sessionCart = (Map<Integer, CartItem>) session.getAttribute("carrello");
                 if (sessionCart != null) {
                     carrello = sessionCart;
+                    logger.info("Carrello caricato dalla sessione per utente guest. Dimensione: " + carrello.size());
+                } else {
+                    logger.info("Nessun carrello trovato in sessione per utente guest");
                 }
+                logger.info("Session ID: " + session.getId());
             }
             
             // Crea un oggetto Cart per la JSP
@@ -74,8 +78,19 @@ public class CartServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
         
-        // Validazione CSRF Token
-        if (!isValidCSRFToken(request)) {
+        // Validazione CSRF Token solo per utenti loggati
+        User utente = (User) request.getSession().getAttribute("utente");
+        
+        // Debug per capire il problema
+        logger.info("=== DEBUG CART SERVLET ===");
+        logger.info("Utente: " + (utente != null ? "loggato (ID: " + utente.getId() + ")" : "guest"));
+        logger.info("isValidCSRFToken: " + isValidCSRFToken(request));
+        logger.info("Condizione CSRF: " + (utente != null && !isValidCSRFToken(request)));
+        logger.info("=== FINE DEBUG ===");
+        
+        if (utente != null && !isValidCSRFToken(request)) {
+            // Solo gli utenti loggati richiedono il token CSRF
+            logger.warning("Token CSRF non valido per utente loggato");
             if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
                 response.setContentType("application/json");
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -88,8 +103,8 @@ public class CartServlet extends HttpServlet {
         
         String action = request.getParameter("action");
         
-        // Se action è null, prova a determinare l'azione dai parametri
-        if (action == null) {
+        // Se action è null o vuoto, prova a determinare l'azione dai parametri
+        if (action == null || action.trim().isEmpty()) {
             if (request.getParameter("productId") != null) {
                 action = "add"; // Se c'è productId, probabilmente è un'aggiunta
             } else {
@@ -107,11 +122,18 @@ public class CartServlet extends HttpServlet {
         }
         
         try {
-        logger.info("Azione ricevuta: " + action);
+        logger.info("Azione ricevuta: '" + action + "'");
         logger.info("Parametri ricevuti: productId=" + request.getParameter("productId") + 
                    ", prodottoId=" + request.getParameter("prodottoId") + 
                    ", quantita=" + request.getParameter("quantita") +
                    ", quantity=" + request.getParameter("quantity"));
+        
+        // Debug tutti i parametri
+        logger.info("=== DEBUG TUTTI I PARAMETRI ===");
+        request.getParameterMap().forEach((key, values) -> {
+            logger.info("Parametro: '" + key + "' = '" + String.join(", ", values) + "'");
+        });
+        logger.info("=== FINE DEBUG PARAMETRI ===");
         
         // Debug parametri solo per update
         if ("update".equals(action)) {
@@ -142,13 +164,15 @@ public class CartServlet extends HttpServlet {
             }
             
             // Salva il carrello
-            User utente = (User) session.getAttribute("utente");
             if (utente != null) {
                 // Utente registrato: salva nel database
                 saveCartToDatabase(utente.getId(), carrello);
+                logger.info("Carrello salvato nel database per utente: " + utente.getId());
             } else {
                 // Utente guest: salva in sessione
                 session.setAttribute("carrello", carrello);
+                logger.info("Carrello salvato in sessione per utente guest. Dimensione: " + carrello.size());
+                logger.info("Session ID: " + session.getId());
             }
             
             // AJAX response
@@ -263,9 +287,11 @@ public class CartServlet extends HttpServlet {
         }
 
         ProductDAO prodottoDAO = new ProductDAO();
+        logger.info("CartServlet.addToCart - Ricerca prodotto con ID: " + prodottoId);
         Product prodotto = prodottoDAO.findByProductId(prodottoId);
 
         if (prodotto != null) {
+            logger.info("CartServlet.addToCart - Prodotto trovato: " + prodotto.getName() + ", Stock: " + prodotto.getStockQuantity());
             // Controlla disponibilità
             if (prodotto.getStockQuantity() >= quantita) {
                 CartItem item = carrello.get(prodottoId);
@@ -291,6 +317,7 @@ public class CartServlet extends HttpServlet {
                 throw new Exception("Quantità non disponibile. Disponibile: " + prodotto.getStockQuantity());
             }
         } else {
+            logger.severe("CartServlet.addToCart - Prodotto NON trovato con ID: " + prodottoId);
             throw new Exception("Prodotto non trovato con ID: " + prodottoId);
         }
     }
@@ -406,23 +433,31 @@ public class CartServlet extends HttpServlet {
     private boolean isValidCSRFToken(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
         if (session == null) {
+            logger.info("isValidCSRFToken: Sessione null");
             return false;
         }
         
         String sessionToken = (String) session.getAttribute("csrfToken");
         String requestToken = request.getParameter("csrfToken");
         
+        logger.info("isValidCSRFToken: SessionToken = " + sessionToken);
+        logger.info("isValidCSRFToken: RequestToken = " + requestToken);
+        
         // Se non c'è token nella sessione, non è valido
         if (sessionToken == null) {
+            logger.info("isValidCSRFToken: SessionToken null");
             return false;
         }
         
         // Se non c'è token nella richiesta, non è valido
         if (requestToken == null || requestToken.trim().isEmpty()) {
+            logger.info("isValidCSRFToken: RequestToken null o vuoto");
             return false;
         }
         
         // Confronta i token
-        return sessionToken.equals(requestToken.trim());
+        boolean isValid = sessionToken.equals(requestToken.trim());
+        logger.info("isValidCSRFToken: Token validi = " + isValid);
+        return isValid;
     }
 }

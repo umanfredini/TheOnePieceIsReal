@@ -20,6 +20,7 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/css/background-music.css?v=${System.currentTimeMillis()}">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/css/wishlist-buttons.css?v=${System.currentTimeMillis()}">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/css/catalogo.css?v=20241206">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/css/footer.css?v=${System.currentTimeMillis()}">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="${pageContext.request.contextPath}/scripts/main.js" defer></script>
     <script src="${pageContext.request.contextPath}/scripts/toast.js" type="module" defer></script>

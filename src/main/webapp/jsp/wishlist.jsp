@@ -149,7 +149,10 @@
 }
 </style>
 
-<script>
+<script type="module">
+// Importa la funzione showToast
+import { showToast } from '${pageContext.request.contextPath}/scripts/toast.js';
+
 // La wishlist ora usa la funzione standard toggleWishlist dal wishlist-manager.js
 function toggleWishlistInPage(productId) {
     // Usa la funzione standard toggleWishlist
@@ -180,11 +183,11 @@ function toggleWishlistInPage(productId) {
     }, 1000);
 }
 
-function goToProductDetail(productId) {
+window.goToProductDetail = function(productId) {
     window.location.href = '${pageContext.request.contextPath}/ProductServlet?action=detail&id=' + productId;
 }
 
-function addToCart(productId) {
+window.addToCart = function(productId) {
     const formData = new FormData();
     formData.append('action', 'add');
     formData.append('productId', productId);
@@ -198,7 +201,7 @@ function addToCart(productId) {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            showToast('Prodotto aggiunto al carrello!', 'success');
+            showToast('Prodotto aggiunto al carrello! 🛒', 'success');
         } else {
             showToast(data.error || 'Errore durante l\'aggiunta al carrello', 'error');
         }
@@ -209,23 +212,7 @@ function addToCart(productId) {
     });
 }
 
-function showToast(message, type) {
-    const toast = document.createElement('div');
-    toast.className = 'toast-notification ' + type;
-    const iconClass = type === 'success' ? 'check-circle' : 'times-circle';
-    toast.innerHTML = 
-        '<div class="toast-content">' +
-            '<i class="fas fa-' + iconClass + '"></i>' +
-            '<span>' + message + '</span>' +
-        '</div>';
-    document.body.appendChild(toast);
-    
-    setTimeout(() => toast.classList.add('show'), 100);
-    setTimeout(() => {
-        toast.classList.remove('show');
-        setTimeout(() => toast.remove(), 300);
-    }, 3000);
-}
+// Funzione showToast gestita da toast.js
 </script>
 
 <jsp:include page="footer.jsp" />

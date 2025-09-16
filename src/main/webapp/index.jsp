@@ -34,17 +34,16 @@
 
 <!-- Menu hamburger rimosso - usa quello di header.jsp -->
 
-<script>
+<script type="module">
+    // Importa la funzione showToast
+    import { showToast } from '${pageContext.request.contextPath}/scripts/toast.js';
+    
     // Funzioni semplificate per i prodotti
     
     // Controllo wishlist - usa la funzione completa dal wishlist-manager.js
     // La funzione toggleWishlist è definita in wishlist-manager.js
     
-    // Controllo carrello
-    function addToCart(productId) {
-        // Qui puoi aggiungere la logica AJAX per aggiungere al carrello
-        console.log('Aggiungi al carrello prodotto:', productId);
-    }
+    // Controllo carrello - funzione rimossa, usa quella completa più sotto
     
 </script>
 
@@ -186,72 +185,11 @@
     </main>
 </div>
 
-<!-- Footer -->
-<footer class="main-footer">
-    <div class="footer-content">
-        <div class="footer-section">
-            <h4>🏴‍☠️ The One Piece Is Real</h4>
-            <p>Il tuo negozio ufficiale di merchandising One Piece</p>
-        </div>
-        <div class="footer-section">
-            <h4>📞 Contatti</h4>
-            <p>Email: info@onepieceisreal.it</p>
-            <p>Tel: +39 123 456 7890</p>
-        </div>
-        <div class="footer-section">
-            <h4>🚢 Spedizioni</h4>
-            <p>Consegna in tutta Italia</p>
-            <a href="${pageContext.request.contextPath}/TrackingServlet" class="tracking-link">
-                <i class="fas fa-ship"></i> Traccia Ordine
-            </a>
-        </div>
-    </div>
-    
-</footer>
 
 <!-- Stili per il carosello funzionale -->
 <style>
 
-/* Toast notifications */
-.toast-notification {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    z-index: 9999;
-    min-width: 300px;
-    max-width: 500px;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    animation: slideInRight 0.3s ease;
-    font-family: var(--font-body);
-    opacity: 0;
-    transform: translateX(100%);
-    transition: all 0.3s ease;
-}
-
-.toast-notification.show {
-    opacity: 1;
-    transform: translateX(0);
-}
-
-.toast-content {
-    display: flex;
-    align-items: center;
-    padding: 1rem 1.25rem;
-    gap: 0.75rem;
-}
-
-.toast-notification.success {
-    background: linear-gradient(135deg, #28a745, #20c997);
-    color: white;
-    border-left: 4px solid #1e7e34;
-}
-
-.toast-notification.error {
-    background: linear-gradient(135deg, #dc3545, #e74c3c);
-    color: white;
-    border-left: 4px solid #c82333;
-}
+/* Toast notifications - gestite da toast.js */
 
 @keyframes slideInRight {
     from {
@@ -269,6 +207,7 @@
 <script src="${pageContext.request.contextPath}/scripts/main.js"></script>
 <script src="${pageContext.request.contextPath}/scripts/cart.js"></script>
 <script src="${pageContext.request.contextPath}/scripts/wishlist-manager.js"></script>
+<script type="module" src="${pageContext.request.contextPath}/scripts/product-cards.js"></script>
 <script>
     // Test se wishlist-manager.js è caricato
     console.log('=== TEST WISHLIST MANAGER ===');
@@ -355,7 +294,7 @@
     }
     
     // Controllo carrello
-    function addToCart(productId) {
+    window.addToCart = function(productId) {
         event.preventDefault();
         event.stopPropagation();
         
@@ -387,7 +326,7 @@
         })
         .then(function(data) {
             if (data.success) {
-                showToast('Prodotto aggiunto al carrello!', 'success');
+                showToast('Prodotto aggiunto al carrello! 🛒', 'success');
                 // Opzionale: aggiorna contatore carrello se presente
                 var cartCounter = document.querySelector('.cart-counter');
                 if (cartCounter && data.cartSize) {
@@ -403,33 +342,7 @@
         });
     }
     
-    // Funzione per mostrare toast notifications
-    function showToast(message, type) {
-        var toast = document.createElement('div');
-        type = type || 'info';
-        toast.className = 'toast-notification ' + type;
-        
-        var iconClass = 'fas fa-info-circle';
-        if (type === 'success') {
-            iconClass = 'fas fa-check-circle';
-        } else if (type === 'error') {
-            iconClass = 'fas fa-times-circle';
-        }
-        
-        toast.innerHTML = '<div class="toast-content">' +
-            '<i class="' + iconClass + '"></i>' +
-            '<span>' + message + '</span>' +
-            '</div>';
-        
-        document.body.appendChild(toast);
-        
-        setTimeout(function() { toast.classList.add('show'); }, 100);
-        
-        setTimeout(function() {
-            toast.classList.remove('show');
-            setTimeout(function() { toast.remove(); }, 300);
-        }, 3000);
-    }
+    // Funzione showToast gestita da toast.js
     
         
         // Configurazione per il file wishlist-manager.js
@@ -678,81 +591,8 @@
 }
 </style>
 
-<!-- Stili per il pulsante Traccia Ordine in homepage -->
-<style>
-/* Stile per il link tracking nel footer - BOTTONE GRADEVOLE CON BARCA */
-.tracking-link {
-    display: inline-block;
-    margin-top: 15px;
-    padding: 15px 25px;
-    background: linear-gradient(135deg, #ffd700, #ffed4e);
-    color: #000000;
-    text-decoration: none;
-    border-radius: 25px;
-    font-weight: 700;
-    font-size: 1.1rem;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    transition: all 0.3s ease;
-    box-shadow: 0 6px 20px rgba(255, 215, 0, 0.5);
-    border: 3px solid #000000;
-    position: relative;
-    overflow: hidden;
-    animation: subtle-glow 2s ease-in-out infinite;
-    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.4);
-    font-family: 'Arial', sans-serif;
-    min-width: 220px;
-    text-align: center;
-}
 
-.tracking-link::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-    transition: left 0.6s;
-}
-
-.tracking-link:hover::before {
-    left: 100%;
-}
-
-.tracking-link:hover {
-    background: linear-gradient(135deg, #ffff00, #ffd700);
-    transform: translateY(-2px) scale(1.02);
-    box-shadow: 0 8px 25px rgba(255, 215, 0, 0.7);
-    color: #000000;
-    text-decoration: none;
-    border-color: #ffff00;
-}
-
-.tracking-link:active {
-    transform: translateY(-1px) scale(1.01);
-}
-
-.tracking-link i {
-    margin-right: 8px;
-    font-size: 1.2rem;
-    filter: drop-shadow(1px 1px 2px rgba(0, 0, 0, 0.4));
-    color: #000000;
-}
-
-@keyframes subtle-glow {
-    0%, 100% {
-        box-shadow: 0 6px 20px rgba(255, 215, 0, 0.5);
-        transform: scale(1);
-        border-color: #000000;
-    }
-    50% {
-        box-shadow: 0 8px 25px rgba(255, 215, 0, 0.7);
-        transform: scale(1.01);
-        border-color: #ffff00;
-    }
-}
-</style>
+<jsp:include page="jsp/footer.jsp" />
 
 </body>
 </html> 

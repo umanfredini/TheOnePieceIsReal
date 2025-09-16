@@ -375,7 +375,10 @@
     </c:if>
 </main>
 
-<script>
+<script type="module">
+// Importa la funzione showToast
+import { showToast } from '${pageContext.request.contextPath}/scripts/toast.js';
+
 // Script per migliorare l'esperienza paginazione
 document.addEventListener('DOMContentLoaded', function() {
     // Scroll to top quando si cambia pagina
@@ -455,7 +458,7 @@ function validateJumpPage() {
 }
 
 // Funzione per aggiungere al carrello
-function addToCart(productId) {
+window.addToCart = function(productId) {
     // Aggiungendo al carrello prodotto
     
     // Ottieni il token CSRF se presente
@@ -486,7 +489,7 @@ function addToCart(productId) {
     })
     .then(function(data) {
         if (data.success) {
-            showToast('Prodotto aggiunto al carrello!', 'success');
+            showToast('Prodotto aggiunto al carrello! 🛒', 'success');
             // Opzionale: aggiorna contatore carrello se presente
             var cartCounter = document.querySelector('.cart-counter');
             if (cartCounter && data.cartSize) {
@@ -534,33 +537,7 @@ function addToCart(productId) {
         }
     });
 
-// Funzione per mostrare toast notifications
-function showToast(message, type) {
-    var toast = document.createElement('div');
-    type = type || 'info';
-    toast.className = 'toast-notification ' + type;
-    
-    var iconClass = 'fas fa-info-circle';
-    if (type === 'success') {
-        iconClass = 'fas fa-check-circle';
-    } else if (type === 'error') {
-        iconClass = 'fas fa-times-circle';
-    }
-    
-    toast.innerHTML = '<div class="toast-content">' +
-        '<i class="' + iconClass + '"></i>' +
-        '<span>' + message + '</span>' +
-        '</div>';
-    
-    document.body.appendChild(toast);
-    
-    setTimeout(function() { toast.classList.add('show'); }, 100);
-    
-    setTimeout(function() {
-        toast.classList.remove('show');
-        setTimeout(function() { toast.remove(); }, 300);
-    }, 3000);
-}
+// Funzione showToast gestita da toast.js
 
 // CSS per animazioni
 var style = document.createElement('style');
@@ -584,92 +561,15 @@ style.textContent =
         'opacity: 1;' +
     '}' +
     
-    '/* Toast notifications */' +
-    '.toast-notification {' +
-        'position: fixed;' +
-        'top: 20px;' +
-        'right: 20px;' +
-        'background: white;' +
-        'border-radius: 8px;' +
-        'box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);' +
-        'padding: 15px 20px;' +
-        'z-index: 10000;' +
-        'transform: translateX(100%);' +
-        'transition: transform 0.3s ease;' +
-        'max-width: 300px;' +
-    '}' +
-    
-    '.toast-notification.show {' +
-        'transform: translateX(0);' +
-    '}' +
-    
-    '.toast-notification.success {' +
-        'border-left: 4px solid #28a745;' +
-    '}' +
-    
-    '.toast-notification.error {' +
-        'border-left: 4px solid #dc3545;' +
-    '}' +
-    
-    '.toast-notification.info {' +
-        'border-left: 4px solid #17a2b8;' +
-    '}' +
-    
-    '.toast-content {' +
-        'display: flex;' +
-        'align-items: center;' +
-        'gap: 10px;' +
-    '}' +
-    
-    '.toast-content i {' +
-        'font-size: 1.2rem;' +
-    '}' +
-    
-    '.toast-notification.success .toast-content i {' +
-        'color: #28a745;' +
-    '}' +
-    
-    '.toast-notification.error .toast-content i {' +
-        'color: #dc3545;' +
-    '}' +
-    
-    '.toast-notification.info .toast-content i {' +
-        'color: #17a2b8;' +
-    '}';
+    '/* Toast notifications - gestite da toast.js */';
 document.head.appendChild(style);
 
 // Funzione per andare al dettaglio prodotto
-function goToProductDetail(productId) {
+window.goToProductDetail = function(productId) {
     window.location.href = '${pageContext.request.contextPath}/ProductServlet?action=detail&id=' + productId;
 }
 
-// Funzione per mostrare toast notifications
-function showToast(message, type) {
-    var toast = document.createElement('div');
-    type = type || 'info';
-    toast.className = 'toast-notification ' + type;
-    
-    var iconClass = 'fas fa-info-circle';
-    if (type === 'success') {
-        iconClass = 'fas fa-check-circle';
-    } else if (type === 'error') {
-        iconClass = 'fas fa-times-circle';
-    }
-    
-    toast.innerHTML = '<div class="toast-content">' +
-        '<i class="' + iconClass + '"></i>' +
-        '<span>' + message + '</span>' +
-        '</div>';
-    
-    document.body.appendChild(toast);
-    
-    setTimeout(function() { toast.classList.add('show'); }, 100);
-    
-    setTimeout(function() {
-        toast.classList.remove('show');
-        setTimeout(function() { toast.remove(); }, 300);
-    }, 3000);
-}
+// Funzione showToast gestita da toast.js
 </script>
 
 

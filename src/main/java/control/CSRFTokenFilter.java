@@ -26,7 +26,8 @@ public class CSRFTokenFilter implements Filter {
             requestURI.contains(".gif") ||
             requestURI.contains(".ico") ||
             requestURI.contains("/LogoutServlet") ||
-            requestURI.contains("/jsp/logout.jsp")) {
+            requestURI.contains("/jsp/logout.jsp") ||
+            requestURI.contains("/CartServlet")) {
             chain.doFilter(request, response);
             return;
         }

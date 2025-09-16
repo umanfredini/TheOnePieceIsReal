@@ -110,13 +110,16 @@
     </section>
 </main>
 
-<script>
-function setProductId(productId) {
+<script type="module">
+// Importa la funzione showToast
+import { showToast } from '${pageContext.request.contextPath}/scripts/toast.js';
+
+window.setProductId = function(productId) {
     document.getElementById('productIdToRemove').value = productId;
 }
 
 // Funzione per aggiornare la quantità via AJAX
-function updateQuantity(productId, newQuantity) {
+window.updateQuantity = function(productId, newQuantity) {
     const quantity = parseInt(newQuantity);
     const manualId = 'quantity_' + productId;
     let input = document.getElementById(manualId);
@@ -331,52 +334,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// Funzione per mostrare toast (se non esiste già)
-function showToast(message, type = 'info') {
-    // Crea o aggiorna un elemento toast
-    let toast = document.getElementById('toast-notification');
-    if (!toast) {
-        toast = document.createElement('div');
-        toast.id = 'toast-notification';
-        toast.style.cssText = `
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 15px 20px;
-            border-radius: 8px;
-            color: white;
-            font-weight: bold;
-            z-index: 9999;
-            opacity: 0;
-            transform: translateX(100%);
-            transition: all 0.3s ease;
-            max-width: 300px;
-            word-wrap: break-word;
-        `;
-        document.body.appendChild(toast);
-    }
-    
-    // Imposta il colore in base al tipo
-    const colors = {
-        success: '#28a745',
-        error: '#dc3545',
-        warning: '#ffc107',
-        info: '#17a2b8'
-    };
-    
-    toast.style.backgroundColor = colors[type] || colors.info;
-    toast.textContent = message;
-    
-    // Mostra il toast
-    toast.style.opacity = '1';
-    toast.style.transform = 'translateX(0)';
-    
-    // Nascondi dopo 3 secondi
-    setTimeout(() => {
-        toast.style.opacity = '0';
-        toast.style.transform = 'translateX(100%)';
-    }, 3000);
-}
+// Funzione showToast gestita da toast.js
 </script>
 
 <jsp:include page="footer.jsp" />

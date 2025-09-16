@@ -677,13 +677,6 @@
         gap: 1.5rem;
         padding: 0 1rem;
     }
-    
-    .tracking-link {
-        width: 100%;
-        max-width: none;
-        margin: 1rem auto 0;
-        display: block;
-    }
 }
 
 /* Breakpoint per schermi piccoli - layout a colonna singola */
